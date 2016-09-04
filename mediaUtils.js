@@ -119,6 +119,7 @@ function mediaUtils(scene, camera, stills, videos,
         that.updateSkyDomeForFileName(pid);
     }
     this.updateSkyDomeForFileName = function(fileName) {
+        document.title = fileName;
         that.videoDisplayed = false;
         that.toggleVideoControls();
         that.video.pause();
@@ -147,7 +148,12 @@ function mediaUtils(scene, camera, stills, videos,
     }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');
+        that.updateVideoForFileName(pid);
+    }
+    this.updateVideoForFileName = function(pid) {
+        that.videoFileName = pid;
         console.log('in video: ' + pid);
+        document.title = pid;
         var pathToTexture = 'media/' + pid + '.mp4';
 
         that.videoSource.setAttribute('src', pathToTexture);
@@ -171,14 +177,23 @@ function mediaUtils(scene, camera, stills, videos,
         that.toggleVideoControls();
 	}
     this.video_play = function() {
+        console.log("1 Is video paused? " + that.video.paused);
+        that.video.pause();             
+        setTimeout(function () {      
+            that.video.pause();             
+            console.log("2 Is video paused? " + that.video.paused);
 		that.video.play();
+            console.log("3 Is video paused? " + that.video.paused);
+        }, 150);
     }
     this.video_stop = function() {
 		that.video.pause();    	
     }
     this.video_restart = function() {
+        that.video.pause();
         that.video.currentTime = 0;
-		that.video.play();
+        that.updateVideoForFileName(that.videoFileName);
+		that.video_play();
     }
     this.video_skip = function(value) {
         that.video.currentTime += value;

@@ -51,7 +51,6 @@ function rotateCameraUpDown(camera, radians) {
     var phi = Math.atan2(y,x);
     theta -= radians;
     theta = Math.max(0.01,Math.min(Math.PI-0.01, theta));
-    console.log(theta);
 
     x = radius * Math.sin(theta)*Math.cos(phi);
     y = radius * Math.sin(theta)*Math.sin(phi);
