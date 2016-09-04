@@ -25,7 +25,7 @@ function mediaUtils(scene, camera, stills, videos,
 	this.videoSource = "";
     this.videoDisplayed = false;
     this.rotateYAmount = 0;
-    this.rotateZAmount = 0;
+    this.rotateXAmount = 0;
 
     this.controlPanelVisible = true;
 	document.body.onkeyup = function(e){
@@ -107,8 +107,9 @@ function mediaUtils(scene, camera, stills, videos,
 		var unitVector = (new THREE.Vector3()).copy(that.camera.position).normalize();
         that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
         that.camera.lookAt(new THREE.Vector3(0,0,0));
-        that.skyBox.rotateY(that.rotateYAmount);
-        that.skyBox.rotateZ(that.rotateZAmount);
+        rotateCameraY(that.camera, that.rotateYAmount);
+        rotateCameraUpDown(that.camera, that.rotateXAmount);
+
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
 		  if (that.videoTexture) that.videoTexture.needsUpdate = true;
 		}		
@@ -195,14 +196,14 @@ function mediaUtils(scene, camera, stills, videos,
         that.rotateYAmount += 0.002;
     }  
     this.cameraUp = function() {
-        that.rotateZAmount -= 0.002;
+        that.rotateXAmount -= 0.002;
     }  
     this.cameraDown = function() {
-        that.rotateZAmount += 0.002;
+        that.rotateXAmount += 0.002;
     }  
     this.cameraStop = function() {
         that.rotateYAmount = 0.;
-        that.rotateZAmount = 0.;
+        that.rotateXAmount = 0.;
     }  
     this.flipCamera = function() {
     	that.camera.position.x = - that.camera.position.x;

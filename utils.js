@@ -18,13 +18,15 @@ function doFloor(scene) {
         return _floor;
 }
 
-var _radians = 0;
 function rotateCameraY(camera, radians) {
-    var x = camera.position.x;	var y = camera.position.y;	var z = camera.position.z;
+    // the idea here is the camera is rotating around the origin.
+    // so for this to work there has to be a camera.lookat(new THREE.Vector3(0,0,0)) call in
+    // the animate loop.
+    var x = camera.position.x;  var y = camera.position.y;  var z = camera.position.z;
     var signx = x > 0 ? 1 : -1;
 
     // get current radians from z and x coords.
-    _radians = x == 0 ? Math.PI/2 : Math.atan(z/x);
+    var _radians = x == 0 ? Math.PI/2 : Math.atan(z/x);
     if (signx == -1) _radians += Math.PI;
 
     _radians += radians;
@@ -37,6 +39,27 @@ function rotateCameraY(camera, radians) {
     camera.position.x = radius * Math.cos(_radians);
     camera.position.z = radius * Math.sin(_radians);
     //_camera.position.y = 4;
+}
+function rotateCameraUpDown(camera, radians) {
+    // see note above for rotateCameraY. Same idea here.
+    var x = camera.position.x;  var y = camera.position.z;  var z = camera.position.y;
+
+    var radius= Math.sqrt(x*x + y*y + z*z);
+    // var theta=Math.atan2(y,x);
+    var theta = Math.acos(z/radius);
+    // var phi=Math.atan2(Math.sqrt(x*x+y*y),z);
+    var phi = Math.atan2(y,x);
+    theta -= radians;
+    theta = Math.max(0.01,Math.min(Math.PI-0.01, theta));
+    console.log(theta);
+
+    x = radius * Math.sin(theta)*Math.cos(phi);
+    y = radius * Math.sin(theta)*Math.sin(phi);
+    z = radius * Math.cos(theta);
+
+    camera.position.x = x;
+    camera.position.y = z;
+    camera.position.z = y;
 }
 
 function drawAxes(size,position, rotation) {
