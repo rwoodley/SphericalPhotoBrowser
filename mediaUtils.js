@@ -44,10 +44,10 @@ function mediaUtils(scene, camera, stills, videos,
     this.setupMediaIcons = function() {
         var textureListHTML = '';
         for (var i = 0; i < myTextures.length; i++)
-            textureListHTML += "<span id=textureSelector_xxx class='tselector'>xxx</span>".replace(/xxx/g, myTextures[i]);
+            textureListHTML += "<span id='textureSelector_xxx' class='tselector'>xxx</span>".replace(/xxx/g, myTextures[i]);
 
         for (var i = 0; i < myVideos.length; i++)
-            textureListHTML += "<span id=textureSelector_xxx class='vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
+            textureListHTML += "<span id='textureSelector_xxx' class='vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
         
         document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 

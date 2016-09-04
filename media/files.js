@@ -1,1 +1,1 @@
-myTextures=["MZCA4781","PSJQ1719","GWLN2320","SYTB5372","MEDO6435","RMXG7456","WGCW7632","EMNU8300"]
+myTextures=["Still 1","Still 2","Still 3","Still 4","Still 5","Still 6","Still 7","Still 8"]
