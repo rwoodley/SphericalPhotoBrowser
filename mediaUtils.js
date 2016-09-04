@@ -25,6 +25,8 @@ function mediaUtils(scene, camera, stills, videos,
 	this.videoSource = "";
     this.videoDisplayed = false;
     this.rotateYAmount = 0;
+    this.rotateZAmount = 0;
+
     this.controlPanelVisible = true;
 	document.body.onkeyup = function(e){
 	    if(e.keyCode == 32)
@@ -39,6 +41,7 @@ function mediaUtils(scene, camera, stills, videos,
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
+        that.updateSkyDomeForFileName(myTextures[0]);
 	}
 
     this.setupMediaIcons = function() {
@@ -105,22 +108,26 @@ function mediaUtils(scene, camera, stills, videos,
         that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
         that.camera.lookAt(new THREE.Vector3(0,0,0));
         that.skyBox.rotateY(that.rotateYAmount);
+        that.skyBox.rotateZ(that.rotateZAmount);
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
 		  if (that.videoTexture) that.videoTexture.needsUpdate = true;
 		}		
 	}
     this.updateSkyDome = function(event) {
-    	var pid = event.target.id.replace('textureSelector_','');
+        var pid = event.target.id.replace('textureSelector_','');
+        that.updateSkyDomeForFileName(pid);
+    }
+    this.updateSkyDomeForFileName = function(fileName) {
         that.videoDisplayed = false;
         that.toggleVideoControls();
         that.video.pause();
-        var pathToTexture = 'media/' + pid + '.jpg';
-		(new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
-		    var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
+        var pathToTexture = 'media/' + fileName + '.jpg';
+        (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
+            var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
 
-			that.skyBox.material = skyMaterial;
+            that.skyBox.material = skyMaterial;
 
-		});
+        });
     }
     this.initSkyBox = function() {
         var segment = 256.;
@@ -187,8 +194,15 @@ function mediaUtils(scene, camera, stills, videos,
     this.cameraRight = function() {
         that.rotateYAmount += 0.002;
     }  
+    this.cameraUp = function() {
+        that.rotateZAmount -= 0.002;
+    }  
+    this.cameraDown = function() {
+        that.rotateZAmount += 0.002;
+    }  
     this.cameraStop = function() {
         that.rotateYAmount = 0.;
+        that.rotateZAmount = 0.;
     }  
     this.flipCamera = function() {
     	that.camera.position.x = - that.camera.position.x;
