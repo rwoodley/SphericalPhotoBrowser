@@ -26,6 +26,7 @@ function mediaUtils(scene, camera, stills, videos,
     this.videoDisplayed = false;
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
+    this.FOV = 90;
 
     this.controlPanelVisible = true;
 	document.body.onkeyup = function(e){
@@ -72,7 +73,9 @@ function mediaUtils(scene, camera, stills, videos,
     	appendSingleCameraIcon(container, 'cameraControlIcon', 'down', 'Camera Down', that.cameraDown);
     	appendSingleCameraIcon(container, 'cameraControlIcon', 'right', 'Camera Right', that.cameraRight);
     	appendSingleCameraIcon(container, 'cameraControlIcon', 'stop', 'Camera Stop', that.cameraStop);
-    	appendSingleCameraIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
+        appendSingleCameraIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
+        appendSingleCameraIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', that.narrowFOV);
+        appendSingleCameraIcon(container, 'cameraControlIcon', 'fovWide', 'Wider Viewport', that.widerFOV);
     }
     function appendSingleCameraIcon(containerEl, style, png, title, callback) {
     	var el;
@@ -225,6 +228,16 @@ function mediaUtils(scene, camera, stills, videos,
     	that.camera.position.x = - that.camera.position.x;
     	that.camera.position.y = - that.camera.position.y;
     	that.camera.position.z = - that.camera.position.z;
+    }
+    this.narrowFOV = function() {
+        that.FOV += 15;
+        that.camera.fov = that.FOV;
+        that.camera.updateProjectionMatrix();
+    }
+    this.widerFOV = function() {
+        that.FOV -= 15;
+        that.camera.fov = that.FOV;
+        that.camera.updateProjectionMatrix();
     }
     this.initMediaUtils();
 }
