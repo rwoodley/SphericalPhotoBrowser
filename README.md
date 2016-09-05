@@ -14,3 +14,5 @@ That's it.
 Hit the space bar to toggle visbility of icons.
 
 Mouse over the icons at the top to view different images.
+
+You can view a demo here: http://rwoodleymedia.org/SphericalPhotoBrowser/
