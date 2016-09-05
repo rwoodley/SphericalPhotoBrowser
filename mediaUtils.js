@@ -177,6 +177,7 @@ function mediaUtils(scene, camera, stills, videos,
         that.toggleVideoControls();
 	}
     this.video_play = function() {
+        // all this messing around to avoid a chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=593273
         console.log("1 Is video paused? " + that.video.paused);
         that.video.pause();             
         setTimeout(function () {      
@@ -192,7 +193,7 @@ function mediaUtils(scene, camera, stills, videos,
     this.video_restart = function() {
         that.video.pause();
         that.video.currentTime = 0;
-        that.updateVideoForFileName(that.videoFileName);
+        // that.updateVideoForFileName(that.videoFileName);
 		that.video_play();
     }
     this.video_skip = function(value) {
