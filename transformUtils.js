@@ -38,23 +38,23 @@ function transformUtils(camera, transformControlsContainerId, mediaUtils) {
 	}
     this.setupTransformControlIcons = function() {
     	var container = document.getElementById(that.transformControlsContainerId);
-    	appendSingleIcon(container, 'transformControlIcon', 'rotateLeft', 'Rotate Left', that.rotateLeft);
-    	appendSingleIcon(container, 'transformControlIcon', 'rotateRight', 'Rotate Right', that.rotateRight);
-    	appendSingleIcon(container, 'transformControlIcon', 'pause', 'Rotate Pause', that.rotatePause);
-    	appendSingleIcon(container, 'transformControlIcon', 'stop', 'No Rotation', that.rotationOff);
+    	appendSingleIcon(container, 'transformControlIcon', 'rotateLeft.png', 'Rotate Left', that.rotateLeft);
+    	appendSingleIcon(container, 'transformControlIcon', 'rotateRight.png', 'Rotate Right', that.rotateRight);
+    	appendSingleIcon(container, 'transformControlIcon', 'pause.png', 'Rotate Pause', that.rotatePause);
+    	appendSingleIcon(container, 'transformControlIcon', 'stop.png', 'No Rotation', that.rotationOff);
 
-    	appendSingleIcon(container, 'transformControlIcon', 'zoomIn', 'Zoom In', that.zoomIn);
-    	appendSingleIcon(container, 'transformControlIcon', 'zoomOut', 'Zoom Out', that.zoomOut);
-    	appendSingleIcon(container, 'transformControlIcon', 'cancel', 'Cancel Zoom', that.cancel);
-    	appendSingleIcon(container, 'transformControlIcon', 'epsilon', 'Set Fixed Point 1', that.setFixedPoint1);
-    	appendSingleIcon(container, 'transformControlIcon', 'epsilon', 'Set Fixed Point 2', that.setFixedPoint2);
-    	appendSingleIcon(container, 'transformControlIcon', 'reset', 'Reset', that.reset);
-    	appendSingleIcon(container, 'transformControlIcon', 'debug', 'Show/Hide Debug Info', that.toggleDebugInfo);
+    	appendSingleIcon(container, 'transformControlIcon', 'zoomIn.png', 'Zoom In', that.zoomIn);
+    	appendSingleIcon(container, 'transformControlIcon', 'zoomOut.png', 'Zoom Out', that.zoomOut);
+    	appendSingleIcon(container, 'transformControlIcon', 'cancel.png', 'Cancel Zoom', that.cancel);
+    	appendSingleIcon(container, 'transformControlIcon', 'Epsilon1.svg', 'Set Fixed Point 1', that.setFixedPoint1);
+    	appendSingleIcon(container, 'transformControlIcon', 'Epsilon2.svg', 'Set Fixed Point 2', that.setFixedPoint2);
+    	appendSingleIcon(container, 'transformControlIcon', 'reset.png', 'Reset', that.reset);
+    	appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.toggleDebugInfo);
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;
     	el = document.createElement('span');
-    	el.innerHTML = "<img src='icons/xxx.png' title=\"yyy\" class='showhide zzz'></img>"
+    	el.innerHTML = "<img src='icons/xxx' title=\"yyy\" class='showhide zzz'></img>"
     		.replace('xxx', png).replace('yyy', title).replace('zzz', style);
     	$(el).click(callback);
     	containerEl.appendChild(el);
