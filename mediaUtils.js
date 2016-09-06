@@ -48,10 +48,10 @@ function mediaUtils(scene, camera, stills, videos,
     this.setupMediaIcons = function() {
         var textureListHTML = '';
         for (var i = 0; i < myTextures.length; i++)
-            textureListHTML += "<span id='textureSelector_xxx' class='tselector'>xxx</span>".replace(/xxx/g, myTextures[i]);
+            textureListHTML += "<span id='textureSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myTextures[i]);
 
         for (var i = 0; i < myVideos.length; i++)
-            textureListHTML += "<span id='textureSelector_xxx' class='vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
+            textureListHTML += "<span id='textureSelector_xxx' class='showhide vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
         
         document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 
@@ -60,27 +60,27 @@ function mediaUtils(scene, camera, stills, videos,
     }
     this.setupVideoControlIcons = function() {
     	var container = document.getElementById(that.videoControlsContainerId);
-    	appendSingleCameraIcon(container, 'videoControlIcon', 'rewind', 'Video Back', that.video_rewind);
-    	appendSingleCameraIcon(container, 'videoControlIcon', 'play', 'Video Play', that.video_play);
-    	appendSingleCameraIcon(container, 'videoControlIcon', 'stop', 'Video Stop', that.video_stop);
-    	appendSingleCameraIcon(container, 'videoControlIcon', 'ff', 'Video Forward', that.video_ff);
-    	appendSingleCameraIcon(container, 'videoControlIcon', 'replay', 'Video Restart', that.video_restart);
+    	appendSingleIcon(container, 'videoControlIcon', 'rewind', 'Video Back', that.video_rewind);
+    	appendSingleIcon(container, 'videoControlIcon', 'play', 'Video Play', that.video_play);
+    	appendSingleIcon(container, 'videoControlIcon', 'stop', 'Video Stop', that.video_stop);
+    	appendSingleIcon(container, 'videoControlIcon', 'ff', 'Video Forward', that.video_ff);
+    	appendSingleIcon(container, 'videoControlIcon', 'replay', 'Video Restart', that.video_restart);
     }
     this.setupCameraControlIcons = function() {
     	var container = document.getElementById(that.cameraControlsContainerId);
-    	appendSingleCameraIcon(container, 'cameraControlIcon', 'left', 'Camera Left', that.cameraLeft);
-    	appendSingleCameraIcon(container, 'cameraControlIcon', 'up', 'Camera Up', that.cameraUp);
-    	appendSingleCameraIcon(container, 'cameraControlIcon', 'down', 'Camera Down', that.cameraDown);
-    	appendSingleCameraIcon(container, 'cameraControlIcon', 'right', 'Camera Right', that.cameraRight);
-    	appendSingleCameraIcon(container, 'cameraControlIcon', 'stop', 'Camera Stop', that.cameraStop);
-        appendSingleCameraIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
-        appendSingleCameraIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', that.narrowFOV);
-        appendSingleCameraIcon(container, 'cameraControlIcon', 'fovWide', 'Wider Viewport', that.widerFOV);
+    	appendSingleIcon(container, 'cameraControlIcon', 'left', 'Camera Left', that.cameraLeft);
+    	appendSingleIcon(container, 'cameraControlIcon', 'up', 'Camera Up', that.cameraUp);
+    	appendSingleIcon(container, 'cameraControlIcon', 'down', 'Camera Down', that.cameraDown);
+    	appendSingleIcon(container, 'cameraControlIcon', 'right', 'Camera Right', that.cameraRight);
+    	appendSingleIcon(container, 'cameraControlIcon', 'stop', 'Camera Stop', that.cameraStop);
+        appendSingleIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
+        appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', that.narrowFOV);
+        appendSingleIcon(container, 'cameraControlIcon', 'fovWide', 'Wider Viewport', that.widerFOV);
     }
-    function appendSingleCameraIcon(containerEl, style, png, title, callback) {
+    function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;
     	el = document.createElement('span');
-    	el.innerHTML = "<img src='icons/xxx.png' title=\"yyyy\" class='zzz'></img>"
+    	el.innerHTML = "<img src='icons/xxx.png' title=\"yyy\" class='showhide zzz'></img>"
     		.replace('xxx', png).replace('yyy', title).replace('zzz', style);
     	$(el).click(callback);
     	containerEl.appendChild(el);
@@ -88,14 +88,16 @@ function mediaUtils(scene, camera, stills, videos,
 	this.toggleControlPanel = function() {
     	that.controlPanelVisible = !that.controlPanelVisible;
     	if (that.controlPanelVisible) {
-			$('#' + that.mediaListContainerId).hide();
-			$('#' + that.videoControlsContainerId).hide();
-			$('#' + that.cameraControlsContainerId).hide();
+            $('.showhide').hide();
+            // $('#' + that.mediaListContainerId).hide();
+			// $('#' + that.videoControlsContainerId).hide();
+   //          $('#' + that.cameraControlsContainerId).hide();
 		}
 		else {
-			$('#' + that.mediaListContainerId).show();
-			$('#' + that.videoControlsContainerId).show();
-			$('#' + that.cameraControlsContainerId).show();
+            $('.showhide').show();
+			// $('#' + that.mediaListContainerId).show();
+			// $('#' + that.videoControlsContainerId).show();
+			// $('#' + that.cameraControlsContainerId).show();
 		}
 	}
 	this.toggleVideoControls = function() {
@@ -128,11 +130,14 @@ function mediaUtils(scene, camera, stills, videos,
         that.video.pause();
         var pathToTexture = 'media/' + fileName + '.jpg';
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
-            var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
 
-            that.skyBox.material = skyMaterial;
+            that.skyBox.material = that.setMaterialForTexture(texture);
 
         });
+    }
+    // over-ride this to provide your own material,e.g. shader material:
+    this.setMaterialForTexture = function(texture) {
+            return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
     }
     this.initSkyBox = function() {
         var segment = 256.;
@@ -170,11 +175,7 @@ function mediaUtils(scene, camera, stills, videos,
         that.video.play();
 
         that.videoTexture.minFilter = THREE.LinearFilter;   // eliminates aliasing when tiling textures.
-        var videoMaterial = new THREE.MeshBasicMaterial({
-            map: that.videoTexture,
-            overdraw: true,
-            side: THREE.DoubleSide 
-        });
+        var videoMaterial = that.setMaterialForTexture(that.videoTexture);
         that.skyBox.material = videoMaterial;
         that.videoDisplayed = true;
         that.toggleVideoControls();

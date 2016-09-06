@@ -46,25 +46,6 @@
         <script src="utils.js"></script>
         <script src="media/files.js"></script>
         <script src="media/videos.js"></script>
-        <script id="vs" type="x-shader/x-vertex">
-            varying vec2 vUv; 
-            void main()
-            {
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0 );
-                gl_Position = projectionMatrix * mvPosition;
-                vUv = uv;
-            }
-        </script>
-        <script id="fs" type="x-shader/x-fragment">
-            uniform sampler2D iChannel0;
-            varying vec2 vUv;  
-            void main()
-            {
-                vec2 uv = vUv;
-                vec4 tex1 = texture2D( iChannel0,  uv);
-                gl_FragColor = tex1;
-            }
-        </script>
 		<script>
 			var _container;
 			var _camera, _controls, _scene, _renderer, _uniforms, _clock, _mediaUtils;
