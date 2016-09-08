@@ -43,10 +43,13 @@ function mediaUtils(scene, camera, stills, videos,
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
         that.updateSkyDomeForFileName(myTextures[0]);
+        that.setInitialCameraPosition();
 	}
-
+    this.setInitialCameraPosition = function() {
+        that.camera.position.x = -1; that.camera.position.y = 0.0; that.camera.position.z = 0;   
+    }
     this.setupMediaIcons = function() {
-        var textureListHTML = '';
+        var textureListHTML = document.getElementById(that.mediaListContainerId).innerHTML;
         for (var i = 0; i < myTextures.length; i++)
             textureListHTML += "<span id='textureSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myTextures[i]);
 
@@ -55,8 +58,8 @@ function mediaUtils(scene, camera, stills, videos,
         
         document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 
-        $('.tselector').mouseover(that.updateSkyDome);
-        $('.vselector').mouseover(that.updateVideo);
+        $('.tselector').click(that.updateSkyDome);
+        $('.vselector').click(that.updateVideo);
     }
     this.setupVideoControlIcons = function() {
     	var container = document.getElementById(that.videoControlsContainerId);
@@ -109,11 +112,16 @@ function mediaUtils(scene, camera, stills, videos,
 		}
 	}
 	this.animate = function() {
-		var unitVector = (new THREE.Vector3()).copy(that.camera.position).normalize();
-        that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
-        that.camera.lookAt(new THREE.Vector3(0,0,0));
-        rotateCameraY(that.camera, that.rotateYAmount);
-        rotateCameraUpDown(that.camera, that.rotateXAmount);
+        if (that.plane.visible) {
+            that.setInitialCameraPosition();
+        }
+        else {
+    		var unitVector = (new THREE.Vector3()).copy(that.camera.position).normalize();
+            that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
+            that.camera.lookAt(new THREE.Vector3(0,0,0));
+            rotateCameraY(that.camera, that.rotateYAmount);
+            rotateCameraUpDown(that.camera, that.rotateXAmount);
+        }
 
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
 		  if (that.videoTexture) that.videoTexture.needsUpdate = true;
@@ -130,10 +138,32 @@ function mediaUtils(scene, camera, stills, videos,
         that.video.pause();
         var pathToTexture = 'media/' + fileName + '.jpg';
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
-
-            that.skyBox.material = that.setMaterialForTexture(texture);
-
+            var mat = that.setMaterialForTexture(texture);
+            that.skyBox.material = mat;
+            that.plane.material = mat;
         });
+    }
+    this.toggleView = function() {
+        if (!that.plane.visible) {
+            planeOnlyView();
+        }
+        else {
+            sphereOnlyView();
+        }
+    }
+    function sphereOnlyView() {
+        that.skyBox.visible = true;
+        // that.skyBox.geometry.radius = 10;
+        // that.skyBox.position.set(0,0,0);
+        that.plane.visible = false;
+        // that.plane.scale.set(10,10,10);
+        // that.skyBox.scale.set(10,10,10);
+    }
+    function planeOnlyView() {
+        that.skyBox.visible = false;
+        // that.plane.position.set(0,0,0);
+        that.plane.visible = true;
+        // that.plane.scale.set(1,1,1);
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.setMaterialForTexture = function(texture) {
@@ -148,6 +178,14 @@ function mediaUtils(scene, camera, stills, videos,
         that.scene.add( that.skyBox );
         that.skyBox.position.set(0,0,0);
         that.skyBox.scale.set(1,1,-1);
+
+        // the plane is used for debuggin Mobius transforms and is hidden most of the time.
+        var planeGeometry = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
+        that.plane = new THREE.Mesh( planeGeometry, newMaterial );
+        that.plane.rotateY(Math.PI/2);
+        that.plane.visible = false;
+        that.scene.add( that.plane );
+
     }
     this.initVideo = function() {
         that.video  = document.getElementById('video');
@@ -177,6 +215,7 @@ function mediaUtils(scene, camera, stills, videos,
         that.videoTexture.minFilter = THREE.LinearFilter;   // eliminates aliasing when tiling textures.
         var videoMaterial = that.setMaterialForTexture(that.videoTexture);
         that.skyBox.material = videoMaterial;
+        that.plane.material = videoMaterial;
         that.videoDisplayed = true;
         that.toggleVideoControls();
 	}

@@ -3,7 +3,7 @@
 	<head>
         <style>
 			body {
-				font-family: Monospace;
+				font-family: Arial;
 				background-color: #000;
 				margin: 0px;
 				overflow: hidden;
@@ -19,7 +19,7 @@
             }
             .videoPanel {
                 position: fixed;
-                bottom: 20%;
+                bottom: 30%;
                 width: 95%;
             }
             .cameraPanel {
@@ -28,6 +28,11 @@
                 width: 95%;
             }
             .transformPanel {
+                position: fixed;
+                bottom: 20%;
+                width: 95%;
+            }
+            .complexPanel {
                 position: fixed;
                 bottom: 10%;
                 width: 95%;
@@ -43,6 +48,10 @@
                 padding: 5px;
                 background-color: black;
                 display: none;
+            }
+            .wideLabel {
+                width: 80px !important;
+                font-style: bold;
             }
 		</style>
         <link rel="stylesheet" type="text/css" href="mediaUtils.css">
@@ -87,9 +96,10 @@
         </script>
 
         <script id="fs" type="x-shader/x-fragment">
+
+            // ====== Math Utils =======
+
             #define PI 3.1415926535897932384626433832795
-            uniform sampler2D iChannel0;
-            varying vec2 vUv;  
             #define cx_product(a, b) vec2(a.x*b.x-a.y*b.y, a.x*b.y+a.y*b.x)
             #define cx_conjugate(a) vec2(a.x,-a.y)
             #define cx_divide(a, b) vec2(((a.x*b.x+a.y*b.y)/(b.x*b.x+b.y*b.y)),((a.y*b.x-a.x*b.y)/(b.x*b.x+b.y*b.y)))
@@ -98,16 +108,10 @@
               return a ? y : x;
             }
 
-            // proposed solution from 
-            // http://stackoverflow.com/questions/26070410/robust-atany-x-on-glsl-for-converting-xy-coordinate-to-angle
-            // swaps params when |x| <= |y|
             float atan2(in float y, in float x) {
-                // float res = atan(y,x);
-                // return res;
+                // http://stackoverflow.com/questions/26070410/robust-atany-x-on-glsl-for-converting-xy-coordinate-to-angle
                 bool s = (abs(x) >= abs(y));
-                // bool s = abs(y) > 1./32.;
                 float res = mix(PI/2.0 - atan(x,y), atan(y,x), s);
-                // float res = mix(0.0,atan(y,x), s);
                 return res;
             }
             // https://github.com/julesb/glsl-util/blob/master/complexvisual.glsl
@@ -127,19 +131,34 @@
             vec2 cx_exp(vec2 z) {
                 return vec2(exp(z.x) * cos(z.y), exp(z.x) * sin(z.y));
             }
+            vec3 complexToCartesian(vec2 c) {
+                float denom = 1.0 + c.x*c.x + c.y*c.y;
+                float x = 2.*c.x/denom;
+                float y = 2.*c.y/denom;
+                float z = (c.x*c.x + c.y*c.y - 1.0)/denom;
+                return vec3(x,y,z);
+            }
 
-
+            // ===== shader control variables
+            uniform sampler2D iChannel0;
+            varying vec2 vUv;  
             uniform float iGlobalTime;
             uniform float zoomFactor;
             uniform float e1x;
             uniform float e1y;
             uniform float e2x;
             uniform float e2y;
-            uniform int effectsOnOff;       // 0=nothing,1=rotate,2=zoom
+            uniform int mobiusEffectsOnOff; 
+            uniform int complexEffect1OnOff;
+            uniform int complexEffect2OnOff;
+            uniform int complexEffect3OnOff;
+            uniform int complexEffect4OnOff;
+
             uniform bool showFixedPoints;
             vec2 one = vec2(1.0, 0.0);
             vec2 zero = vec2(0.0, 0.0);
 
+            // ====== Transformation Code
             vec2 applyMobiusTransformation(in vec2 z, in vec2 a, in vec2 b, in vec2 c, in vec2 d) {
                 vec2 top = cx_product(z,a)+b;
                 vec2 bottom = cx_product(z,c)+d;
@@ -166,14 +185,6 @@
                 vec2 ans = cx_product(vec2(factor,0),z);
                 return ans;
             }
-            vec2 weirdExpTransform(vec2 z) {
-                // vec2 n = one + z;
-                // vec2 d = one - z;
-                // vec2 f = cx_divide(n,d);
-                // vec2 res = -1. * cx_exp(-4.*f);
-                vec2 res = cx_exp(z);
-                return res;
-            }
             vec2 anotherTransform(vec2 z) {
                 vec2 i = vec2(0., 1.);
                 vec2 n = z-i;
@@ -181,18 +192,6 @@
                 vec2 f = cx_divide(n,d);
                 vec2 res = 1. * cx_exp(4.*f);
                 return res;
-                // vec2 i = vec2(1., 0.);
-                // vec2 n = 1.+z;
-                // vec2 d = 1.-z;
-                // vec2 f = cx_divide(n,d);
-                // return f;
-            }
-            vec3 complexToCartesian(vec2 c) {
-                float denom = 1.0 + c.x*c.x + c.y*c.y;
-                float x = 2.*c.x/denom;
-                float y = 2.*c.y/denom;
-                float z = (c.x*c.x + c.y*c.y - 1.0)/denom;
-                return vec3(x,y,z);
             }
             void main() {
                  float theta;
@@ -223,11 +222,8 @@
 
                 vec2 a = vec2(x/(1.0-z), y/(1.0-z));
 
-                vec2 result;
-                if (e1x == e2x && e1y == e2y) {
-                    result = a; // if no fixed points, do nothing.
-                }
-                else {
+                vec2 result = a;
+                if (mobiusEffectsOnOff == 1) {
                     vec2 e1 = vec2(e1x,e1y);
                     vec2 e2 = vec2(e2x,e2y);
                     if (showFixedPoints) {
@@ -245,18 +241,23 @@
                         }                       
                     }
 
-                    if (effectsOnOff == 0) {
-                        result = a;
-                    }
-                    else {
-                        vec2 b = transformForFixedPoints(a, e1, e2);
-                        vec2 c;
-                        vec2 b1 = applyRotation(b,iGlobalTime/10.);
-                        c = zoom(b1, zoomFactor);
-                        result = inverseTransformForFixedPoints(c, e1, e2);
-                        // result = cx_product(result, result);
-                        //result = anotherTransform(result);
-                    }
+                    vec2 b = transformForFixedPoints(a, e1, e2);
+                    vec2 c;
+                    vec2 b1 = applyRotation(b,iGlobalTime/10.);
+                    c = zoom(b1, zoomFactor);
+                    result = inverseTransformForFixedPoints(c, e1, e2);
+                }
+                if (complexEffect1OnOff == 1) {
+                    result = cx_product(result, result);                    
+                }
+                if (complexEffect2OnOff == 1) {
+                    result = cx_product(result, result);                    
+                }
+                if (complexEffect3OnOff == 1) {
+                    result = anotherTransform(result);
+                }
+                if (complexEffect4OnOff == 1) {
+                    result = cx_exp(result);
                 }
 
                 // // // // now c back to sphere.
@@ -314,7 +315,10 @@
                     "cameraControlsContainer",
                     "videoControlsContainerId");
 
-                _transformUtils = new transformUtils(_camera, "transformControlsContainerId", _mediaUtils);
+                _transformUtils = new transformUtils(_camera, 
+                    "transformControlsContainerId", 
+                    "complexControlsContainerId", 
+                    _mediaUtils);
 
                 _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
                 _renderer.setSize( window.innerWidth, window.innerHeight );
@@ -352,25 +356,35 @@
             <div style="float: right; "  class="availableMediaPanel ">
                 <div class="availableMediaPanelInner">
                     <div id="mediaListContainer" >
+                        <span class='showhide wideLabel tselector'>Select Image:</span>
                     </div>
                 </div>
             </div>
             <div class="transformPanel">
                 <div class="centerAlign">
                     <div id="transformControlsContainerId">
+                        <span class='showhide wideLabel transformControlIcon'>Möbius transforms:</span>
+                    </div>
+                </div>
+            </div>
+            <div class="complexPanel">
+                <div class="centerAlign">
+                    <div id="complexControlsContainerId">
+                        <span class='showhide wideLabel transformControlIcon'>Complex transforms:</span>
                     </div>
                 </div>
             </div>
             <div class="videoPanel">
                 <div class="centerAlign">
                     <div id="videoControlsContainerId">
+                        <span class='showhide wideLabel videoControlIcon'>Video controls:</span>
                     </div>
                 </div>
             </div>
             <div class="cameraPanel">
                 <div class="centerAlign">
                     <div id="cameraControlsContainer">
-
+                        <span class='showhide wideLabel cameraControlIcon'>Camera controls:</span>
                     </div>
                 </div>
             </div>

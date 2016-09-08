@@ -1,7 +1,7 @@
 .cameraControlIcon { 
     border: 2px solid; 
     border-color: #6495ED; margin: 5px; padding: 5px; color: #000000; 
-    background-color: rgba(88,88,255,.5);
+    background-color: rgba(88,88,255,.6);
     width: 40px;
     height: 40px;
     display: inline-block;
@@ -11,7 +11,7 @@
     font-size: 8pt;
     border: 2px solid; 
     border-color: #6495ED; margin: 5px; padding: 5px; color: #000000; 
-    background-color: rgba(88,255,88,.5);
+    background-color: rgba(88,255,255,.9);
     width: 60px;
     display: inline-block;
     vertical-align: middle;
@@ -21,7 +21,7 @@
     font-size: 8pt;
     border: 2px solid; 
     border-color: #6495ED; margin: 5px; padding: 5px; color: #000000; 
-    background-color: rgba(88,88,255,.5);
+    background-color: rgba(88,255,88,.9);
     width: 60px;
     display: inline-block;
     vertical-align: middle;
@@ -30,7 +30,7 @@
 .videoControlIcon { 
     border: 2px solid; 
     border-color: #6495ED; margin: 5px; padding: 5px; color: #000000; 
-    background-color: rgba(255,88,88,.5);
+    background-color: rgba(255,88,88,.6);
     width: 40px; 
     height: 40px;
     display: inline-block;
