@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html >
 	<head>
         <style>
 			body {
-				font-family: Arial;
+				font-family: Arial  ;
 				background-color: #000;
 				margin: 0px;
 				overflow: hidden;
@@ -51,7 +51,6 @@
             }
             .wideLabel {
                 width: 80px !important;
-                font-style: bold;
             }
 		</style>
         <link rel="stylesheet" type="text/css" href="mediaUtils.css">
@@ -61,6 +60,7 @@
 		<script src="r73/Detector.js"></script>
  		<script src="r73/stats.min.js"></script>
 		<script src="lib/jquery-3.1.0.min.js"></script>
+        <script src="lib/toast.js"></script>
         <script src="mediaUtils.js"></script>
         <script src="transformUtils.js"></script>
         <script src="utils.js"></script>
@@ -130,6 +130,10 @@
             }
             vec2 cx_exp(vec2 z) {
                 return vec2(exp(z.x) * cos(z.y), exp(z.x) * sin(z.y));
+            }
+            vec2 cx_pow(vec2 z, vec2 y) {
+                return  cx_exp(cx_product(y, cx_log(z)));
+
             }
             vec3 complexToCartesian(vec2 c) {
                 float denom = 1.0 + c.x*c.x + c.y*c.y;
@@ -247,12 +251,14 @@
                     c = zoom(b1, zoomFactor);
                     result = inverseTransformForFixedPoints(c, e1, e2);
                 }
-                if (complexEffect1OnOff == 1) {
-                    result = cx_product(result, result);                    
-                }
-                if (complexEffect2OnOff == 1) {
-                    result = cx_product(result, result);                    
-                }
+                vec2 realNumber = vec2(complexEffect1OnOff, 0.);
+                result = cx_pow(result, realNumber);                    
+                // if (complexEffect1OnOff == 1) {
+                //     result = cx_product(result, result);                    
+                // }
+                // if (complexEffect2OnOff == 1) {
+                //     result = cx_product(result, result);                    
+                // }
                 if (complexEffect3OnOff == 1) {
                     result = anotherTransform(result);
                 }
@@ -363,7 +369,7 @@
             <div class="transformPanel">
                 <div class="centerAlign">
                     <div id="transformControlsContainerId">
-                        <span class='showhide wideLabel transformControlIcon'>Möbius transforms:</span>
+                        <span class='showhide wideLabel transformControlIcon'>M&ouml;bius transforms:</span>
                     </div>
                 </div>
             </div>

@@ -13,12 +13,11 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.cameraLookAtComplexX = 0;
     this.cameraLookAtComplexY = 0;
     this.currentZoom = 1;
-    that.mediaUtils = mediaUtils;
+    this.mediaUtils = mediaUtils;
     this.uniforms = {
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
-        complexEffect1OnOff: { type: 'i', value: 0 },
-        complexEffect2OnOff: { type: 'i', value: 0 },
+        complexEffect1OnOff: { type: 'i', value: 1 },
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },
 	    showFixedPoints: { type: 'i', value: 1 },
@@ -40,9 +39,18 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         } );
         return newMaterial;                    
     }
+    this.showToast = function(message, ms) {
+        var options = {
+            settings: {
+                duration: ms
+            }
+        };        
+        this.toast = new iqwerty.toast.Toast(message, options);
+    }
 	this.initTransformUtils = function() {
 		that.setupTransformControlIcons();
         that.setupComplexControlIcons();
+        that.showToast('Hit space bar to show/hide icons.', 2000);
 	}
     this.setupTransformControlIcons = function() {
     	var container = document.getElementById(that.transformControlsContainerId);
@@ -62,10 +70,10 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
-        appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.complexEffect1);                
-        appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.complexEffect2);                
-        appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.complexEffect3);                
-        appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.complexEffect4);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform1Icon.png', 'Show/Hide Debug Info', that.complexEffect1);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Show/Hide Debug Info', that.complexEffect2);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Show/Hide Debug Info', that.complexEffect3);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Show/Hide Debug Info', that.complexEffect4);                
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;
@@ -76,10 +84,12 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	containerEl.appendChild(el);
     }
     this.complexEffect1 = function() { 
-        that.uniforms.complexEffect1OnOff.value = that.uniforms.complexEffect1OnOff.value == 0 ? 1 : 0;
+        that.uniforms.complexEffect1OnOff.value += 1;
+        that.showToast("n = " + that.uniforms.complexEffect1OnOff.value, 1000);
     }
     this.complexEffect2 = function() { 
-        that.uniforms.complexEffect2OnOff.value = that.uniforms.complexEffect2OnOff.value == 0 ? 1 : 0;
+        that.uniforms.complexEffect1OnOff.value -= 1;
+        that.showToast("n = " + that.uniforms.complexEffect1OnOff.value, 1000);
     }
     this.complexEffect3 = function() { 
         that.uniforms.complexEffect3OnOff.value = that.uniforms.complexEffect3OnOff.value == 0 ? 1 : 0;
@@ -178,8 +188,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	that.point1Defined = false;
     	that.point2Defined = false;
     	that.uniforms.mobiusEffectsOnOff.value = 0;
-        that.uniforms.complexEffect1OnOff.value = 0;
-        that.uniforms.complexEffect2OnOff.value = 0;
+        that.uniforms.complexEffect1OnOff.value = 1;
+        // that.uniforms.complexEffect2OnOff.value = 0;
         that.uniforms.complexEffect3OnOff.value = 0;
         that.uniforms.complexEffect4OnOff.value = 0;
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
