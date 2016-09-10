@@ -14,6 +14,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.cameraLookAtComplexY = 0;
     this.currentZoom = 1;
     this.mediaUtils = mediaUtils;
+    this.cameraVectorLength = 1;    // by default, unit vector.
     this.uniforms = {
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
@@ -61,12 +62,13 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 
     	appendSingleIcon(container, 'transformControlIcon', 'zoomIn.png', 'Zoom In', that.zoomIn);
     	appendSingleIcon(container, 'transformControlIcon', 'zoomOut.png', 'Zoom Out', that.zoomOut);
-    	appendSingleIcon(container, 'transformControlIcon', 'cancel.png', 'Cancel Zoom', that.cancel);
+    	appendSingleIcon(container, 'transformControlIcon', 'cancel.png', 'Cancel Zoom', that.zoomCancel);
     	appendSingleIcon(container, 'transformControlIcon', 'Epsilon1.svg', 'Set Fixed Point 1', that.setFixedPoint1);
     	appendSingleIcon(container, 'transformControlIcon', 'Epsilon2.svg', 'Set Fixed Point 2', that.setFixedPoint2);
     	appendSingleIcon(container, 'transformControlIcon', 'reset.png', 'Reset', that.reset);
         appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.toggleDebugInfo);
-        appendSingleIcon(container, 'transformControlIcon', 'toggle.png', 'ToggleView', that.mediaUtils.toggleView);
+        appendSingleIcon(container, 'transformControlIcon', 'toggle.png', 'Toggle View', that.toggleView);
+        appendSingleIcon(container, 'transformControlIcon', 'help.png', 'Help/Info', that.showHelpPage);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -75,6 +77,24 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Show/Hide Debug Info', that.complexEffect3);                
         appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Show/Hide Debug Info', that.complexEffect4);                
     }
+    this.viewState = 0;
+    this.toggleView = function() {
+        that.viewState++;
+        that.viewState = that.viewState % 3;
+        if (that.viewState == 0) {
+            that.cameraVectorLength = 1;
+            that.mediaUtils.toggleView(false);
+        }
+        else
+        if (that.viewState == 1) {
+            that.cameraVectorLength = 15;
+            that.mediaUtils.toggleView(false);
+        }
+        else {
+            that.cameraVectorLength = 1;
+            that.mediaUtils.toggleView(true);
+        }
+    }
     function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;
     	el = document.createElement('span');
@@ -82,6 +102,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     		.replace('xxx', png).replace('yyy', title).replace('zzz', style);
     	$(el).click(callback);
     	containerEl.appendChild(el);
+    }
+    this.showHelpPage = function() {
+        window.location.href = 'info.html';
     }
     this.complexEffect1 = function() { 
         that.uniforms.complexEffect1OnOff.value += 1;
@@ -149,7 +172,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.zoomIn = function() { that.zoom(.5); }
     this.zoomOut = function() { that.zoom(2.); }
-    this.zoomCancel = function() { that.zoom(1/that.currentZoom); }
+    this.zoomCancel = function() { 
+        that.zoom(1/that.currentZoom); }
     this.zoom = function(factor) {
 		that.setFixedPointsIfUndefined();
     	that.currentZoom *= factor;
@@ -179,6 +203,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.animate = function() {
         that.uniforms.iGlobalTime.value = that.uniforms.iGlobalTime.value  + .1*that.rotateDirection;
     	that.updateVariousNumbersForCamera();
+        that.mediaUtils.animate(that.cameraVectorLength);
     }
     this.reset = function() {
     	that.currentZoom = 1.0;

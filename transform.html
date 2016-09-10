@@ -52,6 +52,19 @@
             .wideLabel {
                 width: 80px !important;
             }
+            #statsDiv {
+/*                _stats.domElement.style.position = 'absolute';
+                _stats.domElement.style.bottom = '0px';
+                _stats.domElement.style.zIndex = 100;
+                _stats.domElement.style.float = "right";
+*/                position: fixed;
+                bottom: 0;
+                z-index:  100;
+                width: 100%;
+            }
+            #statsDivInner {
+                float: right;                
+            }
 		</style>
         <link rel="stylesheet" type="text/css" href="mediaUtils.css">
         <link rel="stylesheet" type="text/css" href="transformUtils.css">
@@ -66,6 +79,17 @@
         <script src="utils.js"></script>
         <script src="media/files.js"></script>
         <script src="media/videos.js"></script>
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        
+          ga('create', 'UA-41066114-1', 'rwoodley.org');
+          ga('send', 'pageview');
+        
+        </script>
+
         <script id="vs_simple" type="x-shader/x-vertex">
             varying vec2 vUv; 
             void main()
@@ -240,7 +264,7 @@
                             return;
                         }
                         if (distance(aInCartesian, e2InCartesian) < .05) {
-                            gl_FragColor = vec4(0.,1.,0.,1.);
+                            gl_FragColor = vec4(0.,0.,1.,1.);
                             return;
                         }                       
                     }
@@ -293,7 +317,7 @@
 
         </script>
 		<script>
-			var _container;
+			var _container, _stats;
 			var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
 			var myMesh;
 			function init() {
@@ -331,6 +355,10 @@
 
                 document.getElementById( 'container' ).innerHTML = "";
                 _container.appendChild( _renderer.domElement );
+
+                _stats = new Stats();
+                document.getElementById('statsDivInner').appendChild( _stats.domElement );    
+
                 animate();
 			}
 
@@ -338,8 +366,8 @@
 				requestAnimationFrame( animate );
 				_controls.update( _clock.getDelta() );
 				_renderer.render( _scene, _camera );
-                _mediaUtils.animate();
                 _transformUtils.animate();
+                _stats.update();
 			}
             $().ready(function() {
                 init();
@@ -358,42 +386,45 @@
              <div id='cameraText' class="statusText"></div>
              <div id='unitVectorText' class="statusText"></div>
              <div id='complexPointText' class="statusText"></div>
-
-            <div style="float: right; "  class="availableMediaPanel ">
-                <div class="availableMediaPanelInner">
-                    <div id="mediaListContainer" >
-                        <span class='showhide wideLabel tselector'>Select Image:</span>
-                    </div>
+        </div>
+        <div class="availableMediaPanel ">
+            <div class="centerAlign">
+                <div id="mediaListContainer" >
+                    <span class='showhide wideLabel tselector'>Select Image:</span>
                 </div>
             </div>
-            <div class="transformPanel">
-                <div class="centerAlign">
-                    <div id="transformControlsContainerId">
-                        <span class='showhide wideLabel transformControlIcon'>M&ouml;bius transforms:</span>
-                    </div>
+        </div>
+        <div class="transformPanel">
+            <div class="centerAlign">
+                <div id="transformControlsContainerId">
+                    <span class='showhide wideLabel transformControlIcon'>M&ouml;bius transforms:</span>
                 </div>
             </div>
-            <div class="complexPanel">
-                <div class="centerAlign">
-                    <div id="complexControlsContainerId">
-                        <span class='showhide wideLabel transformControlIcon'>Complex transforms:</span>
-                    </div>
+        </div>
+        <div class="complexPanel">
+            <div class="centerAlign">
+                <div id="complexControlsContainerId">
+                    <span class='showhide wideLabel transformControlIcon'>Complex transforms:</span>
                 </div>
             </div>
-            <div class="videoPanel">
-                <div class="centerAlign">
-                    <div id="videoControlsContainerId">
-                        <span class='showhide wideLabel videoControlIcon'>Video controls:</span>
-                    </div>
+        </div>
+        <div class="videoPanel">
+            <div class="centerAlign">
+                <div id="videoControlsContainerId">
+                    <span class='showhide wideLabel videoControlIcon'>Video controls:</span>
                 </div>
             </div>
-            <div class="cameraPanel">
-                <div class="centerAlign">
-                    <div id="cameraControlsContainer">
-                        <span class='showhide wideLabel cameraControlIcon'>Camera controls:</span>
-                    </div>
+        </div>
+        <div class="cameraPanel">
+            <div class="centerAlign">
+                <div id="cameraControlsContainer">
+                    <span class='showhide wideLabel cameraControlIcon'>Camera controls:</span>
+            <span id="statsDivInner">
+            </span>
                 </div>
             </div>
+        </div>
+        <div id="statsDiv" class='showhide'>
         </div>
         <script>
         </script>

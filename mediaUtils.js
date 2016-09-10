@@ -111,12 +111,15 @@ function mediaUtils(scene, camera, stills, videos,
 			that.video_stop();
 		}
 	}
-	this.animate = function() {
+	this.animate = function(cameraVectorLength) {
         if (that.plane.visible) {
             that.setInitialCameraPosition();
         }
         else {
-    		var unitVector = (new THREE.Vector3()).copy(that.camera.position).normalize();
+    		var unitVector = (new THREE.Vector3())
+                .copy(that.camera.position)
+                .normalize()
+                .multiplyScalar(cameraVectorLength);
             that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
             that.camera.lookAt(new THREE.Vector3(0,0,0));
             rotateCameraY(that.camera, that.rotateYAmount);
@@ -143,8 +146,8 @@ function mediaUtils(scene, camera, stills, videos,
             that.plane.material = mat;
         });
     }
-    this.toggleView = function() {
-        if (!that.plane.visible) {
+    this.toggleView = function(planeVisible) {
+        if (planeVisible) {
             planeOnlyView();
         }
         else {
