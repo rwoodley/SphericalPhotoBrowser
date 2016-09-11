@@ -41,12 +41,13 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         return newMaterial;                    
     }
     this.showToast = function(message, ms) {
+        console.log("Showing " + message + " for " + ms) ;
         var options = {
             settings: {
                 duration: ms
             }
         };        
-        this.toast = new iqwerty.toast.Toast(message, options);
+        new iqwerty.toast.Toast(message, options);
     }
 	this.initTransformUtils = function() {
 		that.setupTransformControlIcons();
@@ -243,12 +244,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
             	that.cameraLookAtComplexX.toFixed(2) + " + " + 
             	that.cameraLookAtComplexY.toFixed(2) + "i";
 
-            that.textElement = document.getElementById('cameraText');
-            that.textElement.innerHTML = "<nobr>Camera: (" + that.camera.position.x.toFixed(1) 
-            	+ "," + that.camera.position.y.toFixed(1) + ","  
-            	+ that.camera.position.z.toFixed(1) + ") len: " 
-				+ that.camera.position.length().toFixed(1) + "</nobr>" ;
-		}
+ 		}
 		catch (x) {}
     }
     this.initTransformUtils();

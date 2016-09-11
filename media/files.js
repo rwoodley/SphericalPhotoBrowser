@@ -1,1 +1,1 @@
-myTextures=["CityHall","DussiKunst","Kirche","LakeMichigan","NESW","Patio","Prarie","Tomatoes","uv"]
+myTextures=[" uv","CBOT","CC","CityHall","Gallery","Lake","NESW","Patio","Prarie","Tomatoes"]

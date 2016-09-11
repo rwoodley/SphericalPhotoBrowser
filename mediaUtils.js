@@ -33,6 +33,14 @@ function mediaUtils(scene, camera, stills, videos,
 	    if(e.keyCode == 32)
 	    	that.toggleControlPanel();
 	}
+    this.showToast = function(message, ms) {
+        var options = {
+            settings: {
+                duration: ms
+            }
+        };        
+        this.toast = new iqwerty.toast.Toast(message, options);
+    }
 
     this.initMediaUtils = function() {
 	    that.initSkyBox();
@@ -139,6 +147,7 @@ function mediaUtils(scene, camera, stills, videos,
         that.videoDisplayed = false;
         that.toggleVideoControls();
         that.video.pause();
+        that.showToast("Loading '" + fileName + "'.", 2000);
         var pathToTexture = 'media/' + fileName + '.jpg';
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
             var mat = that.setMaterialForTexture(texture);

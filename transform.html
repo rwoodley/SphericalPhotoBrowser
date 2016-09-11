@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html >
 	<head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <style>
 			body {
 				font-family: Arial  ;
@@ -53,11 +54,7 @@
                 width: 80px !important;
             }
             #statsDiv {
-/*                _stats.domElement.style.position = 'absolute';
-                _stats.domElement.style.bottom = '0px';
-                _stats.domElement.style.zIndex = 100;
-                _stats.domElement.style.float = "right";
-*/                position: fixed;
+                position: fixed;
                 bottom: 0;
                 z-index:  100;
                 width: 100%;
@@ -382,8 +379,8 @@
 		</video>
 		<div id="container"><br /><br /><br /><br /><br />Generating...</div>
 
-        <div style="position: fixed; top: 3%; width:95%; ">
-             <div id='cameraText' class="statusText"></div>
+        <div style="position: fixed; top: 20%; width:95%; ">
+             <!-- <div id='cameraText' class="statusText"></div> -->
              <div id='unitVectorText' class="statusText"></div>
              <div id='complexPointText' class="statusText"></div>
         </div>
@@ -419,12 +416,10 @@
             <div class="centerAlign">
                 <div id="cameraControlsContainer">
                     <span class='showhide wideLabel cameraControlIcon'>Camera controls:</span>
-            <span id="statsDivInner">
-            </span>
+                    <span id="statsDivInner" class="showhide">
+                    </span>
                 </div>
             </div>
-        </div>
-        <div id="statsDiv" class='showhide'>
         </div>
         <script>
         </script>

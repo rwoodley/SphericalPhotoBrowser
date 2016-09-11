@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <style>
 			body {
 				font-family: Monospace;
@@ -42,6 +43,7 @@
 		<script src="r73/Detector.js"></script>
  		<script src="r73/stats.min.js"></script>
 		<script src="lib/jquery-3.1.0.min.js"></script>
+        <script src="lib/toast.js"></script>
         <script src="mediaUtils.js"></script>
         <script src="utils.js"></script>
         <script src="media/files.js"></script>
@@ -86,7 +88,7 @@
 				requestAnimationFrame( animate );
 				_controls.update( _clock.getDelta() );
 				_renderer.render( _scene, _camera );
-                _mediaUtils.animate();
+                _mediaUtils.animate(1.0);
 			}
             $().ready(function() {
                 init();
