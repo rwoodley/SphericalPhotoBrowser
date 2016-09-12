@@ -221,23 +221,36 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
     }
     this.updateVariousNumbersForCamera = function() {
+        // Camera coordinates are in three.js space where Y is up.
+        // We want to deal with traditional math coordinates where Z is up
     	that.unitVector = (new THREE.Vector3()).copy(that.camera.position).normalize();
 		// in three.js y is up. we want z to be up.
-		// flip the signs on x and z because we're inside the sphere. i think?
-		var x = -that.unitVector.x;
-		var y = -that.unitVector.z;	// assign z to y.
-		var z = -that.unitVector.y;	// assign y to z.
+        // also we need to flip z and x.
+		var y = that.unitVector.x;
+		var x = that.unitVector.z;	// assign z to x.
+		var z = that.unitVector.y;	// assign y to z.
 
     	// convert to point on complex plane
-    	that.cameraLookAtComplexX = - x / (1.0 - z);
-    	that.cameraLookAtComplexY = - y / (1.0 - z);
+        // all the signs are flipped because the camera is not sitting at the origin.
+        // it is sitting 1 unit away from the origin, looking thru the origin at the
+        // opposite side of the sphere.
+        var negz = -z;
+    	that.cameraLookAtComplexX = - x / (1.0 - negz);
+    	that.cameraLookAtComplexY = - y / (1.0 - negz);
 
     	try {
+            _textElement = document.getElementById('cameraText');
+            _textElement.innerHTML = "<nobr>Camera in three.js coords: (" + _camera.position.x.toFixed(1) 
+                + "," + _camera.position.y.toFixed(1) + ","  
+                + _camera.position.z.toFixed(1) + ") len: " 
+                + _camera.position.length().toFixed(1) + "</nobr>" ;
+
             document.getElementById('unitVectorText').innerHTML = 
-            "<nobr>Unit Vec: (" + 
-            	that.unitVector.x.toFixed(1) + "," + 
-            	that.unitVector.z.toFixed(1) + "," + 
-            	that.unitVector.y.toFixed(1) + ") len: " 
+            "<nobr>Camera in Cartesian Space: (" + 
+            	x.toFixed(1) + "," + 
+            	y.toFixed(1) + "," + 
+                z.toFixed(1) + "" + 
+                ") len: " 
 				+ that.unitVector.length().toFixed(1) + "</nobr>" ;   
 
             document.getElementById('complexPointText').innerHTML = "Looking at " + 

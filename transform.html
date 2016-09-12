@@ -231,9 +231,8 @@
                 // ---------
                 // convert from uv to polar coords
                 vec2 tempuv = uv;
-                // vec2 tempuv = uv * 0.9999 + 0.00005;
                 theta = (1.0-tempuv[1]) * PI;
-                phi = PI * 2.0 * tempuv[0];
+                phi = PI * 2.0 * tempuv[0]+PI;
 
                 // convert polar to cartesian. Theta is polar, phi is azimuth.
                 x = sin(theta)*cos(phi);
@@ -245,7 +244,10 @@
                 // can get the corresponding complex point, a.
                 // http://math.stackexchange.com/questions/1219406/how-do-i-convert-a-complex-number-to-a-point-on-the-riemann-sphere
 
-                vec2 a = vec2(x/(1.0-z), y/(1.0-z));
+                // we added the PI to phi above to make the Y axis correspond with
+                // the positive imaginary axis and the X axis correspond with
+                //  the positive real axis. So flip y and x around in this next equation.
+                vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
                 vec2 result = a;
                 if (mobiusEffectsOnOff == 1) {
@@ -274,12 +276,6 @@
                 }
                 vec2 realNumber = vec2(complexEffect1OnOff, 0.);
                 result = cx_pow(result, realNumber);                    
-                // if (complexEffect1OnOff == 1) {
-                //     result = cx_product(result, result);                    
-                // }
-                // if (complexEffect2OnOff == 1) {
-                //     result = cx_product(result, result);                    
-                // }
                 if (complexEffect3OnOff == 1) {
                     result = anotherTransform(result);
                 }
@@ -294,14 +290,15 @@
                 z = (result.x*result.x + result.y*result.y - 1.0)/denom;
 
                 // convert to polar
-                // problem: the phi above is [0,2*PI]. this phi is [0,2*PI)
                 phi = atan2(y, x);
+                phi -= (PI/2.0);    // this correction lines up the UV texture nicely.
                 if (phi <= 0.0) {
                     phi = phi + PI*2.0; 
                 }
                 if (phi >= (2.0 * PI)) {    // allow 2PI since we gen uv over [0,1]
                     phi = phi - 2.0 * PI;
                 }
+                phi = 2. * PI - phi;        // flip the texture around.
                 theta = acos(z);
 
                 // now get uv in new chart.
@@ -330,8 +327,8 @@
 
                 _scene = new THREE.Scene();
                 _controls = new THREE.OrbitControls( _camera, _container.domElement );
-                // _axes = new THREE.AxisHelper( 15000 );
-                // _scene.add(_axes);
+                _axes = new THREE.AxisHelper( 15000 );
+                _scene.add(_axes);
                 _renderer =  new THREE.WebGLRenderer({ antialias: true } );
                 _mediaUtils = new mediaUtils(
                     _scene, 
@@ -380,7 +377,7 @@
 		<div id="container"><br /><br /><br /><br /><br />Generating...</div>
 
         <div style="position: fixed; top: 20%; width:95%; ">
-             <!-- <div id='cameraText' class="statusText"></div> -->
+             <div id='cameraText' class="statusText"></div>
              <div id='unitVectorText' class="statusText"></div>
              <div id='complexPointText' class="statusText"></div>
         </div>

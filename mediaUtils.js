@@ -122,6 +122,7 @@ function mediaUtils(scene, camera, stills, videos,
 	this.animate = function(cameraVectorLength) {
         if (that.plane.visible) {
             that.setInitialCameraPosition();
+            that.camera.position.x *=-1;
         }
         else {
     		var unitVector = (new THREE.Vector3())
