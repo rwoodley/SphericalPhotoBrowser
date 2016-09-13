@@ -1,7 +1,8 @@
 // Functions specific to doing mobius transforms on videos or stills.
 // this must be paired with the appropriate shaders of course.
 // issues: zoom sometimes fires on its own for now good reason.
-function transformUtils(camera, transformControlsContainerId, complexControlsContainerId, mediaUtils) {
+function transformUtils(camera, transformControlsContainerId, complexControlsContainerId, 
+    mediaUtils) {
 	this.camera = camera;
 	var that = this;
 	this.transformControlsContainerId = transformControlsContainerId;
@@ -14,6 +15,11 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.cameraLookAtComplexY = 0;
     this.currentZoom = 1;
     this.mediaUtils = mediaUtils;
+    this.mediaUtils.onSpaceBarClick = function(e){
+        that.uniforms.showFixedPoints.value = 0;
+        $('.statusText').hide();
+    }
+
     this.cameraVectorLength = 1;    // by default, unit vector.
     this.uniforms = {
 	    iGlobalTime:    { type: 'f', value: 0.0 },
@@ -73,10 +79,10 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
-        appendSingleIcon(container, 'transformControlIcon', 'transform1Icon.png', 'Show/Hide Debug Info', that.complexEffect1);                
-        appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Show/Hide Debug Info', that.complexEffect2);                
-        appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Show/Hide Debug Info', that.complexEffect3);                
-        appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Show/Hide Debug Info', that.complexEffect4);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform1Icon.png', 'Increase N', that.complexEffect1);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Decrease N', that.complexEffect2);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Apply transform', that.complexEffect3);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);                
     }
     this.viewState = 0;
     this.toggleView = function() {

@@ -9,7 +9,8 @@ User might want to:
 
 **/ 
 function mediaUtils(scene, camera, stills, videos, 
-	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId) {
+	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
+       onSpaceBarClick) {
 	var that = this;
 	this.stills = stills;
 	this.videos = videos;
@@ -27,12 +28,16 @@ function mediaUtils(scene, camera, stills, videos,
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
     this.FOV = 90;
+    this.onSpaceBarClick = onSpaceBarClick;
 
     this.controlPanelVisible = true;
 	document.body.onkeyup = function(e){
-	    if(e.keyCode == 32)
-	    	that.toggleControlPanel();
-	}
+        if(e.keyCode == 32) {
+            that.toggleControlPanel();
+            if (that.onSpaceBarClick != undefined) that.onSpaceBarClick();
+        }
+    }
+;
     this.showToast = function(message, ms) {
         var options = {
             settings: {
