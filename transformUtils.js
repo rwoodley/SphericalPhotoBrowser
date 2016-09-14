@@ -2,11 +2,13 @@
 // this must be paired with the appropriate shaders of course.
 // issues: zoom sometimes fires on its own for now good reason.
 function transformUtils(camera, transformControlsContainerId, complexControlsContainerId, 
+    transformControls2ContainerId,
     mediaUtils) {
 	this.camera = camera;
 	var that = this;
 	this.transformControlsContainerId = transformControlsContainerId;
     this.complexControlsContainerId = complexControlsContainerId;
+    this.transformControls2ContainerId = transformControls2ContainerId;
     this.unitVector = (new THREE.Vector3()).copy(this.camera.position).normalize();;
     this.point1Defined = false;
     this.point2Defined = false;
@@ -72,7 +74,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	appendSingleIcon(container, 'transformControlIcon', 'cancel.png', 'Cancel Zoom', that.zoomCancel);
     	appendSingleIcon(container, 'transformControlIcon', 'Epsilon1.svg', 'Set Fixed Point 1', that.setFixedPoint1);
     	appendSingleIcon(container, 'transformControlIcon', 'Epsilon2.svg', 'Set Fixed Point 2', that.setFixedPoint2);
-    	appendSingleIcon(container, 'transformControlIcon', 'reset.png', 'Reset', that.reset);
+
+    	var container = document.getElementById(that.transformControls2ContainerId);
+        appendSingleIcon(container, 'transformControlIcon', 'reset.png', 'Reset', that.reset);
         appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.toggleDebugInfo);
         appendSingleIcon(container, 'transformControlIcon', 'toggle.png', 'Toggle View', that.toggleView);
         appendSingleIcon(container, 'transformControlIcon', 'help.png', 'Help/Info', that.showHelpPage);

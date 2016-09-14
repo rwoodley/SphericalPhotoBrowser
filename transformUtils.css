@@ -7,3 +7,17 @@
     display: inline-block;
     vertical-align: middle;
 }
+.label { 
+    border: 2px solid; 
+    border-color: #6495ED; margin: 5px; padding: 5px; 
+    color: #fff; 
+    background-color: rgba(47,149,153,.6);
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.mediaLabel { 
+    font-size: 8pt;
+    height: 15px;
+}
