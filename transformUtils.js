@@ -15,7 +15,6 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.rotateDirection = 0;
     this.cameraLookAtComplexX = 0;
     this.cameraLookAtComplexY = 0;
-    this.currentZoom = 1;
     this.mediaUtils = mediaUtils;
     this.mediaUtils.onSpaceBarClick = function(e){
         that.uniforms.showFixedPoints.value = 0;
@@ -30,11 +29,12 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },
 	    showFixedPoints: { type: 'i', value: 1 },
-	    zoomFactor: { type: 'f', value: 1.0 },
 	    e1x: { type: 'f', value: 0. },
 	    e1y: { type: 'f', value: 0. },
 	    e2x: { type: 'f', value: 0. },
 	    e2y: { type: 'f', value: 0. },
+        loxodromicX: {type: 'f', value: 1. },
+        loxodromicY: {type: 'f', value: 0. },
 	};
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
@@ -73,7 +73,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	appendSingleIcon(container, 'transformControlIcon', 'zoomOut.png', 'Zoom Out', that.zoomOut);
     	appendSingleIcon(container, 'transformControlIcon', 'cancel.png', 'Cancel Zoom', that.zoomCancel);
     	appendSingleIcon(container, 'transformControlIcon', 'Epsilon1.svg', 'Set Fixed Point 1', that.setFixedPoint1);
-    	appendSingleIcon(container, 'transformControlIcon', 'Epsilon2.svg', 'Set Fixed Point 2', that.setFixedPoint2);
+        appendSingleIcon(container, 'transformControlIcon', 'Epsilon2.svg', 'Set Fixed Point 2', that.setFixedPoint2);
+        appendSingleIcon(container, 'transformControlIcon', 'spiral.png', 'Set Loxodromic constant', that.setLoxoPointFromClick);
 
     	var container = document.getElementById(that.transformControls2ContainerId);
         appendSingleIcon(container, 'transformControlIcon', 'reset.png', 'Reset', that.reset);
@@ -164,6 +165,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         }
     	console.log("P1 = " + that.uniforms.e1x.value + "," + that.uniforms.e1y.value);
     	console.log("P2 = " + that.uniforms.e2x.value+ "," + that.uniforms.e2x.value);
+        console.log("loxo point = " + that.uniforms.loxodromicX.value + "," + that.uniforms.loxodromicY.value);
     }
     this.rotatePause = function() { that.rotate(0); }
     this.rotateLeft = function() { that.rotate(-1); }
@@ -181,15 +183,27 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 		that.rotateDirection = 0;
     	that.uniforms.iGlobalTime.value = 0;
     }
+    this.setLoxoPointFromClick = function() {
+        that.setLoxoPoint(that.cameraLookAtComplexX, that.cameraLookAtComplexY);
+    }
+    this.setLoxoPoint = function(x,y) {
+        that.setFixedPointsIfUndefined();
+        that.uniforms.loxodromicX.value = x;
+        that.uniforms.loxodromicY.value = y;
+        console.log("loxo point = " + that.uniforms.loxodromicX.value + "," + that.uniforms.loxodromicY.value);
+        that.showToast("Zoom is (" +
+                that.uniforms.loxodromicX.value.toFixed(2) + "," +
+                that.uniforms.loxodromicY.value.toFixed(2) + "i)"
+            , 2000);
+    }
     this.zoomIn = function() { that.zoom(.5); }
     this.zoomOut = function() { that.zoom(2.); }
-    this.zoomCancel = function() { 
-        that.zoom(1/that.currentZoom); }
+    this.zoomCancel = function() { that.setLoxoPoint(1.,0.); }
     this.zoom = function(factor) {
 		that.setFixedPointsIfUndefined();
-    	that.currentZoom *= factor;
-    	that.uniforms.zoomFactor.value = that.currentZoom;
-    	console.log(that.currentZoom);
+        that.setLoxoPoint(
+            that.uniforms.loxodromicX.value * factor,
+            that.uniforms.loxodromicY.value * factor);
     }
     this.antipode = function(inx,iny) {
     	// -(1/conj(x,y))
@@ -217,8 +231,6 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.mediaUtils.animate(that.cameraVectorLength);
     }
     this.reset = function() {
-    	that.currentZoom = 1.0;
-    	that.uniforms.zoomFactor.value = that.currentZoom;
     	that.rotateDirection = 0;
     	that.uniforms.iGlobalTime.value = 0;
     	that.point1Defined = false;
@@ -229,6 +241,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.uniforms.complexEffect3OnOff.value = 0;
         that.uniforms.complexEffect4OnOff.value = 0;
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
+        that.uniforms.loxodromicX.value = 1;
+        that.uniforms.loxodromicY.value = 0;
     }
     this.updateVariousNumbersForCamera = function() {
         // Camera coordinates are in three.js space where Y is up.

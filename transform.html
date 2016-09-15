@@ -174,6 +174,8 @@
             varying vec2 vUv;  
             uniform float iGlobalTime;
             uniform float zoomFactor;
+            uniform float loxodromicX;
+            uniform float loxodromicY;
             uniform float e1x;
             uniform float e1y;
             uniform float e2x;
@@ -211,8 +213,10 @@
                 vec2 ans = cx_product(z, exp);
                 return ans;
             }
-            vec2 zoom(in vec2 z, in float factor) {
-                vec2 ans = cx_product(vec2(factor,0),z);
+            vec2 zoom(in vec2 z, in vec2 zoomDegree) {
+                // a real zoomDegree is a streight zoom without twist.
+                // a complex zoomDegree has a twist!
+                vec2 ans = cx_product(zoomDegree,z);
                 return ans;
             }
             vec2 anotherTransform(vec2 z) {
@@ -258,6 +262,7 @@
                 if (mobiusEffectsOnOff == 1) {
                     vec2 e1 = vec2(e1x,e1y);
                     vec2 e2 = vec2(e2x,e2y);
+                    vec2 lox = vec2(loxodromicX, loxodromicY);
                     if (showFixedPoints) {
                         vec3 e1InCartesian = complexToCartesian(e1);
                         vec3 e2InCartesian = complexToCartesian(e2);
@@ -271,12 +276,16 @@
                             gl_FragColor = vec4(0.,0.,1.,1.);
                             return;
                         }                       
+                        if (distance(aInCartesian, complexToCartesian(lox)) < .05) {
+                            gl_FragColor = vec4(1.,1.,0.,1.);
+                            return;
+                        }                       
                     }
 
                     vec2 b = transformForFixedPoints(a, e1, e2);
                     vec2 c;
                     vec2 b1 = applyRotation(b,iGlobalTime/10.);
-                    c = zoom(b1, zoomFactor);
+                    c = zoom(b1, vec2(loxodromicX, loxodromicY));
                     result = inverseTransformForFixedPoints(c, e1, e2);
                 }
                 vec2 realNumber = vec2(complexEffect1OnOff, 0.);

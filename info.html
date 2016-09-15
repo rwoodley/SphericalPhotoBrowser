@@ -30,10 +30,9 @@ There is a video showing how to use it <a href="https://youtu.be/_R5nX_QWJ2Q">he
 <p/>
 
 <h3>Transformations:</h3>
-<li><img class="transformControlIcon" src="icons/reset.png" /> Turn off all transforms, revert to original image/video. </li>
 <h4>M&ouml;bius transformations:</h4>
-<li><img class="transformControlIcon" src="icons/Epsilon1.svg" /> Set Fixed Point 1 at center of viewport.</li>
-<li><img class="transformControlIcon" src="icons/Epsilon2.svg" /> Set Fixed Point 2 at center of viewport.</li>
+<li><img class="transformControlIcon" src="icons/Epsilon1.svg" /> Set Fixed Point 1 at center of viewport. When debugging, this point is represented by a red dot on the image.</li>
+<li><img class="transformControlIcon" src="icons/Epsilon2.svg" /> Set Fixed Point 2 at center of viewport. When debugging, this point is represented by a blue dot on the image.</li>
 <li><img class="transformControlIcon" src="icons/rotateLeft.png" /> Rotate left around fixed points.(*) </li>
 <li><img class="transformControlIcon" src="icons/rotateRight.png" /> Rotate right around fixed points.(*) </li>
 <li><img class="transformControlIcon" src="icons/pause.png" /> Stop rotating. </li>
@@ -41,8 +40,8 @@ There is a video showing how to use it <a href="https://youtu.be/_R5nX_QWJ2Q">he
 <li><img class="transformControlIcon" src="icons/zoomIn.png" /> Do conformal zoom in on point 1, out on point 2. (*)</li>
 <li><img class="transformControlIcon" src="icons/zoomOut.png" /> Do conformal zoom out on point 1, in on point 2(*). </li>
 <li><img class="transformControlIcon" src="icons/cancel.png" /> Cancel zoom. </li>
-<li><img class="transformControlIcon" src="icons/toggle.png" /> Toggle view to see effect of transformations on the rectangular texture. </li>
-<li><img class="transformControlIcon" src="icons/debug.png" /> Toggle Show/hide dots representing fixed points. </li>
+<li><img class="transformControlIcon" src="icons/spiral.png" /> Allows you to a loxodromic transformation. It selects the complex point at the center of the viewport to be the scaling factor. If this is a real number (which it is by default), this corresponds to a simple zoom. A complex number is a combination of rotation and zoom (*). When debugging, this point is represented by a yellow dot on the image.</li>
+<p/>
 (*) If you click on rotate or zoom without having first selected the fixed points, the system will set the current center of the viewport to be fixed point 1, and the antipodal point to be fixed point 2.
 
 <h4>Complex transformations:</h4>
@@ -52,6 +51,12 @@ If selected, these are applied after the M&ouml;bius transformations have been a
 <li><img class="transformControlIcon" src="icons/transform2Icon.png" /> Text </li>
 <li><img class="transformControlIcon" src="icons/transform3Icon.png" /> Text </li>
 <li><img class="transformControlIcon" src="icons/transform4Icon.png" /> Text </li>
+
+<h4>Miscellaneous other functions:</h4>
+<li><img class="transformControlIcon" src="icons/reset.png" /> Turn off all transforms, revert to original image/video. </li>
+<li><img class="transformControlIcon" src="icons/toggle.png" /> Toggle view to see effect of transformations on the rectangular texture. </li>
+<li><img class="transformControlIcon" src="icons/debug.png" /> Toggle Show/hide dots representing fixed points. </li>
+
 
 <h3>Video Controls:</h3>
 There are only visible if you are playing a video.
