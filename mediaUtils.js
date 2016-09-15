@@ -56,6 +56,7 @@ function mediaUtils(scene, camera, stills, videos,
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
         that.updateSkyDomeForFileName(myTextures[0]);
+        //that.updateVideoForFileName(myVideos[0]);
         that.setInitialCameraPosition();
 	}
     this.setInitialCameraPosition = function() {
