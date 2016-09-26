@@ -131,11 +131,13 @@ function mediaUtils(scene, camera, stills, videos,
             that.camera.position.x *=-1;
         }
         else {
-    		var unitVector = (new THREE.Vector3())
-                .copy(that.camera.position)
-                .normalize()
-                .multiplyScalar(cameraVectorLength);
-            that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
+            if (cameraVectorLength > 0) {
+        		var unitVector = (new THREE.Vector3())
+                    .copy(that.camera.position)
+                    .normalize()
+                    .multiplyScalar(cameraVectorLength);
+                that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
+            }
             that.camera.lookAt(new THREE.Vector3(0,0,0));
             rotateCameraY(that.camera, that.rotateYAmount);
             rotateCameraUpDown(that.camera, that.rotateXAmount);
@@ -160,29 +162,31 @@ function mediaUtils(scene, camera, stills, videos,
             var mat = that.setMaterialForTexture(texture);
             that.skyBox.material = mat;
             that.plane.material = mat;
+            that.torus.material = mat;
         });
     }
-    this.toggleView = function(planeVisible) {
-        if (planeVisible) {
-            planeOnlyView();
-        }
-        else {
+    this.toggleView = function(geoIndex) {
+        if (geoIndex == 0)
             sphereOnlyView();
-        }
+        if (geoIndex == 1)
+            torusOnlyView();
+        if (geoIndex == 2)
+            planeOnlyView();
     }
     function sphereOnlyView() {
         that.skyBox.visible = true;
-        // that.skyBox.geometry.radius = 10;
-        // that.skyBox.position.set(0,0,0);
         that.plane.visible = false;
-        // that.plane.scale.set(10,10,10);
-        // that.skyBox.scale.set(10,10,10);
+        that.torus.visible = false;
     }
     function planeOnlyView() {
         that.skyBox.visible = false;
-        // that.plane.position.set(0,0,0);
         that.plane.visible = true;
-        // that.plane.scale.set(1,1,1);
+        that.torus.visible = false;
+    }
+    function torusOnlyView() {
+        that.skyBox.visible = false;
+        that.plane.visible = false;
+        that.torus.visible = true;
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.setMaterialForTexture = function(texture) {
@@ -204,6 +208,12 @@ function mediaUtils(scene, camera, stills, videos,
         that.plane.rotateY(Math.PI/2);
         that.plane.visible = false;
         that.scene.add( that.plane );
+
+        var torusGeometry = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
+        that.torus = new THREE.Mesh( torusGeometry, newMaterial );
+        that.torus.rotateX(Math.PI/2);
+        that.torus.visible = false;
+        that.scene.add( that.torus );
 
     }
     this.initVideo = function() {
@@ -235,6 +245,7 @@ function mediaUtils(scene, camera, stills, videos,
         var videoMaterial = that.setMaterialForTexture(that.videoTexture);
         that.skyBox.material = videoMaterial;
         that.plane.material = videoMaterial;
+        that.torus.material = videoMaterial;
         that.videoDisplayed = true;
         that.toggleVideoControls();
 	}

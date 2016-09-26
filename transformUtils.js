@@ -28,6 +28,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         complexEffect1OnOff: { type: 'i', value: 1 },
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },
+        complexEffect5OnOff: { type: 'i', value: 0 },
 	    showFixedPoints: { type: 'i', value: 1 },
 	    e1x: { type: 'f', value: 0. },
 	    e1y: { type: 'f', value: 0. },
@@ -88,23 +89,29 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Decrease N', that.complexEffect2);                
         appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Apply transform', that.complexEffect3);                
         appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect5);                
     }
     this.viewState = 0;
     this.toggleView = function() {
         that.viewState++;
-        that.viewState = that.viewState % 3;
+        that.viewState = that.viewState % 4;
         if (that.viewState == 0) {
             that.cameraVectorLength = 1;
-            that.mediaUtils.toggleView(false);
+            that.mediaUtils.toggleView(0);
         }
         else
         if (that.viewState == 1) {
+            that.cameraVectorLength = -1;
+            that.mediaUtils.toggleView(1);
+        }
+        else
+        if (that.viewState == 2) {
             that.cameraVectorLength = 15;
-            that.mediaUtils.toggleView(false);
+            that.mediaUtils.toggleView(0);
         }
         else {
             that.cameraVectorLength = 1;
-            that.mediaUtils.toggleView(true);
+            that.mediaUtils.toggleView(2);
         }
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
@@ -131,6 +138,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.complexEffect4 = function() { 
         that.uniforms.complexEffect4OnOff.value = that.uniforms.complexEffect4OnOff.value == 0 ? 1 : 0;
+    }
+    this.complexEffect5 = function() { 
+        that.uniforms.complexEffect5OnOff.value++;
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.point1Defined && !that.point2Defined) {
@@ -240,6 +250,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         // that.uniforms.complexEffect2OnOff.value = 0;
         that.uniforms.complexEffect3OnOff.value = 0;
         that.uniforms.complexEffect4OnOff.value = 0;
+        that.uniforms.complexEffect5OnOff.value = 0;
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
         that.uniforms.loxodromicX.value = 1;
         that.uniforms.loxodromicY.value = 0;
