@@ -36,6 +36,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 	    e2y: { type: 'f', value: 0. },
         loxodromicX: {type: 'f', value: 1. },
         loxodromicY: {type: 'f', value: 0. },
+        drosteType: {type: 'i', value: 0 }
 	};
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
@@ -76,6 +77,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	appendSingleIcon(container, 'transformControlIcon', 'Epsilon1.svg', 'Set Fixed Point 1', that.setFixedPoint1);
         appendSingleIcon(container, 'transformControlIcon', 'Epsilon2.svg', 'Set Fixed Point 2', that.setFixedPoint2);
         appendSingleIcon(container, 'transformControlIcon', 'spiral.png', 'Set Loxodromic constant', that.setLoxoPointFromClick);
+        appendSingleIcon(container, 'transformControlIcon', 'roundDroste.png', 'Round Droste', that.roundDroste);
+        appendSingleIcon(container, 'transformControlIcon', 'squareDroste.jpg', 'Square Droste', that.squareDroste);
 
     	var container = document.getElementById(that.transformControls2ContainerId);
         appendSingleIcon(container, 'transformControlIcon', 'reset.png', 'Reset', that.reset);
@@ -196,6 +199,14 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.setLoxoPointFromClick = function() {
         that.setLoxoPoint(that.cameraLookAtComplexX, that.cameraLookAtComplexY);
     }
+    this.roundDroste = function() {
+        that.setFixedPointsIfUndefined();
+        that.uniforms.drosteType.value = 1;
+    }
+    this.squareDroste = function() {
+        that.setFixedPointsIfUndefined();
+        that.uniforms.drosteType.value = 2;
+    }
     this.setLoxoPoint = function(x,y) {
         that.setFixedPointsIfUndefined();
         that.uniforms.loxodromicX.value = x;
@@ -254,6 +265,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
         that.uniforms.loxodromicX.value = 1;
         that.uniforms.loxodromicY.value = 0;
+        that.drosteType = 0;
     }
     this.updateVariousNumbersForCamera = function() {
         // Camera coordinates are in three.js space where Y is up.

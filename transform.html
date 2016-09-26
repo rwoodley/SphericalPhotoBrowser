@@ -190,6 +190,7 @@
             uniform int complexEffect3OnOff;
             uniform int complexEffect4OnOff;
             uniform int complexEffect5OnOff;
+            uniform int drosteType;
 
             uniform bool showFixedPoints;
             vec2 one = vec2(1.0, 0.0);
@@ -219,11 +220,11 @@
 
                 z = z*1.; // Play with this to zoom
                 // 1. Take the annulus to a strip
-                z = cx_log(z+.1); 
+                z = cx_log(z); 
                 // 2. Tile the strips
                 z.x = mod(z.x, log(r2/r1));
                 // 3. Take the tiled strips back to ordinary space.
-                //z = cx_exp(z)*r1;
+                z = cx_exp(z)*r1;
                 return z;
 
                 // my old way of doing droste with simple mod. works only in the northern
@@ -329,12 +330,11 @@
                     vec2 b1 = applyRotation(b,iGlobalTime/10.);
                     c = zoom(b1, vec2(loxodromicX, loxodromicY));
 
-                    c = applyRoundDroste(c);
-//                    vec2 z = sin(c*20.0)*10.;
-//                    float color = z.x * z.y;
-//                    gl_FragColor =  vec4(color,color,color,1.0);
+                    if (drosteType == 1)
+                        c = applyRoundDroste(c);
+                    if (drosteType == 2)
+                        c = applySquareDroste(c);
                     result = inverseTransformForFixedPoints(c, e1, e2);
-//                    return;
                 }
                 vec2 realNumber = vec2(complexEffect1OnOff, 0.);
                 result = cx_pow(result, realNumber);                    
