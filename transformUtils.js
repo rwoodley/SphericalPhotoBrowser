@@ -23,6 +23,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 
     this.cameraVectorLength = 1;    // by default, unit vector.
     this.uniforms = {
+	    iRotationAmount:    { type: 'f', value: 0.0 },
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
         complexEffect1OnOff: { type: 'i', value: 1 },
@@ -194,7 +195,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.rotationOff = function() {
 		that.rotateDirection = 0;
-    	that.uniforms.iGlobalTime.value = 0;
+    	that.uniforms.iRotationAmount.value = 0;
     }
     this.setLoxoPointFromClick = function() {
         that.setLoxoPoint(that.cameraLookAtComplexX, that.cameraLookAtComplexY);
@@ -247,12 +248,14 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 
     }
     this.animate = function() {
-        that.uniforms.iGlobalTime.value = that.uniforms.iGlobalTime.value  + .1*that.rotateDirection;
+        that.uniforms.iRotationAmount.value = that.uniforms.iRotationAmount.value  + .1*that.rotateDirection;
+        that.uniforms.iGlobalTime.value = that.uniforms.iGlobalTime.value  + 1;
     	that.updateVariousNumbersForCamera();
         that.mediaUtils.animate(that.cameraVectorLength);
     }
     this.reset = function() {
     	that.rotateDirection = 0;
+    	that.uniforms.iRotationAmount.value = 0;
     	that.uniforms.iGlobalTime.value = 0;
     	that.point1Defined = false;
     	that.point2Defined = false;
@@ -265,7 +268,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
         that.uniforms.loxodromicX.value = 1;
         that.uniforms.loxodromicY.value = 0;
-        that.drosteType = 0;
+        that.uniforms.drosteType.value = 0;
     }
     this.updateVariousNumbersForCamera = function() {
         // Camera coordinates are in three.js space where Y is up.

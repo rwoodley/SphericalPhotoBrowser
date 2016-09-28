@@ -177,6 +177,7 @@
             // ===== shader control variables
             uniform sampler2D iChannel0;
             varying vec2 vUv;  
+            uniform float iRotationAmount;
             uniform float iGlobalTime;
             uniform float loxodromicX;
             uniform float loxodromicY;
@@ -248,6 +249,41 @@
                 vec2 a_z = abs(z);
                 float scale = f(max(a_z.x,a_z.y));
                 return z*scale;
+
+            }
+            vec2 applyArbitraryDroste(in vec2 z, float zoom) {
+                float r1 = 0.2;     // how big the annulus appears on the screen
+                float r2 = 0.7;     // how wide (relative to r1 each annulus is.
+
+                float zoomFactor = exp(zoom*500.);
+                z = z/zoomFactor; // Play with this to zoom
+                float theta = cx_arg(z);
+                //float b = abs(sin(theta))/2.0 + .5;
+//                float modtheta = mod(theta,PI/2.0);
+                float ndiv = 8.;
+                float colc = theta/(2.*PI);
+                float cold = ndiv*colc;
+                float cole = floor(cold)/ndiv+1./(ndiv*2.0);
+                float colf = theta - cole*2.*PI;
+                float b = cos(colf)*r2;
+                z = cx_log(z); 
+                z.x = mod(z.x, log(b/r1));
+                z = cx_exp(z)*r1;
+                return z;
+
+            }
+            vec2 applyGreenDroste(in vec2 z) {
+                float r1 = 0.2;     // how big the annulus appears on the screen
+                float r2 = 0.7;     // how wide (relative to r1 each annulus is.
+
+                z = z*1.; // Play with this to zoom
+                float theta = cx_arg(z);
+                float b = abs(sin(theta))/2.0 + .5;
+                //z = vec2(b*cos(theta), b*sin(theta));
+                z = cx_log(z); 
+                z.x = mod(z.x, log(b/r1));
+                z = cx_exp(z)*r1;
+                return z;
 
             }
             vec2 applyRotation(in vec2 z, in float radians) {
@@ -327,13 +363,13 @@
 
                     vec2 b = transformForFixedPoints(a, e1, e2);
                     vec2 c;
-                    vec2 b1 = applyRotation(b,iGlobalTime/10.);
+                    vec2 b1 = applyRotation(b,iRotationAmount/10.);
                     c = zoom(b1, vec2(loxodromicX, loxodromicY));
 
                     if (drosteType == 1)
                         c = applyRoundDroste(c);
                     if (drosteType == 2)
-                        c = applySquareDroste(c);
+                        c = applyArbitraryDroste(c, iGlobalTime/100000.);
                     result = inverseTransformForFixedPoints(c, e1, e2);
                 }
                 vec2 realNumber = vec2(complexEffect1OnOff, 0.);
