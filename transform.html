@@ -241,34 +241,46 @@
             float f(float x){
                 return exp2(-floor(log2(x))-2.);
             }
-            vec2 applySquareDroste(in vec2 z) {
+            vec2 applySquareDroste(in vec2 z, float zoom) {
                 // see http://roy.red/infinite-regression-.html#infinite-regression
                 // see http://www.josleys.com/article_show.php?id=82
 
 
+                float zoomFactor = exp(zoom*500.);
+                z = z/zoomFactor; // Play with this to zoom
                 vec2 a_z = abs(z);
                 float scale = f(max(a_z.x,a_z.y));
                 return z*scale;
 
             }
-            vec2 applyArbitraryDroste(in vec2 z, float zoom) {
+            vec2 applyArbitraryDroste(in vec2 z) {
                 float r1 = 0.2;     // how big the annulus appears on the screen
                 float r2 = 0.7;     // how wide (relative to r1 each annulus is.
 
-                float zoomFactor = exp(zoom*500.);
-                z = z/zoomFactor; // Play with this to zoom
+                float r = length(z);
                 float theta = cx_arg(z);
-                //float b = abs(sin(theta))/2.0 + .5;
-//                float modtheta = mod(theta,PI/2.0);
+
+                float zoomFactor = 1.0;
+                float zoom=float(iGlobalTime);
+//                zoomFactor = exp(1.+zoom/500.);
+
+                // make octagon
                 float ndiv = 8.;
-                float colc = theta/(2.*PI);
-                float cold = ndiv*colc;
-                float cole = floor(cold)/ndiv+1./(ndiv*2.0);
-                float colf = theta - cole*2.*PI;
-                float b = cos(colf)*r2;
+                float angle = PI/ndiv;
+                //float shortestR = cos(angle);
+                angle = angle - mod(theta, 2.*PI/ndiv);
+                float b = cos(angle);
+                float scale = b*r2/r1;
+
+                z = z/zoomFactor;
                 z = cx_log(z); 
-                z.x = mod(z.x, log(b/r1));
-                z = cx_exp(z)*r1;
+                float twist = atan(log(scale)/(2.0*PI));
+                vec2 temp = cx_exp(vec2(0.,twist))*cos(twist);
+                z = cx_product(z, temp);
+
+                z.x = mod(z.x , log(scale));
+
+                z = cx_exp(z);
                 return z;
 
             }
@@ -368,8 +380,11 @@
 
                     if (drosteType == 1)
                         c = applyRoundDroste(c);
-                    if (drosteType == 2)
-                        c = applyArbitraryDroste(c, iGlobalTime/100000.);
+                    if (drosteType == 2) {
+                        c = applyArbitraryDroste(c);
+                        //gl_FragColor = vec4(c.x/(PI/4.),0.,0.,1.);
+                        //return;
+                    }
                     result = inverseTransformForFixedPoints(c, e1, e2);
                 }
                 vec2 realNumber = vec2(complexEffect1OnOff, 0.);
