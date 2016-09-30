@@ -29,6 +29,8 @@ function mediaUtils(scene, camera, stills, videos,
     this.rotateXAmount = 0;
     this.FOV = 90;
     this.onSpaceBarClick = onSpaceBarClick;
+    this.material = new THREE.MeshNormalMaterial();
+    this.geoIndex = 0;
 
     this.controlPanelVisible = true;
 	document.body.onkeyup = function(e){
@@ -36,8 +38,8 @@ function mediaUtils(scene, camera, stills, videos,
             that.toggleControlPanel();
             if (that.onSpaceBarClick != undefined) that.onSpaceBarClick();
         }
-    }
-;
+    };
+
     this.showToast = function(message, ms) {
         var options = {
             settings: {
@@ -45,10 +47,10 @@ function mediaUtils(scene, camera, stills, videos,
             }
         };        
         this.toast = new iqwerty.toast.Toast(message, options);
-    }
+    };
 
     this.initMediaUtils = function() {
-	    that.initSkyBox();
+        that.toggleView(0);
 	    that.initVideo();
 	    that.toggleControlPanel();
 	    that.setupMediaIcons();
@@ -58,10 +60,10 @@ function mediaUtils(scene, camera, stills, videos,
         that.updateSkyDomeForFileName(myTextures[0]);
         //that.updateVideoForFileName(myVideos[0]);
         that.setInitialCameraPosition();
-	}
+	};
     this.setInitialCameraPosition = function() {
         that.camera.position.x = -1; that.camera.position.y = 0.0; that.camera.position.z = 0;   
-    }
+    };
     this.setupMediaIcons = function() {
         var textureListHTML = document.getElementById(that.mediaListContainerId).innerHTML;
         for (var i = 0; i < myTextures.length; i++)
@@ -74,7 +76,7 @@ function mediaUtils(scene, camera, stills, videos,
 
         $('.tselector').click(that.updateSkyDome);
         $('.vselector').click(that.updateVideo);
-    }
+    };
     this.setupVideoControlIcons = function() {
     	var container = document.getElementById(that.videoControlsContainerId);
     	appendSingleIcon(container, 'videoControlIcon', 'rewind', 'Video Back', that.video_rewind);
@@ -106,15 +108,9 @@ function mediaUtils(scene, camera, stills, videos,
     	that.controlPanelVisible = !that.controlPanelVisible;
     	if (that.controlPanelVisible) {
             $('.showhide').hide();
-            // $('#' + that.mediaListContainerId).hide();
-			// $('#' + that.videoControlsContainerId).hide();
-   //          $('#' + that.cameraControlsContainerId).hide();
 		}
 		else {
             $('.showhide').show();
-			// $('#' + that.mediaListContainerId).show();
-			// $('#' + that.videoControlsContainerId).show();
-			// $('#' + that.cameraControlsContainerId).show();
 		}
 	}
 	this.toggleVideoControls = function() {
@@ -126,12 +122,12 @@ function mediaUtils(scene, camera, stills, videos,
 		}
 	}
 	this.animate = function(cameraVectorLength) {
-        if (that.plane.visible) {
+        if (that.geoIndex == 1) {       //plane
             that.setInitialCameraPosition();
             that.camera.position.x *=-1;
         }
         else {
-            if (cameraVectorLength > 0) {
+            if (cameraVectorLength > 0 && that.geoIndex == 0) { // sphere
         		var unitVector = (new THREE.Vector3())
                     .copy(that.camera.position)
                     .normalize()
@@ -159,62 +155,37 @@ function mediaUtils(scene, camera, stills, videos,
         that.showToast("Loading '" + fileName + "'.", 2000);
         var pathToTexture = 'media/' + fileName + '.jpg';
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
-            var mat = that.setMaterialForTexture(texture);
-            that.skyBox.material = mat;
-            that.plane.material = mat;
-            that.torus.material = mat;
+            that.material = that.setMaterialForTexture(texture);
+            that.displayMesh.material = that.material;
         });
     }
-    this.toggleView = function(geoIndex) {
-        if (geoIndex == 0)
-            sphereOnlyView();
-        if (geoIndex == 1)
-            torusOnlyView();
-        if (geoIndex == 2)
-            planeOnlyView();
-    }
-    function sphereOnlyView() {
-        that.skyBox.visible = true;
-        that.plane.visible = false;
-        that.torus.visible = false;
-    }
-    function planeOnlyView() {
-        that.skyBox.visible = false;
-        that.plane.visible = true;
-        that.torus.visible = false;
-    }
-    function torusOnlyView() {
-        that.skyBox.visible = false;
-        that.plane.visible = false;
-        that.torus.visible = true;
+    this.toggleView = function(desiredGeoIndex) {
+        that.geoIndex = desiredGeoIndex;
+        var segment = 256.;
+        var sphereRadius = 10;
+        that.scene.remove(that.displayMesh);
+        if (that.geoIndex == 0) {
+            that.displayGeometry = new THREE.SphereGeometry(sphereRadius,segment,segment);
+            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
+            that.displayMesh.scale.set(1,1,-1);
+        }
+        if (that.geoIndex == 1) {
+            that.displayGeometry = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
+            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
+            that.displayMesh.rotateY(Math.PI/2);
+        }
+        if (that.geoIndex == 2) {
+            that.displayGeometry = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
+            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
+            that.displayMesh.rotateX(Math.PI/2);
+        }
+        console.log("geoIndex = " + that.geoIndex);
+        that.displayMesh.position.set(0,0,0);
+        that.scene.add(that.displayMesh);
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.setMaterialForTexture = function(texture) {
             return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
-    }
-    this.initSkyBox = function() {
-        var segment = 256.;
-        var sphereRadius = 10;
-        var skyGeometry = new THREE.SphereGeometry(sphereRadius,segment,segment);
-		var newMaterial = new THREE.MeshNormalMaterial();
-        that.skyBox = new THREE.Mesh( skyGeometry, newMaterial);
-        that.scene.add( that.skyBox );
-        that.skyBox.position.set(0,0,0);
-        that.skyBox.scale.set(1,1,-1);
-
-        // the plane is used for debuggin Mobius transforms and is hidden most of the time.
-        var planeGeometry = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
-        that.plane = new THREE.Mesh( planeGeometry, newMaterial );
-        that.plane.rotateY(Math.PI/2);
-        that.plane.visible = false;
-        that.scene.add( that.plane );
-
-        var torusGeometry = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
-        that.torus = new THREE.Mesh( torusGeometry, newMaterial );
-        that.torus.rotateX(Math.PI/2);
-        that.torus.visible = false;
-        that.scene.add( that.torus );
-
     }
     this.initVideo = function() {
         that.video  = document.getElementById('video');
@@ -242,10 +213,8 @@ function mediaUtils(scene, camera, stills, videos,
         that.video.play();
 
         that.videoTexture.minFilter = THREE.LinearFilter;   // eliminates aliasing when tiling textures.
-        var videoMaterial = that.setMaterialForTexture(that.videoTexture);
-        that.skyBox.material = videoMaterial;
-        that.plane.material = videoMaterial;
-        that.torus.material = videoMaterial;
+        that.material = that.setMaterialForTexture(that.videoTexture);
+        that.displayMesh.material = that.material;
         that.videoDisplayed = true;
         that.toggleVideoControls();
 	}
