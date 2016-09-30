@@ -37,7 +37,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 	    e2y: { type: 'f', value: 0. },
         loxodromicX: {type: 'f', value: 1. },
         loxodromicY: {type: 'f', value: 0. },
-        drosteType: {type: 'i', value: 0 }
+        drosteType: {type: 'i', value: 0 },
+        drosteSpiral: {type: 'i', value: 0 },
+        drosteZoom: {type: 'i', value: 0}
 	};
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
@@ -77,9 +79,11 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	appendSingleIcon(container, 'transformControlIcon', 'cancel.png', 'Cancel Zoom', that.zoomCancel);
     	appendSingleIcon(container, 'transformControlIcon', 'Epsilon1.svg', 'Set Fixed Point 1', that.setFixedPoint1);
         appendSingleIcon(container, 'transformControlIcon', 'Epsilon2.svg', 'Set Fixed Point 2', that.setFixedPoint2);
-        appendSingleIcon(container, 'transformControlIcon', 'spiral.png', 'Set Loxodromic constant', that.setLoxoPointFromClick);
+        appendSingleIcon(container, 'transformControlIcon', 'Epsilon3.svg', 'Set Loxodromic constant', that.setLoxoPointFromClick);
         appendSingleIcon(container, 'transformControlIcon', 'roundDroste.png', 'Round Droste', that.roundDroste);
         appendSingleIcon(container, 'transformControlIcon', 'squareDroste.jpg', 'Square Droste', that.squareDroste);
+        appendSingleIcon(container, 'transformControlIcon', 'spiral.png', 'Toggle Spiral Droste Effect', that.toggleSpiralDroste);
+        appendSingleIcon(container, 'transformControlIcon', 'zoomIn.png', 'Toggle Droste Zoom Effect', that.toggleDrosteZoom);
 
     	var container = document.getElementById(that.transformControls2ContainerId);
         appendSingleIcon(container, 'transformControlIcon', 'reset.png', 'Reset', that.reset);
@@ -207,6 +211,13 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.squareDroste = function() {
         that.setFixedPointsIfUndefined();
         that.uniforms.drosteType.value = 2;
+    }
+    this.toggleSpiralDroste = function() {
+        that.uniforms.drosteSpiral.value = that.uniforms.drosteSpiral.value == 1 ? 0 : 1;
+    }
+    this.toggleDrosteZoom = function() {
+        that.uniforms.drosteZoom.value = (that.uniforms.drosteZoom.value + 1) % 4;
+        console.log(that.uniforms.drosteZoom.value);
     }
     this.setLoxoPoint = function(x,y) {
         that.setFixedPointsIfUndefined();

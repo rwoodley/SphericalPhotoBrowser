@@ -192,6 +192,8 @@
             uniform int complexEffect4OnOff;
             uniform int complexEffect5OnOff;
             uniform int drosteType;
+            uniform int drosteSpiral;
+            uniform int drosteZoom;
 
             uniform bool showFixedPoints;
             vec2 one = vec2(1.0, 0.0);
@@ -216,27 +218,26 @@
                 return applyInverseMobiusTransform(z,one,-e1,one,-e2);
             }
             vec2 applyRoundDroste(in vec2 z) {
-                float r1 = 0.2;     // how big the annulus appears on the screen
-                float r2 = 0.7;     // how wide (relative to r1 each annulus is.
+                float r1 = 0.1;     // how big the annulus appears on the screen
+                float r2 = 0.9;     // how wide (relative to r1 each annulus is.
 
-                z = z*1.; // Play with this to zoom
-                // 1. Take the annulus to a strip
-                z = cx_log(z); 
-                // 2. Tile the strips
-                z.x = mod(z.x, log(r2/r1));
-                // 3. Take the tiled strips back to ordinary space.
+                float zoomFactor = 1.0;
+                if (drosteZoom > 0) {
+                    float zoom=float(iGlobalTime) * float(drosteZoom);
+                    zoomFactor = exp(1.+zoom/500.);
+                }
+                z = cx_log(z/zoomFactor); 
+
+                float scale = r2/r1;
+                if (drosteSpiral == 1) {
+                    float twist = atan(log(scale)/(2.0*PI));
+                    vec2 temp = cx_exp(vec2(0.,twist))*cos(twist);
+                    z = cx_divide(z, temp);
+                }
+
+                z.x = mod(z.x+scale*.6, log(scale));
                 z = cx_exp(z)*r1;
                 return z;
-
-                // my old way of doing droste with simple mod. works only in the northern
-                // hemisphere of the riemann sphere since does modulo(modulus(z))
-                // that is z must be > 1 to get the effect.
-//                float annulusThickness = 40.0;
-//                float lenz = cx_modulus(z*18.);
-//                float remainder = lenz - annulusThickness * float(int(lenz/annulusThickness));
-//                float arg = cx_arg(z);
-//                z = remainder * vec2(cos(arg),sin(arg));
-//                return z;
             }
             float f(float x){
                 return exp2(-floor(log2(x))-2.);
@@ -261,8 +262,11 @@
                 float theta = cx_arg(z);
 
                 float zoomFactor = 1.0;
-                float zoom=float(iGlobalTime);
-//                zoomFactor = exp(1.+zoom/500.);
+                if (drosteZoom > 0) {
+                    float zoom=float(iGlobalTime) * float(drosteZoom);
+                    zoomFactor = exp(1.+zoom/500.);
+                }
+                z = cx_log(z/zoomFactor); 
 
                 // make octagon
                 float ndiv = 8.;
@@ -272,29 +276,14 @@
                 float b = cos(angle);
                 float scale = b*r2/r1;
 
-                z = z/zoomFactor;
-                z = cx_log(z); 
-                float twist = atan(log(scale)/(2.0*PI));
-                vec2 temp = cx_exp(vec2(0.,twist))*cos(twist);
-                z = cx_product(z, temp);
+                if (drosteSpiral == 1) {
+                    float twist = atan(log(scale)/(2.0*PI));
+                    vec2 temp = cx_exp(vec2(0.,twist))*cos(twist);
+                    z = cx_divide(z, temp);
+                }
 
                 z.x = mod(z.x , log(scale));
-
                 z = cx_exp(z);
-                return z;
-
-            }
-            vec2 applyGreenDroste(in vec2 z) {
-                float r1 = 0.2;     // how big the annulus appears on the screen
-                float r2 = 0.7;     // how wide (relative to r1 each annulus is.
-
-                z = z*1.; // Play with this to zoom
-                float theta = cx_arg(z);
-                float b = abs(sin(theta))/2.0 + .5;
-                //z = vec2(b*cos(theta), b*sin(theta));
-                z = cx_log(z); 
-                z.x = mod(z.x, log(b/r1));
-                z = cx_exp(z)*r1;
                 return z;
 
             }
