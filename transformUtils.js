@@ -24,6 +24,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.cameraVectorLength = 1;    // by default, unit vector.
     this.uniforms = {
 	    iRotationAmount:    { type: 'f', value: 0.0 },
+	    startTime:    { type: 'f', value: 0.0 },
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
         complexEffect1OnOff: { type: 'i', value: 1 },
@@ -206,13 +207,14 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.roundDroste = function() {
         that.setFixedPointsIfUndefined();
-        that.uniforms.drosteType.value = 1;
+        that.uniforms.drosteType.value = that.uniforms.drosteType.value > 0 ? 0 : 1;
     }
     this.squareDroste = function() {
         that.setFixedPointsIfUndefined();
-        that.uniforms.drosteType.value = 2;
+        that.uniforms.drosteType.value = that.uniforms.drosteType.value > 0 ? 0 : 2;
     }
     this.toggleSpiralDroste = function() {
+        that.uniforms.startTime.value = that.uniforms.iGlobalTime.value;
         that.uniforms.drosteSpiral.value = that.uniforms.drosteSpiral.value == 1 ? 0 : 1;
     }
     this.toggleDrosteZoom = function() {
@@ -229,8 +231,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
                 that.uniforms.loxodromicY.value.toFixed(2) + "i)"
             , 2000);
     }
-    this.zoomIn = function() { that.zoom(.5); }
-    this.zoomOut = function() { that.zoom(2.); }
+    this.zoomIn = function() { that.zoom(.8); }
+    this.zoomOut = function() { that.zoom(1.25); }
     this.zoomCancel = function() { that.setLoxoPoint(1.,0.); }
     this.zoom = function(factor) {
 		that.setFixedPointsIfUndefined();

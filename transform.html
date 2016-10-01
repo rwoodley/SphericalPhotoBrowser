@@ -179,6 +179,7 @@
             varying vec2 vUv;  
             uniform float iRotationAmount;
             uniform float iGlobalTime;
+            uniform float startTime;
             uniform float loxodromicX;
             uniform float loxodromicY;
             uniform float e1x;
@@ -218,12 +219,12 @@
                 return applyInverseMobiusTransform(z,one,-e1,one,-e2);
             }
             vec2 applyRoundDroste(in vec2 z) {
-                float r1 = 0.1;     // how big the annulus appears on the screen
+                float r1 = 0.3;     // how big the annulus appears on the screen
                 float r2 = 0.9;     // how wide (relative to r1 each annulus is.
 
                 float zoomFactor = 1.0;
                 if (drosteZoom > 0) {
-                    float zoom=float(iGlobalTime) * float(drosteZoom);
+                    float zoom=float(iGlobalTime - startTime) * float(drosteZoom);
                     zoomFactor = exp(1.+zoom/500.);
                 }
                 z = cx_log(z/zoomFactor); 
@@ -263,7 +264,7 @@
 
                 float zoomFactor = 1.0;
                 if (drosteZoom > 0) {
-                    float zoom=float(iGlobalTime) * float(drosteZoom);
+                    float zoom=float(iGlobalTime-startTime) * float(drosteZoom);
                     zoomFactor = exp(1.+zoom/500.);
                 }
                 z = cx_log(z/zoomFactor); 
@@ -430,7 +431,7 @@
                 _scene = new THREE.Scene();
                 _controls = new THREE.OrbitControls( _camera, _container.domElement );
                 _axes = new THREE.AxisHelper( 15000 );
-                _scene.add(_axes);
+                // _scene.add(_axes);
                 _renderer =  new THREE.WebGLRenderer({ antialias: true } );
                 _mediaUtils = new mediaUtils(
                     _scene, 
