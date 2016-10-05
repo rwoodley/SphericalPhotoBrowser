@@ -1,1 +1,1 @@
-myTextures=["CBOT","CC","CityHall","Gallery","NESW","Patio","Prarie","Tomatoes","platform","uv"]
+myTextures=["CBOT.jpg","CC.jpg","CityHall.jpg","Falzone.jpg","Gallery.jpg","NESW.jpg","P1000733.JPG","P1000739.JPG","P1000746.JPG","P1000804.JPG","P1000831.JPG","Patio.jpg","Prarie.jpg","Tomatoes.jpg","Tomeka1.jpg","Tomeka2.jpg","Vandermark.jpg","platform.jpg","tomekaS.png","uv.jpg"]
