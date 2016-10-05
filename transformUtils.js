@@ -50,6 +50,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
             vertexShader: document.getElementById( 'vs' ).textContent,
             fragmentShader: document.getElementById( 'fs' ).textContent,
             side: THREE.DoubleSide,
+            transparent: true,
             // wireframe: true
         } );
         return newMaterial;                    
@@ -103,24 +104,32 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.viewState = 0;
     this.toggleView = function() {
         that.viewState++;
-        that.viewState = that.viewState % 4;
+        that.viewState = that.viewState % 6;
         if (that.viewState == 0) {
             that.cameraVectorLength = 1;
             that.mediaUtils.toggleView(0);
         }
         else
-        if (that.viewState == 1) {
+        if (that.viewState == 5) {
             that.cameraVectorLength = -1;
             that.mediaUtils.toggleView(1);
         }
         else
-        if (that.viewState == 2) {
+        if (that.viewState == 3) {
             that.cameraVectorLength = 15;
             that.mediaUtils.toggleView(0);
         }
-        else {
+        if (that.viewState == 4) {
             that.cameraVectorLength = 1;
             that.mediaUtils.toggleView(2);
+        }
+        if (that.viewState == 1) {
+            that.cameraVectorLength = 15;
+            that.mediaUtils.toggleView(4);
+        }
+        if (that.viewState == 2) {
+            that.cameraVectorLength = 15;
+            that.mediaUtils.toggleView(3);
         }
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
@@ -149,7 +158,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.uniforms.complexEffect4OnOff.value = that.uniforms.complexEffect4OnOff.value == 0 ? 1 : 0;
     }
     this.complexEffect5 = function() { 
-        that.uniforms.complexEffect5OnOff.value++;
+        that.uniforms.complexEffect5OnOff.value = 
+        that.uniforms.complexEffect5OnOff.value == 0 ? 1 : 0;
+        // that.uniforms.complexEffect5OnOff.value++;
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.point1Defined && !that.point2Defined) {

@@ -50,14 +50,15 @@ function mediaUtils(scene, camera, stills, videos,
     };
 
     this.initMediaUtils = function() {
-        that.toggleView(0);
+        that.toggleView(1);
 	    that.initVideo();
 	    that.toggleControlPanel();
 	    that.setupMediaIcons();
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
-        that.updateSkyDomeForFileName(myTextures[0]);
+        that.updateSkyDomeForFileName('uv.jpg');
+        //that.updateSkyDomeForFileName(myTextures[0]);
         //that.updateVideoForFileName(myVideos[0]);
         that.setInitialCameraPosition();
 	};
@@ -153,7 +154,7 @@ function mediaUtils(scene, camera, stills, videos,
         that.toggleVideoControls();
         that.video.pause();
         that.showToast("Loading '" + fileName + "'.", 2000);
-        var pathToTexture = 'media/' + fileName + '.jpg';
+        var pathToTexture = 'media/' + fileName;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
             that.material = that.setMaterialForTexture(texture);
             that.displayMesh.material = that.material;
@@ -178,6 +179,40 @@ function mediaUtils(scene, camera, stills, videos,
             that.displayGeometry = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
             that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
             that.displayMesh.rotateX(Math.PI/2);
+        }
+        if (that.geoIndex == 3) {
+            that.displayGeometry = 
+            new THREE.ParametricGeometry( 
+                psphere, 
+                40, 40 );
+            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
+            that.displayMesh.rotateX(Math.PI/2);
+        }
+        if (that.geoIndex == 4) {
+            that.displayGeometry = 
+            new THREE.ParametricGeometry( 
+                klein, 
+                40, 40 );
+
+            // that.displayGeometry = new THREE.IcosahedronGeometry( 1,0 );
+            //that.displayGeometry = new THREE.TubeGeometry( helix, 128, 2.5, 32 )
+
+            // var points = [];
+            // var height = 5;
+            // var count = 30;
+            // for (var i = 0; i < count; i++) {
+            //     points.push(new THREE.Vector3((Math.sin(i * 0.2) 
+            //     + Math.cos(i * 0.3)) * height + 12, 
+            //     0, ( i - count ) + count / 2));
+            // }
+            // // use the same points to create a convexgeometry
+            // var latheGeometry = new THREE.LatheGeometry
+            //     (points, 40, 0, 3.1415926*2.);
+            // that.displayGeometry = latheGeometry;
+
+            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
+            // that.displayMesh.scale.set(1,-1,1);
+            that.displayMesh.rotateX(-Math.PI/2);
         }
         console.log("geoIndex = " + that.geoIndex);
         that.displayMesh.position.set(0,0,0);
