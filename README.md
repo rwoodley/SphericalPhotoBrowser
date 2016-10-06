@@ -17,7 +17,12 @@ Mouse over the icons at the top to view different images.
 
 You can view a demo here: http://rwoodleymedia.org/SphericalPhotoBrowser/
 
-Links of interest:
+References:   
+
+- Needham's "Visual Complex Analysis":   
+https://www.amazon.com/Visual-Complex-Analysis-Tristan-Needham/dp/0198534469   
+
+- Indra's Pearls.
 
 - Visualizations of many mathematicalsurfaces, Kleinian groups, etc:   
 http://www.math.harvard.edu/~ctm/gallery/
@@ -25,5 +30,7 @@ http://www.math.harvard.edu/~ctm/gallery/
 - Apollonian Gasket:   
 https://math.dartmouth.edu/archive/m56s13/public_html/Conley_proj.pdf
 
+- Apollonian Circle Packings: Geometry and Group Theory, I. The Apollonian Group: 
+http://www.math.ucsd.edu/~ronspubs/05_03_apollonian.pdf
 
 
