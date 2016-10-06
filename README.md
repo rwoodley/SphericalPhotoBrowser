@@ -19,7 +19,11 @@ You can view a demo here: http://rwoodleymedia.org/SphericalPhotoBrowser/
 
 Links of interest:
 
-Visualizations of many mathematicalsurfaces, Kleinian groups, etc:
+- Visualizations of many mathematicalsurfaces, Kleinian groups, etc:   
 http://www.math.harvard.edu/~ctm/gallery/
+
+- Apollonian Gasket:   
+https://math.dartmouth.edu/archive/m56s13/public_html/Conley_proj.pdf
+
 
 
