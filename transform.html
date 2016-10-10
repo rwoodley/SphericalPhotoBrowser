@@ -78,9 +78,16 @@
 		<script src="lib/jquery-3.1.0.min.js"></script>
         <script src="lib/toast.js"></script>
         <script src="myGeometries.js"></script>
+
+        <script src="shaderCode/main.js"></script>
+        <script src="shaderCode/droste.js"></script>
+        <script src="shaderCode/mathUtils.js"></script>
+
         <script src="mediaUtils.js"></script>
         <script src="transformUtils.js"></script>
         <script src="utils.js"></script>
+
+        
         <script src="media/files.js"></script>
         <script src="media/videos.js"></script>
         <script>
@@ -126,84 +133,8 @@
 
         <script id="fs" type="x-shader/x-fragment">
 
-            // ====== Math Utils =======
 
-            #define PI 3.1415926535897932384626433832795
-            #define cx_product(a, b) vec2(a.x*b.x-a.y*b.y, a.x*b.y+a.y*b.x)
-            #define cx_conjugate(a) vec2(a.x,-a.y)
-            #define cx_divide(a, b) vec2(((a.x*b.x+a.y*b.y)/(b.x*b.x+b.y*b.y)),((a.y*b.x-a.x*b.y)/(b.x*b.x+b.y*b.y)))
-            // emulate OpenGL 4.5's mix(,,bool)
-            float mix(float x, float y, bool a) {
-              return a ? y : x;
-            }
-            //#define cx_abs(a) sqrt(a.x*a.x + a.y*a.y)
-            #define cx_modulus(a) length(a)
-            #define cx_conj(a) vec2(a.x,-a.y)
-            #define cx_arg(a) atan2(a.y,a.x)
-
-            float atan2(in float y, in float x) {
-                // http://stackoverflow.com/questions/26070410/robust-atany-x-on-glsl-for-converting-xy-coordinate-to-angle
-                bool s = (abs(x) >= abs(y));
-                float res = mix(PI/2.0 - atan(x,y), atan(y,x), s);
-                return res;
-            }
-            // https://github.com/julesb/glsl-util/blob/master/complexvisual.glsl
-            vec2 cx_sqrt(vec2 a) {
-                float r = sqrt(a.x*a.x+a.y*a.y);
-                float rpart = sqrt(0.5*(r+a.x));
-                float ipart = sqrt(0.5*(r-a.x));
-                if (a.y < 0.0) ipart = -ipart;
-                return vec2(rpart,ipart);
-            }
-            vec2 cx_log(vec2 a) {
-                float rpart = sqrt((a.x*a.x)+(a.y*a.y));
-                float ipart = atan2(a.y,a.x);
-                if (ipart > PI) ipart=ipart-(2.0*PI);
-                return vec2(log(rpart),ipart);
-            }
-            vec2 cx_exp(vec2 z) {
-                return vec2(exp(z.x) * cos(z.y), exp(z.x) * sin(z.y));
-            }
-            vec2 cx_pow(vec2 z, vec2 y) {
-                return  cx_exp(cx_product(y, cx_log(z)));
-
-            }
-            vec3 complexToCartesian(vec2 c) {
-                float denom = 1.0 + c.x*c.x + c.y*c.y;
-                float x = 2.*c.x/denom;
-                float y = 2.*c.y/denom;
-                float z = (c.x*c.x + c.y*c.y - 1.0)/denom;
-                return vec3(x,y,z);
-            }
-
-            // ===== shader control variables
-            uniform sampler2D iChannel0;
-            varying vec2 vUv;  
-            uniform float iRotationAmount;
-            uniform float iGlobalTime;
-            uniform float startTime;
-            uniform float loxodromicX;
-            uniform float loxodromicY;
-            uniform float e1x;
-            uniform float e1y;
-            uniform float e2x;
-            uniform float e2y;
-            uniform int mobiusEffectsOnOff; 
-            uniform int complexEffect1OnOff;
-            uniform int complexEffect2OnOff;
-            uniform int complexEffect3OnOff;
-            uniform int complexEffect4OnOff;
-            uniform int complexEffect5OnOff;
-            uniform int drosteType;
-            uniform int drosteSpiral;
-            uniform int drosteZoom;
-
-            uniform bool showFixedPoints;
-            vec2 one = vec2(1.0, 0.0);
-            vec2 zero = vec2(0.0, 0.0);
-            vec2 i = vec2(0., 1.);
-
-            // ====== Transformation Code
+           // ====== Transformation Code
             struct xform { vec2 a; vec2 b; vec2 c; vec2 d; };
             
             xform xformCtor(in vec2 a, in vec2 b, in vec2 c, in vec2 d) {
@@ -229,75 +160,6 @@
             vec2 inverseTransformForFixedPoints(in vec2 z, in vec2 e1, in vec2 e2) {
                 // inverse is (dz-b)/(-cz+a). a and c are 1.
                 return applyInverseMobiusTransformation(z,xformCtor(one,-e1,one,-e2));
-            }
-            vec2 applyRoundDroste(in vec2 z) {
-                float r1 = 0.3;     // how big the annulus appears on the screen
-                float r2 = 0.9;     // how wide (relative to r1 each annulus is.
-
-                float zoomFactor = 1.0;
-                if (drosteZoom > 0) {
-                    float zoom=float(iGlobalTime - startTime) * float(drosteZoom);
-                    zoomFactor = exp(1.+zoom/500.);
-                }
-                z = cx_log(z/zoomFactor); 
-
-                float scale = r2/r1;
-                if (drosteSpiral == 1) {
-                    float twist = atan(log(scale)/(2.0*PI));
-                    vec2 temp = cx_exp(vec2(0.,twist))*cos(twist);
-                    z = cx_divide(z, temp);
-                }
-
-                z.x = mod(z.x+scale*.6, log(scale));
-                z = cx_exp(z)*r1;
-                return z;
-            }
-            float f(float x){
-                return exp2(-floor(log2(x))-2.);
-            }
-            vec2 applySquareDroste(in vec2 z, float zoom) {
-                // see http://roy.red/infinite-regression-.html#infinite-regression
-                // see http://www.josleys.com/article_show.php?id=82
-
-                float zoomFactor = exp(zoom*500.);
-                z = z/zoomFactor; // Play with this to zoom
-                vec2 a_z = abs(z);
-                float scale = f(max(a_z.x,a_z.y));
-                return z*scale;
-
-            }
-            vec2 applyArbitraryDroste(in vec2 z) {
-                float r1 = 0.2;     // how big the annulus appears on the screen
-                float r2 = 0.7;     // how wide (relative to r1 each annulus is.
-
-                float r = length(z);
-                float theta = cx_arg(z);
-
-                float zoomFactor = 1.0;
-                if (drosteZoom > 0) {
-                    float zoom=float(iGlobalTime-startTime) * float(drosteZoom);
-                    zoomFactor = exp(1.+zoom/500.);
-                }
-                z = cx_log(z/zoomFactor); 
-
-                // make octagon
-                float ndiv = 8.;
-                float angle = PI/ndiv;
-                //float shortestR = cos(angle);
-                angle = angle - mod(theta, 2.*PI/ndiv);
-                float b = cos(angle);
-                float scale = b*r2/r1;
-
-                if (drosteSpiral == 1) {
-                    float twist = atan(log(scale)/(2.0*PI));
-                    vec2 temp = cx_exp(vec2(0.,twist))*cos(twist);
-                    z = cx_divide(z, temp);
-                }
-
-                z.x = mod(z.x , log(scale));
-                z = cx_exp(z);
-                return z;
-
             }
             vec2 applyRotation(in vec2 z, in float radians) {
                 // vec2 exp = cx_exp(vec2(0.,radians));

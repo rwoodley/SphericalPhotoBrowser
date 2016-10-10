@@ -45,10 +45,17 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
         texture.minFilter = THREE.LinearFilter; // eliminates aliasing when tiling textures.
+        var fragmentShaderCode = 
+            ""
+            + SHADERCODE.uniformsAndGlobals()
+            + SHADERCODE.mathUtils()
+            + SHADERCODE.drosteUtils()
+            + document.getElementById( 'fs' ).textContent
+        ;
         newMaterial = new THREE.ShaderMaterial( {
             uniforms: that.uniforms,
             vertexShader: document.getElementById( 'vs' ).textContent,
-            fragmentShader: document.getElementById( 'fs' ).textContent,
+            fragmentShader: fragmentShaderCode,
             side: THREE.DoubleSide,
             transparent: true,
             // wireframe: true
