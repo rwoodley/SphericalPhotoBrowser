@@ -49,7 +49,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
             ""
             + SHADERCODE.uniformsAndGlobals()
             + SHADERCODE.mathUtils()
+            + SHADERCODE.mobiusTransformUtils()
             + SHADERCODE.drosteUtils()
+            + SHADERCODE.schottkyUtils()
             + document.getElementById( 'fs' ).textContent
         ;
         newMaterial = new THREE.ShaderMaterial( {

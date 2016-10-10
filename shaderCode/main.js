@@ -1,6 +1,8 @@
 SHADERCODE = {
     drosteUtils: "",
-    mathUtils: ""
+    mathUtils: "",
+    schottkyUtils: "",
+    mobiusTransformUtils: ""
 };
 SHADERCODE.uniformsAndGlobals = function() {
 var x = `  
