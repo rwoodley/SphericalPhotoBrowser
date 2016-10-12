@@ -34,14 +34,23 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 	    showFixedPoints: { type: 'i', value: 1 },
 	    e1x: { type: 'f', value: 0. },
 	    e1y: { type: 'f', value: 0. },
-	    e2x: { type: 'f', value: 0. },
+	    e2x: { type: 'f', value: 0. }, 
 	    e2y: { type: 'f', value: 0. },
         loxodromicX: {type: 'f', value: 1. },
         loxodromicY: {type: 'f', value: 0. },
         drosteType: {type: 'i', value: 0 },
         drosteSpiral: {type: 'i', value: 0 },
-        drosteZoom: {type: 'i', value: 0}
+        drosteZoom: {type: 'i', value: 0},
+        schottkyCircles: { type: "v3v", value: [
+            new THREE.Vector3(1.,1.,.5),
+            new THREE.Vector3(2.,1.,.5),
+            new THREE.Vector3(3.,1.,.5),
+            new THREE.Vector3(4.,1.,.5),
+            new THREE.Vector3(5.,1.,.5) 
+        ]},
 	};
+    var su = new schottkyUtils();
+    su.addUniforms(this.uniforms);
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
         texture.minFilter = THREE.LinearFilter; // eliminates aliasing when tiling textures.

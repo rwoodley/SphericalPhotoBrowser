@@ -62,6 +62,7 @@ void defineInitialCircles() {
     initialCircles.A.radius = xradius;
     float cnst = 1./sin(xtheta);
     cnst = 1.;
+    /*
     group_b = xformCtor(
                         vec2(s2,0.), 
                         one,
@@ -74,7 +75,12 @@ void defineInitialCircles() {
                         -i,
                         vec2(s2,0.));
     group_A = inverseXformCtor(group_a);
-    xFormForIndex[0] = group_a;
+    */
+    group_a = xformCtor(xforma[0], xforma[1], xforma[2], xforma[3]);
+    group_b = xformCtor(xformb[0], xformb[1], xformb[2], xformb[3]);
+    group_A = xformCtor(xformA[0], xformA[1], xformA[2], xformA[3]);
+    group_B = xformCtor(xformB[0], xformB[1], xformB[2], xformB[3]);
+    xFormForIndex[0] = group_b;
     xFormForIndex[1] = group_A;
     xFormForIndex[2] = group_b;
     xFormForIndex[3] = group_B;
@@ -135,7 +141,22 @@ vec4 getTextureColor(vec2 z) {
     }
     return vec4(0.,0.,0.,1.);
 }
+circle fromVec3(vec3 x) {
+    circle c;
+    c.center[0] = x[0];
+    c.center[1] = x[1];
+    c.radius = x[2];
+    return c;
+}
 vec4 applySchottky(in vec2 z) {
+
+    for (int i = 0; i < 4; i++) {
+        vec3 v = schottkyCircles[i];
+        circle c;
+        c = fromVec3(v);
+        if (insideCircle(c, z))
+            return vec4(1.,0.,0.,1.);
+    }
     defineInitialCircles();
 
   //  vec4 clr = highlightInnerCircle(z);

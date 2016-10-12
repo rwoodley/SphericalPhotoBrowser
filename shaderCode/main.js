@@ -29,6 +29,12 @@ var x = `
     uniform int drosteSpiral;
     uniform int drosteZoom;
 
+    uniform vec3 schottkyCircles[5];
+    uniform vec2 xforma[4];     // TODO: rename to schottkyXform.
+    uniform vec2 xformb[4];
+    uniform vec2 xformA[4];
+    uniform vec2 xformB[4];
+
     uniform bool showFixedPoints;
     vec2 one = vec2(1.0, 0.0);
     vec2 zero = vec2(0.0, 0.0);
