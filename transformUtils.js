@@ -49,7 +49,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
             new THREE.Vector3(5.,1.,.5) 
         ]},
 	};
-    var su = new schottkyUtils();
+//    var su = new schottkyUtils();
+    var su = new schottkyUtils2();
     su.addUniforms(this.uniforms);
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
