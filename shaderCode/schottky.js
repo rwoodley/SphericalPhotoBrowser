@@ -34,48 +34,25 @@ circle mobiusOnCircle(xform T, circle C) { // indra's pearls, page 91
     D.radius = cx_modulus(D.center - applyMobiusTransformation(C.center + C.radius, T));
     return D;
 }
-void addChildCircle(int xFormIndex, int circleType, circle c) {
-    // TODO: exclude inverses, etc.
-/*
-    xform x = xFormForIndex[xFormIndex];
-    circle child = mobiusOnCircle(x, c);
-    childCircle a;
-    a.c = child;
-    a.x  = x;
-    children[nChildren] = a;
-    nChildren++;
-*/
-}
 
 void defineInitialCircles() {
     float xradius = 1.;
     float xctr = 1./cos(xtheta);
     float s2 = sqrt(2.0);
-    initialCircles.b.center = vec2(-s2,0.);
-    initialCircles.b.radius = xradius;
-    initialCircles.B.center = vec2(s2,0.);
-    initialCircles.B.radius = xradius;
 
     initialCircles.a.center = -i*s2;
     initialCircles.a.radius = xradius;
     initialCircles.A.center = i*s2;
     initialCircles.A.radius = xradius;
+
+    initialCircles.b.center = vec2(-s2,0.);
+    initialCircles.b.radius = xradius;
+    initialCircles.B.center = vec2(s2,0.);
+    initialCircles.B.radius = xradius;
+
     float cnst = 1./sin(xtheta);
     cnst = 1.;
-    /*
-    group_b = xformCtor(
-                        vec2(s2,0.), 
-                        one,
-                        one,
-                        vec2(s2,0.));
-    group_B = inverseXformCtor(group_b);
-    group_a = xformCtor(
-                        vec2(s2,0.), 
-                        i,
-                        -i,
-                        vec2(s2,0.));
-    group_A = inverseXformCtor(group_a);
-    */
+
     group_a = xformCtor(xforma[0], xforma[1], xforma[2], xforma[3]);
     group_b = xformCtor(xformb[0], xformb[1], xformb[2], xformb[3]);
     group_A = xformCtor(xformA[0], xformA[1], xformA[2], xformA[3]);
@@ -85,13 +62,6 @@ void defineInitialCircles() {
     xFormForIndex[2] = group_b;
     xFormForIndex[3] = group_B;
 
-    nChildren = 0;
-    for (int i = 0; i < 4; i++) {
-        addChildCircle(i, 0, initialCircles.a);
-        addChildCircle(i, 1, initialCircles.A);
-        addChildCircle(i, 2, initialCircles.b);
-        addChildCircle(i, 3, initialCircles.B);
-    }
 }
 bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;

@@ -32,26 +32,35 @@ var cnum = function(real, imaginary) {
         return self;
     }
 }
-var circle = function(center,r) {
+var Circle = function(center,r) {
     this.center = center;   // a cnum
-    this.r = r;
+    this.radius = r;
 }
 var xform = function(a,b,c,d) {     // each one is a cnum.
     var self = this;
     self.a = a; self.b = b; self.c = c; self.d = d;
     self.applyXform = function(z) {
-        var top = cx_plus(x_product(z,self.a), self.b);
-        var bot = cx_plus(x_product(z,self.c), self.d);
+        var top = cx_plus(cx_product(z,self.a), self.b);
+        var bot = cx_plus(cx_product(z,self.c), self.d);
         return cx_divide(top, bot);
     }
-    self.mobiusOnCircle = function(C) {  // T is a transform, C a circle
+    self.mobiusOnCircle = function(C) {  // T is a transform, C a Circle
         var T = self;
         var zdenom = cx_conjugate(cx_plus(cx_divide(T.d, T.c), C.center));
-        var z = cx_minus(C.center, 
-                        cx_divide(new cnum(C.radius * C.radius,0.), zdenom));
-        var Dcenter = T.applyXform(z);
-        var Dradius = cx_modulus(D.center - applyMobiusTransformation(C.center + C.radius, T));
-        var D = new circle(Dcenter,Dradius);
+        var Dcenter;
+        if (zdenom.x == 0 && zdenom.y == 0) {
+            Dcenter = cx_divide(a,c);
+        }
+        else {
+            var z = cx_minus(C.center, 
+                            cx_divide(new cnum(C.radius * C.radius,0.), zdenom));
+            Dcenter = T.applyXform(z);
+        }
+        var Dradius = 
+        cx_modulus(
+            cx_minus(Dcenter, T.applyXform(
+                cx_plus(C.center, new cnum(C.radius, C.radius)))));
+        var D = new Circle(Dcenter,Dradius);
         return D;
     }
     self.getAsUniform = function() {
@@ -73,29 +82,7 @@ var schottkyUtils2 = function(
     xforms             // an array. 4 of these, eache one an array of 4 THREE.Vector2: a,b,c,d. corresponding to a, A, b, B
 ) {
     var self = this;
-    var xradius = 1.0;
-    var s2 = Math.sqrt(2.);
-    var one = new cnum(1.0,0);
-    var i = new cnum(0.0, 1.0);
-    var startingCircles = [];
-    startingCircles[0] = new circle(new cnum(0.0, -s2), xradius);    // a
-    startingCircles[1] = new circle(new cnum(0.0, s2), xradius);    // A
-    startingCircles[2] = new circle(new cnum(-s2, 0.), xradius);    // b
-    startingCircles[3] = new circle(new cnum(s2, 0.), xradius);    // B
-    self.xforma = new xform(
-        new cnum(s2,  0.0),
-        new cnum(0.0, 1.0),
-        new cnum(0.0, -1.0),
-        new cnum(s2, 0.0)
-    );
-    self.xformb = new xform(
-        new cnum(s2,  0.0),
-        new cnum(0.0, 1.0),
-        new cnum(0.0, -1.0),
-        new cnum(s2, 0.0)
-    );
-    self.xformA = self.xforma.getInverse();
-    self.xformB = self.xformb.getInverse();
+    self.circles = [];
     self.addUniforms = function(uniforms) {
         uniforms.xforma = {
             type: "v2v", value: self.xforma.getAsUniform()
@@ -111,25 +98,71 @@ var schottkyUtils2 = function(
         }
     }   
     self.init = function() {
-        self.xForms = xforms;
+        var xradius = 1.0;
+        var s2 = Math.sqrt(2.00);
+        var one = new cnum(1.0,0);
+        var i = new cnum(0.0, 1.0);
+        self.startingCircles = [];
+        self.startingCircles[0] = new Circle(new cnum(0.0, -s2), xradius);    // a
+        self.startingCircles[1] = new Circle(new cnum(0.0, s2), xradius);    // A
+        self.startingCircles[2] = new Circle(new cnum(-s2, 0.), xradius);    // b
+        self.startingCircles[3] = new Circle(new cnum(s2, 0.), xradius);    // B
+        self.xforma = new xform(
+            new cnum(s2,  0.0),
+            new cnum(0.0, 1.0),
+            new cnum(0.0, -1.0),
+            new cnum(s2, 0.0)
+        );
+        self.xformb = new xform(
+            new cnum(s2,  0.0),
+            new cnum(1.0, 0.0),
+            new cnum(1.0, 0.0),
+            new cnum(s2, 0.0)
+        );
+        self.xformA = self.xforma.getInverse();
+        self.xformB = self.xformb.getInverse();
+        self.xforms = [self.xforma, self.xformA, self.xformb, self.xformB];
         self.names = ['a', 'A', 'b', 'B'];
         self.inverses = [1,0,3,2];       // points to inverse transform.
         var result = [];
         var level = 0;
-        self.terminalLevel = 4;
-        for (var circle in self.startingCircles) {
-            self.genChildren(circle, level)
+        self.terminalLevel = 3;
+        for (var sindex in self.startingCircles) {
+            var slot = parseInt(sindex)+1;
+            var aslot = slot.toString();
+            self.genChildren(self.startingCircles[sindex], level, -1, slot, aslot);
         }
+        console.table(self.circles);
     }
-    self.genChildren = function(parent, level, lastXformIndex) {
+    self.genChildren = function(parent, level, lastXformIndex, slot, aslot) {
         level++;
         for (var i = 0; i < 4; i++) {
-            if (i == self.inverses[lastXformIndex])
+            if (i == self.inverses[lastXformIndex] && lastXformIndex > -1)
                 continue;   // a should not follow A, etc.
-            var xform = self.xForms[i];
-            childCircle = applyXform(parent, xform);
+            var xform = self.xforms[i];
+            // childCircle = applyXform(parent, xform);
+            childCircle = xform.mobiusOnCircle(parent);
+            var newslot = slot*4 + i;
+            var newaslot = aslot + i.toString();
+            var wrapper = {
+                'circle': childCircle,
+                'level': level,
+                'parent': parent,
+                'xform': i,
+                'parentXform': lastXformIndex,
+                'index': self.circles.length,
+                'cx': childCircle.center.x,
+                'cy': childCircle.center.y,
+                'r': childCircle.radius,
+                'slot': newslot,
+                'aslot': newaslot
+            };
+            if (newslot in self.circles)
+                console.log("DUP! at " + newslot + "," + newaslot + ","
+                + self.circles[newslot].aslot);
+            self.circles[newslot] = wrapper
             if (level < self.terminalLevel)
-                self.genChildren(childCircle, level, i);   
+                self.genChildren(childCircle, level, i, newslot,newaslot);   
         }
         level--;
     }
