@@ -4,7 +4,7 @@ SHADERCODE = {
     schottkyUtils: "",
     mobiusTransformUtils: ""
 };
-SHADERCODE.uniformsAndGlobals = function() {
+SHADERCODE.uniformsAndGlobals = function(numCircles) {
 var x = `  
 
     // ===== shader control variables
@@ -28,7 +28,8 @@ var x = `
     uniform int drosteType;
     uniform int drosteSpiral;
     uniform int drosteZoom;
-
+    uniform int uNumCircles;
+    uniform vec4 uCircles[$1];    // centerx, centery, radius
     uniform vec3 schottkyCircles[5];    // centerx, centery, radius
     uniform vec2 xforma[4];     // TODO: rename to schottkyXform.
     uniform vec2 xformb[4];     // a,b,c,d
@@ -40,5 +41,5 @@ var x = `
     vec2 zero = vec2(0.0, 0.0);
     vec2 i = vec2(0., 1.);
 `;
-return x;
+return x.replace('$1', numCircles);
 }

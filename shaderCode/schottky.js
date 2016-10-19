@@ -1,4 +1,4 @@
-SHADERCODE.schottkyUtils = function() {
+SHADERCODE.schottkyUtils = function(numCircles) {
 var x = `  
 
 struct circle {
@@ -66,6 +66,9 @@ void defineInitialCircles() {
 bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
 }
+bool nearCircleRim(circle a, vec2 z) {
+    return distance(z,a.center) > .95 *  a.radius;
+}
 vec2 schottkyGroup(in vec2 z, in vec2 s, in vec2 t, int index) {
     if (index > 0)
         z = applyMobiusTransformation(z, group_a);
@@ -120,13 +123,25 @@ circle fromVec3(vec3 x) {
 }
 vec4 applySchottky(in vec2 z) {
 
-    for (int i = 0; i < 4; i++) {
-        vec3 v = schottkyCircles[i];
+    for (int i = 0; i < $1; i++) {
+        vec4 v = uCircles[i];
+        if(v.a > 900.00) continue;
         circle c;
-        c = fromVec3(v);
-        if (insideCircle(c, z))
-            return vec4(1.,0.,0.,1.);
+        c = fromVec3(vec3(v.x,v.y,v.z));
+        if (insideCircle(c, z) && v.a > 2.) {
+            if (nearCircleRim(c,z))
+                return vec4(1.,0.,0.,1.);
+        }
+        else if (insideCircle(c, z) && v.a > 1.) {
+            if (nearCircleRim(c,z))
+                return vec4(0.,1.,0.,1.);
+        }
+        else if (insideCircle(c, z)) {
+            if (nearCircleRim(c,z))
+                return vec4(0.,0.,1.,1.);
+        }
     }
+    return vec4(0.,0.,0.,1.);
     defineInitialCircles();
 
   //  vec4 clr = highlightInnerCircle(z);
@@ -150,5 +165,5 @@ vec4 applySchottky(in vec2 z) {
     return clr;
 }
 `;
-return x;
+return x.replace('$1', numCircles);
 }

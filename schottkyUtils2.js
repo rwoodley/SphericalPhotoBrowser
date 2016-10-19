@@ -83,6 +83,8 @@ var schottkyUtils2 = function(
 ) {
     var self = this;
     self.circles = [];
+    self.maxSlot = 0;
+    self.numFilledSlots = 0;
     self.addUniforms = function(uniforms) {
         uniforms.xforma = {
             type: "v2v", value: self.xforma.getAsUniform()
@@ -96,7 +98,13 @@ var schottkyUtils2 = function(
         uniforms.xformB = {
             type: "v2v", value: self.xformB.getAsUniform()
         }
-    }   
+        uniforms.uCircles = {
+            type: "v4v", value: self.genCircleUniform()
+        }
+        uniforms.uNumCircles = {
+            type: "int", value: self.maxSlot
+        }
+    }
     self.init = function() {
         var xradius = 1.0;
         var s2 = Math.sqrt(2.00);
@@ -104,7 +112,7 @@ var schottkyUtils2 = function(
         var i = new cnum(0.0, 1.0);
         self.startingCircles = [];
         self.startingCircles[0] = new Circle(new cnum(0.0, -s2), xradius);    // a
-        self.startingCircles[1] = new Circle(new cnum(0.0, s2), xradius);    // A
+        self.startingCircles[1] = new Circle(new  cnum(0.0, s2), xradius);    // A
         self.startingCircles[2] = new Circle(new cnum(-s2, 0.), xradius);    // b
         self.startingCircles[3] = new Circle(new cnum(s2, 0.), xradius);    // B
         self.xforma = new xform(
@@ -142,8 +150,8 @@ var schottkyUtils2 = function(
             var xform = self.xforms[i];
             // childCircle = applyXform(parent, xform);
             childCircle = xform.mobiusOnCircle(parent);
-            var newslot = slot*4 + i;
-            var newaslot = aslot + i.toString();
+            var newslot = slot*5 + i + 1;
+            var newaslot = aslot + (i+1).toString();
             var wrapper = {
                 'circle': childCircle,
                 'level': level,
@@ -157,6 +165,7 @@ var schottkyUtils2 = function(
                 'slot': newslot,
                 'aslot': newaslot
             };
+            if (newslot > self.maxSlot) self.maxSlot = newslot;
             if (newslot in self.circles)
                 console.log("DUP! at " + newslot + "," + newaslot + ","
                 + self.circles[newslot].aslot);
@@ -165,6 +174,24 @@ var schottkyUtils2 = function(
                 self.genChildren(childCircle, level, i, newslot,newaslot);   
         }
         level--;
+    }
+    self.genCircleUniform = function() {
+        var res = [];
+        for (var i = 0; i < self.maxSlot; i++) {
+            var v4;
+            if (i in self.circles) {
+                var circ = self.circles[i].circle;
+                v4 = new THREE.Vector4(circ.center.x, circ.center.y, circ.radius,
+                            self.circles[i].level);
+                res.push(v4);
+            }
+            else {
+                v4 = new THREE.Vector4(0,0,0,999);
+            }
+            // res.push(v4);
+        }
+        self.numFilledSlots = res.length;
+        return res;
     }
     self.init();
 }

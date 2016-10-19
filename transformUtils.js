@@ -42,7 +42,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         drosteSpiral: {type: 'i', value: 0 },
         drosteZoom: {type: 'i', value: 0},
         schottkyCircles: { type: "v3v", value: [
-            new THREE.Vector3(1.,1.,.5),
+            new THREE.Vector3(1.,1.,.5), 
             new THREE.Vector3(2.,1.,.5),
             new THREE.Vector3(3.,1.,.5),
             new THREE.Vector3(4.,1.,.5),
@@ -57,11 +57,11 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         texture.minFilter = THREE.LinearFilter; // eliminates aliasing when tiling textures.
         var fragmentShaderCode = 
             ""
-            + SHADERCODE.uniformsAndGlobals()
+            + SHADERCODE.uniformsAndGlobals(su.numFilledSlots)
             + SHADERCODE.mathUtils()
             + SHADERCODE.mobiusTransformUtils()
             + SHADERCODE.drosteUtils()
-            + SHADERCODE.schottkyUtils()
+            + SHADERCODE.schottkyUtils(su.numFilledSlots)
             + document.getElementById( 'fs' ).textContent
         ;
         newMaterial = new THREE.ShaderMaterial( {
