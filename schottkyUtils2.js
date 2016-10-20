@@ -59,7 +59,7 @@ var xform = function(a,b,c,d) {     // each one is a cnum.
         var Dradius = 
         cx_modulus(
             cx_minus(Dcenter, T.applyXform(
-                cx_plus(C.center, new cnum(C.radius, C.radius)))));
+                cx_plus(C.center, new cnum(C.radius, 0)))));
         var D = new Circle(Dcenter,Dradius);
         return D;
     }
@@ -101,6 +101,9 @@ var schottkyUtils2 = function(
         uniforms.uCircles = {
             type: "v4v", value: self.genCircleUniform()
         }
+        uniforms.uCircleChildren = {
+            type: "v3v", value: self.genCircleChildrenUniform()
+        }
         uniforms.uNumCircles = {
             type: "int", value: self.maxSlot
         }
@@ -135,62 +138,79 @@ var schottkyUtils2 = function(
         var result = [];
         var level = 0;
         self.terminalLevel = 3;
+        self.circleIndex = 0;
         for (var sindex in self.startingCircles) {
-            var slot = parseInt(sindex)+1;
+            var index = parseInt(sindex);
+            var slot = index+1;
             var aslot = slot.toString();
-            self.genChildren(self.startingCircles[sindex], level, -1, slot, aslot);
+            var wrapper = self.makeWrapper(
+                self.startingCircles[sindex],
+                null, 
+                aslot, 0, index, index);
+            self.circles.push(wrapper);
+            self.genChildren(wrapper, level, self.inverses[sindex], aslot);
         }
         console.table(self.circles);
     }
-    self.genChildren = function(parent, level, lastXformIndex, slot, aslot) {
+    self.genChildren = function(parent, level, lastXformIndex, aslot) {
         level++;
         for (var i = 0; i < 4; i++) {
-            if (i == self.inverses[lastXformIndex] && lastXformIndex > -1)
+            if (i == self.inverses[lastXformIndex])
                 continue;   // a should not follow A, etc.
             var xform = self.xforms[i];
-            // childCircle = applyXform(parent, xform);
-            childCircle = xform.mobiusOnCircle(parent);
-            var newslot = slot*5 + i + 1;
+            childCircle = xform.mobiusOnCircle(parent.circle);
             var newaslot = aslot + (i+1).toString();
+            wrapper = self.makeWrapper(childCircle, parent, newaslot, level, i,
+                self.circles.length);
+            parent.children.push(wrapper);
+            self.circles.push(wrapper);
+            if (level < self.terminalLevel)
+                self.genChildren(wrapper, level, i,newaslot);   
+        }
+        level--;
+    }
+    self.makeWrapper = function(childCircle, parent, newaslot, level, i, index) {
             var wrapper = {
                 'circle': childCircle,
                 'level': level,
                 'parent': parent,
                 'xform': i,
-                'parentXform': lastXformIndex,
-                'index': self.circles.length,
+                'index': index,
                 'cx': childCircle.center.x,
                 'cy': childCircle.center.y,
                 'r': childCircle.radius,
-                'slot': newslot,
-                'aslot': newaslot
+                'aslot': newaslot,
+                'children': []
             };
-            if (newslot > self.maxSlot) self.maxSlot = newslot;
-            if (newslot in self.circles)
-                console.log("DUP! at " + newslot + "," + newaslot + ","
-                + self.circles[newslot].aslot);
-            self.circles[newslot] = wrapper
-            if (level < self.terminalLevel)
-                self.genChildren(childCircle, level, i, newslot,newaslot);   
-        }
-        level--;
+            return wrapper;
     }
     self.genCircleUniform = function() {
         var res = [];
-        for (var i = 0; i < self.maxSlot; i++) {
-            var v4;
-            if (i in self.circles) {
-                var circ = self.circles[i].circle;
-                v4 = new THREE.Vector4(circ.center.x, circ.center.y, circ.radius,
-                            self.circles[i].level);
-                res.push(v4);
-            }
-            else {
-                v4 = new THREE.Vector4(0,0,0,999);
-            }
-            // res.push(v4);
+        for (var i = 0; i < self.circles.length; i++) {
+            var circ = self.circles[i].circle;
+            var v4 = new THREE.Vector4(circ.center.x, circ.center.y, circ.radius,
+                        self.circles[i].level);
+            res.push(v4);
         }
         self.numFilledSlots = res.length;
+        return res;
+    }
+    self.genCircleChildrenUniform = function() {
+        var res = [];
+        for (var i = 0; i < self.circles.length; i++) {
+            var circ = self.circles[i];
+            if (circ.children.length > 0) {
+                var v3 = new THREE.Vector3(
+                        circ.children[0].index,
+                        circ.children[1].index,
+                        circ.children[2].index
+                    );
+                res.push(v3);
+            }
+            else 
+                res.push(new THREE.Vector3(-1.,-1.,-1.));
+        }
+        console.table(res);
         return res;
     }
     self.init();

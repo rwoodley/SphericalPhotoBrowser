@@ -67,7 +67,8 @@ bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
 }
 bool nearCircleRim(circle a, vec2 z) {
-    return distance(z,a.center) > .95 *  a.radius;
+    float d = distance(z,a.center);
+    return d > .95 *  a.radius && d <= a.radius;
 }
 vec2 schottkyGroup(in vec2 z, in vec2 s, in vec2 t, int index) {
     if (index > 0)
@@ -114,32 +115,54 @@ vec4 getTextureColor(vec2 z) {
     }
     return vec4(0.,0.,0.,1.);
 }
-circle fromVec3(vec3 x) {
+circle fromVec3(vec3 v) {
     circle c;
-    c.center[0] = x[0];
-    c.center[1] = x[1];
-    c.radius = x[2];
+    c.center[0] = v.x;
+    c.center[1] = v.y;
+    c.radius = v.z;
     return c;
 }
-vec4 applySchottky(in vec2 z) {
-
+circle fromVec4(vec4 v) {
+    return fromVec3(vec3(v.x,v.y,v.z));
+}
+int getVec3ValForIndex(vec3 v, int i) {
+    if (i == 0) return int(v.x);
+    if (i == 1) return int(v.y);
+    return int(v.z);
+}
+circle getChildCircle(vec3 chillun, int j) {
+    circle empty;
+    int target = getVec3ValForIndex(chillun, j);
+    if (target < 0) return empty;
     for (int i = 0; i < $1; i++) {
+        if (i == target) {
+            vec4 v = uCircles[i];
+            return fromVec4(v);
+        }
+    }
+    return empty;
+}
+vec4 applySchottky(in vec2 z) {
+    for (int i = 0; i < $1; i++) {
+        vec4 color;
+        if (i == 0) color = vec4(1.0,0.,0.,1.);
+        if (i == 1) color = vec4(1.0,1.,0.,1.);
+        if (i == 2) color = vec4(1.0,0.,1.,1.);
+        if (i == 3) color = vec4(0.0,1.,1.,1.);
         vec4 v = uCircles[i];
-        if(v.a > 900.00) continue;
+        if (v.a > 0.0) continue;
         circle c;
-        c = fromVec3(vec3(v.x,v.y,v.z));
-        if (insideCircle(c, z) && v.a > 2.) {
-            if (nearCircleRim(c,z))
-                return vec4(1.,0.,0.,1.);
+        c = fromVec4(v);
+        vec3 chillun = uCircleChildren[i];
+        for (int j = 0; j < 3; j++) {
+            circle cc = getChildCircle(chillun, j);
+            if (cc.radius > 0.0) {
+                if (insideCircle(cc, z) && nearCircleRim(cc, z))
+                    return color;
+            }
         }
-        else if (insideCircle(c, z) && v.a > 1.) {
-            if (nearCircleRim(c,z))
-                return vec4(0.,1.,0.,1.);
-        }
-        else if (insideCircle(c, z)) {
-            if (nearCircleRim(c,z))
-                return vec4(0.,0.,1.,1.);
-        }
+        if (nearCircleRim(c,z))
+            return color;
     }
     return vec4(0.,0.,0.,1.);
     defineInitialCircles();
@@ -165,5 +188,5 @@ vec4 applySchottky(in vec2 z) {
     return clr;
 }
 `;
-return x.replace('$1', numCircles);
+return x.replace('$1', numCircles).replace('$1', numCircles);
 }
