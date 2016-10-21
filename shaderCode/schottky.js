@@ -24,17 +24,34 @@ xform group_a;
 xform group_b;
 xform group_A;
 xform group_B;
-xform xFormForIndex[4];  // group_a, A, b, B
+
 circle mobiusOnCircle(xform T, circle C) { // indra's pearls, page 91
     circle D;
     vec2 z;
     vec2 zdenom = cx_conjugate(vec2(cx_divide(T.d, T.c) + C.center));
     z = C.center - cx_divide(vec2(C.radius * C.radius,0.), zdenom);
     D.center = applyMobiusTransformation(z, T);
-    D.radius = cx_modulus(D.center - applyMobiusTransformation(C.center + C.radius, T));
+    D.radius = cx_modulus(D.center - applyMobiusTransformation(C.center + vec2(C.radius,0.), T));
     return D;
 }
-
+circle getInitialCircle(int i) {
+    if (i == 0) return initialCircles.a;
+    if (i == 1) return initialCircles.A;
+    if (i == 2) return initialCircles.b;
+    return initialCircles.B;
+}
+xform getTransform(int i) {
+    if (i == 0) return group_a;
+    if (i == 1) return group_A;
+    if (i == 2) return group_b;
+    return group_B;
+}
+xform getInitialCircleTransform(int i) {
+    if (i == 1) return group_a;
+    if (i == 0) return group_A;
+    if (i == 3) return group_b;
+    return group_B;
+}
 void defineInitialCircles() {
     float xradius = 1.;
     float xctr = 1./cos(xtheta);
@@ -57,10 +74,6 @@ void defineInitialCircles() {
     group_b = xformCtor(xformb[0], xformb[1], xformb[2], xformb[3]);
     group_A = xformCtor(xformA[0], xformA[1], xformA[2], xformA[3]);
     group_B = xformCtor(xformB[0], xformB[1], xformB[2], xformB[3]);
-    xFormForIndex[0] = group_b;
-    xFormForIndex[1] = group_A;
-    xFormForIndex[2] = group_b;
-    xFormForIndex[3] = group_B;
 
 }
 bool insideCircle(circle a, vec2 z) {
@@ -76,18 +89,6 @@ vec2 schottkyGroup(in vec2 z, in vec2 s, in vec2 t, int index) {
    if (index < 0)
         z = applyInverseMobiusTransformation(z, group_a);
     return z;
-}
-vec4 highlightInnerCircle(vec2 z) {
-    circle c = initialCircles.A;
-    circle c1 = mobiusOnCircle(group_a, c);
-
-    if (insideCircle(c1, z)) {
-        return vec4(0,.0,1.,1.);
-    }
-    if (insideCircle(c, z)) {
-        return vec4(1.,.0,0.,1.);
-    }
-    return vec4(0.,1.,0.,1.);
 }
 vec2 applyInverseSchottkyTransformForCircle(vec2 z, int i) {
     if (i == 0)
@@ -142,32 +143,94 @@ circle getChildCircle(vec3 chillun, int j) {
     }
     return empty;
 }
-vec4 applySchottky(in vec2 z) {
+vec4 applySchottkyFromJS(in vec2 z) {
     for (int i = 0; i < $1; i++) {
-        vec4 color;
-        if (i == 0) color = vec4(1.0,0.,0.,1.);
-        if (i == 1) color = vec4(1.0,1.,0.,1.);
-        if (i == 2) color = vec4(1.0,0.,1.,1.);
-        if (i == 3) color = vec4(0.0,1.,1.,1.);
         vec4 v = uCircles[i];
-        if (v.a > 0.0) continue;
-        circle c;
-        c = fromVec4(v);
-        vec3 chillun = uCircleChildren[i];
-        for (int j = 0; j < 3; j++) {
-            circle cc = getChildCircle(chillun, j);
-            if (cc.radius > 0.0) {
-                if (insideCircle(cc, z) && nearCircleRim(cc, z))
-                    return color;
+        if (v.a == 0.0) {
+            circle c;
+            c = fromVec4(v);
+            if (insideCircle(c,z)) {
+                    return vec4(1.,0.,0.,1.);
+                //vec3 chillun = uCircleChildren[i];
+                if (nearCircleRim(c,z))
+                    return vec4(1.,1.,0.,1.);
+                else
+                    return vec4(1.,0.,0.,1.);
             }
         }
-        if (nearCircleRim(c,z))
-            return color;
     }
     return vec4(0.,0.,0.,1.);
-    defineInitialCircles();
+}
+vec4 highlightInnerCircle(vec2 z) {
+    circle c = initialCircles.A;
+    circle c1 = mobiusOnCircle(group_a, c);
 
-  //  vec4 clr = highlightInnerCircle(z);
+    if (insideCircle(c1, z)) {
+        return vec4(0,.0,1.,1.);
+    }
+    if (insideCircle(c, z)) {
+        return vec4(1.,.0,0.,1.);
+    }
+    return vec4(0.,1.,0.,1.);
+}
+int inverseTransformIndex(int i) {
+    if (i == 0) return 1;
+    if (i == 1) return 0;
+    if (i == 2) return 3;
+    if (i == 3) return 2;
+}
+vec4 getLevel2ContainingZ(xform T, vec2 z, int inCircleIndex) {
+    int xformIndex = inverseTransformIndex(inCircleIndex);
+    for (int circleIndex = 0; circleIndex < 4; circleIndex++) {
+        if (circleIndex != xformIndex) {
+            circle c1 =  mobiusOnCircle(T, getInitialCircle(circleIndex));
+            for (int i1 = 0; i1 < 4; i1++) {
+                if (i1 != inverseTransformIndex(xformIndex)) {
+                    xform T1 = getTransform(i1);
+                    circle c2 =  mobiusOnCircle(T1, c1);
+                    if (insideCircle(c2, z)) {
+                        return vec4(0.,0.,1.,1.);
+                    }
+                }
+            }
+        }
+    }
+    return vec4(0.,0.,0.,0.);
+}
+vec4 getLevel1ContainingZ(xform T, vec2 z, int inCircleIndex) {
+    int xformIndex = inverseTransformIndex(inCircleIndex);
+    for (int circleIndex = 0; circleIndex < 4; circleIndex++) {
+        if (circleIndex != xformIndex) {
+            circle c1 =  mobiusOnCircle(T, getInitialCircle(circleIndex));
+            if (insideCircle(c1, z)) {
+                return vec4(1.,0.,0.,1.);    
+            }
+        }
+    }
+    return vec4(0.,0.,0.,0.);
+}
+vec4 applySchottky(in vec2 z) {
+    defineInitialCircles();
+    vec4 clr;
+    for (int i = 0; i < 4; i++) {
+        circle c = getInitialCircle(i);     // 0 = a, 1 = A
+        xform T = getInitialCircleTransform(i); // 0=A,1=a
+        clr = getLevel2ContainingZ(T, z, i);
+        if (clr.a > 0.0) return clr;
+    }
+    for (int i = 0; i < 4; i++) {
+        circle c = getInitialCircle(i);     // 0 = a, 1 = A
+        xform T = getInitialCircleTransform(i); // 0=A,1=a
+        clr = getLevel1ContainingZ(T, z, i);
+        if (clr.a > 0.0) return clr;
+        if (insideCircle(c, z) == true) {
+            return vec4(0.,1.,0.,1.);
+        }
+    }
+    return vec4(1.,1.,1.,.3);
+}
+vec4 applyOldSchottky(in vec2 z) {
+
 
   // group_a takes A to a, normally. a1
   // we're starting with z on C, and want to get the right color, by unwinding xforms.
