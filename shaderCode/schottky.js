@@ -4,6 +4,7 @@ var x = `
 struct circle {
     vec2 center;
     float radius;
+    float radiusSquared;
 };
 struct childCircle {
     circle c;
@@ -31,7 +32,8 @@ circle mobiusOnCircle(xform T, circle C) { // indra's pearls, page 91
     vec2 zdenom = cx_conjugate(vec2(cx_divide(T.d, T.c) + C.center));
     z = C.center - cx_divide(vec2(C.radius * C.radius,0.), zdenom);
     D.center = applyMobiusTransformation(z, T);
-    D.radius = cx_modulus(D.center - applyMobiusTransformation(C.center + vec2(C.radius,0.), T));
+    D.radius = cx_modulus(D.center - 
+        applyMobiusTransformation(C.center + vec2(C.radius,0.), T));
     return D;
 }
 circle getInitialCircle(int i) {
@@ -189,6 +191,7 @@ vec4 getLevel2ContainingZ(xform T, vec2 z, int inCircleIndex) {
                     xform T1 = getTransform(i1);
                     circle c2 =  mobiusOnCircle(T1, c1);
                     if (insideCircle(c2, z)) {
+                    //if (c2.center.x-z.x < c2.radius) {
                         return vec4(0.,0.,1.,1.);
                     }
                 }
@@ -197,11 +200,11 @@ vec4 getLevel2ContainingZ(xform T, vec2 z, int inCircleIndex) {
     }
     return vec4(0.,0.,0.,0.);
 }
-vec4 getLevel1ContainingZ(xform T, vec2 z, int inCircleIndex) {
-    int xformIndex = inverseTransformIndex(inCircleIndex);
-    for (int circleIndex = 0; circleIndex < 4; circleIndex++) {
-        if (circleIndex != xformIndex) {
-            circle c1 =  mobiusOnCircle(T, getInitialCircle(circleIndex));
+vec4 getLevel1ContainingZ(circle c, vec2 z, int xformIndex) {
+    for (int iii = 0; iii < 4; iii++) {
+        if (iii != xformIndex) {
+            xform T = getTransform(iii);
+            circle c1 =  mobiusOnCircle(T, c);
             if (insideCircle(c1, z)) {
                 return vec4(1.,0.,0.,1.);    
             }
@@ -214,16 +217,35 @@ vec4 applySchottky(in vec2 z) {
     vec4 clr;
     for (int i = 0; i < 4; i++) {
         circle c = getInitialCircle(i);     // 0 = a, 1 = A
-        xform T = getInitialCircleTransform(i); // 0=A,1=a
-        clr = getLevel2ContainingZ(T, z, i);
-        if (clr.a > 0.0) return clr;
-    }
-    for (int i = 0; i < 4; i++) {
-        circle c = getInitialCircle(i);     // 0 = a, 1 = A
-        xform T = getInitialCircleTransform(i); // 0=A,1=a
-        clr = getLevel1ContainingZ(T, z, i);
-        if (clr.a > 0.0) return clr;
-        if (insideCircle(c, z) == true) {
+        if (insideCircle(c, z)) {
+            xform T = getTransform(inverseTransformIndex(i));
+            for (int j = 0; j < 4; j++) {
+                if (j == inverseTransformIndex(i)) continue;
+                circle c1 = getInitialCircle(j);     // 0 = a, 1 = A
+                circle c2 =  mobiusOnCircle(T, c1);
+                if (insideCircle(c2, z)) {
+                    xform T1 = getTransform(inverseTransformIndex(j));
+                    for (int k = 0; k < 4; k++) {
+                        if (k == inverseTransformIndex(j)) continue;
+                        circle c3 = getInitialCircle(k);
+                        circle c4 = mobiusOnCircle(T, mobiusOnCircle(T1, c3));
+                        if (insideCircle(c4, z)) {
+                            xform T2 = getTransform(inverseTransformIndex(k));
+                            for (int l = 0; l < 4; l++) {
+                                if (l == inverseTransformIndex(k)) continue;
+                                circle c5 = getInitialCircle(l);
+                                circle c6 = mobiusOnCircle(T,
+                                            mobiusOnCircle(T1,
+                                            mobiusOnCircle(T2, c5)));
+                                if (insideCircle(c6, z))
+                                    return vec4(1.,1.,0.,1.);    
+                            }
+                            return vec4(0.,0.,1.,1.);    
+                        }
+                    }
+                    return vec4(1.,0.,0.,1.);    
+                }
+            }
             return vec4(0.,1.,0.,1.);
         }
     }

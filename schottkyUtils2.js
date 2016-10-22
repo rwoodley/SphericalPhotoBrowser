@@ -150,7 +150,7 @@ var schottkyUtils2 = function(
             self.circles.push(wrapper);
             self.genChildren(wrapper, level, self.inverses[sindex], aslot);
         }
-        console.table(self.circles);
+        //console.table(self.circles);
     }
     self.genChildren = function(parent, level, lastXformIndex, aslot) {
         level++;
@@ -210,7 +210,7 @@ var schottkyUtils2 = function(
             else 
                 res.push(new THREE.Vector3(-1.,-1.,-1.));
         }
-        console.table(res);
+        //console.table(res);
         return res;
     }
     self.init();
