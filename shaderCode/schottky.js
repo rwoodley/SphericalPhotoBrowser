@@ -1,4 +1,4 @@
-SHADERCODE.schottkyUtils = function(numCircles) {
+SHADERCODE.schottkyUtils = function() {
 var x = `  
 
 struct circle {
@@ -18,7 +18,6 @@ struct circleGroup {
     circle b;
     circle B;
 };
-circleGroup level1[4];
 circleGroup initialCircles;
 float xtheta = 3.14159/4.;
 xform group_a;
@@ -54,7 +53,7 @@ xform getInitialCircleTransform(int i) {
     if (i == 3) return group_b;
     return group_B;
 }
-void defineInitialCircles() {
+void defineInitialCircles() {   // indra's neckalce page 170
     float xradius = 1.;
     float xctr = 1./cos(xtheta);
     float s2 = sqrt(2.0);
@@ -72,11 +71,13 @@ void defineInitialCircles() {
     float cnst = 1./sin(xtheta);
     cnst = 1.;
 
-    group_a = xformCtor(xforma[0], xforma[1], xforma[2], xforma[3]);
-    group_b = xformCtor(xformb[0], xformb[1], xformb[2], xformb[3]);
-    group_A = xformCtor(xformA[0], xformA[1], xformA[2], xformA[3]);
-    group_B = xformCtor(xformB[0], xformB[1], xformB[2], xformB[3]);
-
+    vec2 s2c = vec2(sqrt(2.0),0.);
+    vec2 zero = vec2(0.,0.);
+    vec2 one = vec2(1.,0.);
+    group_a = xformCtor(s2c,i,-i,s2c);
+    group_b = xformCtor(s2c,one,one,s2c);
+    group_A = inverseXformCtor(group_a);
+    group_B = inverseXformCtor(group_b);
 }
 bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
@@ -133,36 +134,6 @@ int getVec3ValForIndex(vec3 v, int i) {
     if (i == 1) return int(v.y);
     return int(v.z);
 }
-circle getChildCircle(vec3 chillun, int j) {
-    circle empty;
-    int target = getVec3ValForIndex(chillun, j);
-    if (target < 0) return empty;
-    for (int i = 0; i < $1; i++) {
-        if (i == target) {
-            vec4 v = uCircles[i];
-            return fromVec4(v);
-        }
-    }
-    return empty;
-}
-vec4 applySchottkyFromJS(in vec2 z) {
-    for (int i = 0; i < $1; i++) {
-        vec4 v = uCircles[i];
-        if (v.a == 0.0) {
-            circle c;
-            c = fromVec4(v);
-            if (insideCircle(c,z)) {
-                    return vec4(1.,0.,0.,1.);
-                //vec3 chillun = uCircleChildren[i];
-                if (nearCircleRim(c,z))
-                    return vec4(1.,1.,0.,1.);
-                else
-                    return vec4(1.,0.,0.,1.);
-            }
-        }
-    }
-    return vec4(0.,0.,0.,1.);
-}
 vec4 highlightInnerCircle(vec2 z) {
     circle c = initialCircles.A;
     circle c1 = mobiusOnCircle(group_a, c);
@@ -181,37 +152,10 @@ int inverseTransformIndex(int i) {
     if (i == 2) return 3;
     if (i == 3) return 2;
 }
-vec4 getLevel2ContainingZ(xform T, vec2 z, int inCircleIndex) {
-    int xformIndex = inverseTransformIndex(inCircleIndex);
-    for (int circleIndex = 0; circleIndex < 4; circleIndex++) {
-        if (circleIndex != xformIndex) {
-            circle c1 =  mobiusOnCircle(T, getInitialCircle(circleIndex));
-            for (int i1 = 0; i1 < 4; i1++) {
-                if (i1 != inverseTransformIndex(xformIndex)) {
-                    xform T1 = getTransform(i1);
-                    circle c2 =  mobiusOnCircle(T1, c1);
-                    if (insideCircle(c2, z)) {
-                    //if (c2.center.x-z.x < c2.radius) {
-                        return vec4(0.,0.,1.,1.);
-                    }
-                }
-            }
-        }
-    }
-    return vec4(0.,0.,0.,0.);
-}
-vec4 getLevel1ContainingZ(circle c, vec2 z, int xformIndex) {
-    for (int iii = 0; iii < 4; iii++) {
-        if (iii != xformIndex) {
-            xform T = getTransform(iii);
-            circle c1 =  mobiusOnCircle(T, c);
-            if (insideCircle(c1, z)) {
-                return vec4(1.,0.,0.,1.);    
-            }
-        }
-    }
-    return vec4(0.,0.,0.,0.);
-}
+struct schottkyResult {
+    int level;
+    xform T[6];     // N = level
+};
 vec4 applySchottky(in vec2 z) {
     defineInitialCircles();
     vec4 clr;
@@ -237,41 +181,23 @@ vec4 applySchottky(in vec2 z) {
                                 circle c6 = mobiusOnCircle(T,
                                             mobiusOnCircle(T1,
                                             mobiusOnCircle(T2, c5)));
-                                if (insideCircle(c6, z))
+                                if (nearCircleRim(c6, z))
                                     return vec4(1.,1.,0.,1.);    
                             }
-                            return vec4(0.,0.,1.,1.);    
+                            if (nearCircleRim(c4, z))
+                                return vec4(0.,0.,1.,1.);    
                         }
                     }
-                    return vec4(1.,0.,0.,1.);    
+                    if (nearCircleRim(c2, z))
+                        return vec4(1.,0.,0.,1.);    
                 }
             }
-            return vec4(0.,1.,0.,1.);
+            if (nearCircleRim(c, z))
+                return vec4(0.,1.,0.,1.);
         }
     }
     return vec4(1.,1.,1.,.3);
 }
-vec4 applyOldSchottky(in vec2 z) {
-
-
-  // group_a takes A to a, normally. a1
-  // we're starting with z on C, and want to get the right color, by unwinding xforms.
-  // if inside circle, apply reverse xform(s) to get to color.
-
-        if (insideCircle(initialCircles.a, z) == true)     // in a1, apply 2: group_a takes a1 to a2. should be: group_A takes a to A.
-    z = applyInverseSchottkyTransformForCircle(z, 2);          
-    else if (insideCircle(initialCircles.b, z) == true)
-    z = applyInverseSchottkyTransformForCircle(z, 3);
-    else if (insideCircle(initialCircles.A, z) == true)
-    z = applyInverseSchottkyTransformForCircle(z, 0);
-    else if (insideCircle(initialCircles.B, z) == true)
-    z = applyInverseSchottkyTransformForCircle(z, 1);
-    else {
-        return vec4(1.,1.,1.,1.);
-    }
-    vec4 clr = getTextureColor(z);
-    return clr;
-}
 `;
-return x.replace('$1', numCircles).replace('$1', numCircles);
+return x;
 }

@@ -41,27 +41,17 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         drosteType: {type: 'i', value: 0 },
         drosteSpiral: {type: 'i', value: 0 },
         drosteZoom: {type: 'i', value: 0},
-        schottkyCircles: { type: "v3v", value: [
-            new THREE.Vector3(1.,1.,.5), 
-            new THREE.Vector3(2.,1.,.5),
-            new THREE.Vector3(3.,1.,.5),
-            new THREE.Vector3(4.,1.,.5),
-            new THREE.Vector3(5.,1.,.5) 
-        ]},
 	};
-//    var su = new schottkyUtils();
-    var su = new schottkyUtils2();
-    su.addUniforms(this.uniforms);
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
         texture.minFilter = THREE.LinearFilter; // eliminates aliasing when tiling textures.
         var fragmentShaderCode = 
             ""
-            + SHADERCODE.uniformsAndGlobals(su.numFilledSlots)
+            + SHADERCODE.uniformsAndGlobals()
             + SHADERCODE.mathUtils()
             + SHADERCODE.mobiusTransformUtils()
             + SHADERCODE.drosteUtils()
-            + SHADERCODE.schottkyUtils(su.numFilledSlots)
+            + SHADERCODE.schottkyUtils()
             + document.getElementById( 'fs' ).textContent
         ;
         newMaterial = new THREE.ShaderMaterial( {
