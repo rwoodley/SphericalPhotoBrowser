@@ -152,51 +152,88 @@ int inverseTransformIndex(int i) {
     if (i == 2) return 3;
     if (i == 3) return 2;
 }
+xform xformForIndex(xform[6] xforms, int i) {
+    // i hate opengl.
+    if (i == 0) return xforms[0];
+    if (i == 1) return xforms[1];
+    if (i == 2) return xforms[2];
+    if (i == 3) return xforms[3];
+    if (i == 4) return xforms[4];
+    return xforms[5];
+}
 struct schottkyResult {
     int level;
-    xform T[6];     // N = level
+    float distance;
+    float radius;
+    xform inverseXform;
+    vec2 inverseZ;
 };
-vec4 applySchottky(in vec2 z) {
+schottkyResult getSchottkyResult(int n, xform[6] xforms, vec2 z, circle c) {
+    schottkyResult res;
+    res.level = n;
+    vec2 invZ = z;
+    for (int i = 0; i < 6; i++) {
+        if (i <= n) {
+            xform T = xformForIndex(xforms, i);
+            invZ = applyMobiusTransformation(invZ, T);
+        }
+    }
+    res.inverseZ = invZ;
+    return res;
+}
+circle applyTransformsToCircle(circle c, xform[6] xforms, int n) {
+    circle res = c;
+    for (int i = 6; i >= 0; i--) {
+        if (i <= n) 
+            res = mobiusOnCircle(xformForIndex(xforms, i), res);
+    }
+    return res;
+}
+schottkyResult applySchottkyLoop(in vec2 z) {
     defineInitialCircles();
     vec4 clr;
+    xform xforms[6];
+    int level = -1;
     for (int i = 0; i < 4; i++) {
         circle c = getInitialCircle(i);     // 0 = a, 1 = A
         if (insideCircle(c, z)) {
             xform T = getTransform(inverseTransformIndex(i));
+            level++;
+            xforms[0] = T;
             for (int j = 0; j < 4; j++) {
                 if (j == inverseTransformIndex(i)) continue;
-                circle c1 = getInitialCircle(j);     // 0 = a, 1 = A
-                circle c2 =  mobiusOnCircle(T, c1);
+                circle c2 = applyTransformsToCircle(getInitialCircle(j), xforms, level);
                 if (insideCircle(c2, z)) {
                     xform T1 = getTransform(inverseTransformIndex(j));
+                    level++;
+                    xforms[1] = T1;
                     for (int k = 0; k < 4; k++) {
                         if (k == inverseTransformIndex(j)) continue;
-                        circle c3 = getInitialCircle(k);
-                        circle c4 = mobiusOnCircle(T, mobiusOnCircle(T1, c3));
+                        circle c4 = applyTransformsToCircle(getInitialCircle(k), xforms, level);
                         if (insideCircle(c4, z)) {
                             xform T2 = getTransform(inverseTransformIndex(k));
+                            level++;
+                            xforms[2] = T2;
                             for (int l = 0; l < 4; l++) {
                                 if (l == inverseTransformIndex(k)) continue;
-                                circle c5 = getInitialCircle(l);
-                                circle c6 = mobiusOnCircle(T,
-                                            mobiusOnCircle(T1,
-                                            mobiusOnCircle(T2, c5)));
-                                if (nearCircleRim(c6, z))
-                                    return vec4(1.,1.,0.,1.);    
+                                circle c6 = applyTransformsToCircle(getInitialCircle(l), xforms, level);
+                                if (insideCircle(c6, z)) {
+                                    return getSchottkyResult(3, xforms, z, c6);
+                                }
                             }
-                            if (nearCircleRim(c4, z))
-                                return vec4(0.,0.,1.,1.);    
+                            return getSchottkyResult(2, xforms, z, c4);
                         }
                     }
-                    if (nearCircleRim(c2, z))
-                        return vec4(1.,0.,0.,1.);    
+                    return getSchottkyResult(1, xforms, z, c2);
                 }
             }
-            if (nearCircleRim(c, z))
-                return vec4(0.,1.,0.,1.);
+            return getSchottkyResult(0, xforms, z, c);
         }
     }
-    return vec4(1.,1.,1.,.3);
+    schottkyResult rrr;
+    rrr.level = level;  // -1
+    rrr.inverseZ = z;
+    return rrr;
 }
 `;
 return x;
