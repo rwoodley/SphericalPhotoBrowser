@@ -85,6 +85,12 @@ function mediaUtils(scene, camera, stills, videos,
     	appendSingleIcon(container, 'videoControlIcon', 'stop', 'Video Stop', that.video_stop);
     	appendSingleIcon(container, 'videoControlIcon', 'ff', 'Video Forward', that.video_ff);
     	appendSingleIcon(container, 'videoControlIcon', 'replay', 'Video Restart', that.video_restart);
+
+    	el = document.createElement('span');
+        el.id = 'videoClock';
+        el.style='width: 30px; height: 30px;';
+        el.className='showhide videoControlIcon';
+        container.appendChild(el);
     }
     this.setupCameraControlIcons = function() {
     	var container = document.getElementById(that.cameraControlsContainerId);
@@ -142,7 +148,9 @@ function mediaUtils(scene, camera, stills, videos,
 
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
 		  if (that.videoTexture) that.videoTexture.needsUpdate = true;
-		}		
+          var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
+          document.getElementById('videoClock').innerHTML = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
+		}
 	}
     this.updateSkyDome = function(event) {
         var pid = event.target.id.replace('textureSelector_','');
