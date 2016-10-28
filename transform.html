@@ -147,6 +147,10 @@ void main() {
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
     schottkyResult r = applySchottkyLoop(a);
+    if (r.level == -1) {
+        gl_FragColor = vec4(0.,0.,0.,0.0);
+        return;
+    }
     a = r.inverseZ;
     vec2 result = a;
     /*
@@ -258,7 +262,7 @@ function init() {
     _scene = new THREE.Scene();
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
     _axes = new THREE.AxisHelper( 15000 );
-    _scene.add(_axes);
+    //_scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
     _mediaUtils = new mediaUtils(
         _scene, 

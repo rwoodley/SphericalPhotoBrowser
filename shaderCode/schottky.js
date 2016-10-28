@@ -175,7 +175,8 @@ schottkyResult getSchottkyResult(int n, xform[6] xforms, vec2 z, circle c) {
     for (int i = 0; i < 6; i++) {
         if (i <= n) {
             xform T = xformForIndex(xforms, i);
-            invZ = applyMobiusTransformation(invZ, T);
+            //invZ = applyMobiusTransformation(invZ, T);
+            invZ = applyInverseMobiusTransformation(invZ, T);
         }
     }
     res.inverseZ = invZ;
@@ -218,20 +219,20 @@ schottkyResult applySchottkyLoop(in vec2 z) {
                                 if (l == inverseTransformIndex(k)) continue;
                                 circle c6 = applyTransformsToCircle(getInitialCircle(l), xforms, level);
                                 if (insideCircle(c6, z)) {
-                                    return getSchottkyResult(3, xforms, z, c6);
+                                    //return getSchottkyResult(2, xforms, z, c6);
                                 }
                             }
-                            return getSchottkyResult(2, xforms, z, c4);
+                            //return getSchottkyResult(2, xforms, z, c4);
                         }
                     }
                     return getSchottkyResult(1, xforms, z, c2);
                 }
             }
-            return getSchottkyResult(0, xforms, z, c);
+            //return getSchottkyResult(0, xforms, z, c);
         }
     }
     schottkyResult rrr;
-    rrr.level = level;  // -1
+    rrr.level = -1;  // -1
     rrr.inverseZ = z;
     return rrr;
 }
