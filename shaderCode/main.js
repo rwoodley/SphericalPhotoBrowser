@@ -9,6 +9,7 @@ var x = `
 
     // ===== shader control variables
     uniform sampler2D iChannel0;
+    uniform sampler2D iChannelDelayMask;
     varying vec2 vUv;  
     uniform float iRotationAmount;
     uniform float iGlobalTime;
@@ -29,6 +30,10 @@ var x = `
     uniform int drosteSpiral;
     uniform int drosteZoom;
     uniform int uNumCircles;
+
+    uniform int  uBlackMask;
+    uniform int  uMaskType;
+    uniform int  uTextureNumber;
 
     uniform bool showFixedPoints;
     vec2 one = vec2(1.0, 0.0);

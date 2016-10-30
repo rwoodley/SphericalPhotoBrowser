@@ -16,9 +16,17 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.cameraLookAtComplexX = 0;
     this.cameraLookAtComplexY = 0;
     this.mediaUtils = mediaUtils;
-    this.mediaUtils.onSpaceBarClick = function(e){
-        that.uniforms.showFixedPoints.value = 0;
-        $('.statusText').hide();
+    this.mediaUtils.onkeyup = function(e){
+        if(e.keyCode == 32) {
+            that.uniforms.showFixedPoints.value = 0;
+            $('.statusText').hide();
+        }
+        if (e.keyCode == 77) {  // m
+            that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
+        }
+        var textureNumber = e.keyCode - 48;
+        if (textureNumber < 10 && textureNumber >= 0)
+            that.uniforms.uTextureNumber.value = textureNumber;
     }
 
     this.cameraVectorLength = 1;    // by default, unit vector.
@@ -32,6 +40,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         complexEffect4OnOff: { type: 'i', value: 0 },
         complexEffect5OnOff: { type: 'i', value: 0 },
 	    showFixedPoints: { type: 'i', value: 1 },
+	    uBlackMask: { type: 'i', value: 0 },
+	    uMaskType: { type: 'i', value: 0 },
+	    uTextureNumber: { type: 'i', value: 0 },
 	    e1x: { type: 'f', value: 0. },
 	    e1y: { type: 'f', value: 0. },
 	    e2x: { type: 'f', value: 0. }, 
@@ -42,6 +53,10 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         drosteSpiral: {type: 'i', value: 0 },
         drosteZoom: {type: 'i', value: 0},
 	};
+    var pathToSubtractionTexture = 'media/subtract.jpg';
+    (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+        that.uniforms.iChannelDelayMask =  { type: 't', value: texture }; 
+    });
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
         texture.minFilter = THREE.LinearFilter; // eliminates aliasing when tiling textures.
@@ -76,7 +91,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 	this.initTransformUtils = function() {
 		that.setupTransformControlIcons();
         that.setupComplexControlIcons();
-        that.showToast('Hit space bar to show/hide icons.', 2000);
+        //that.showToast('Hit space bar to show/hide icons.', 2000);
 	}
     this.setupTransformControlIcons = function() {
     	var container = document.getElementById(that.transformControlsContainerId);
@@ -101,6 +116,10 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.toggleDebugInfo);
         appendSingleIcon(container, 'transformControlIcon', 'toggle.png', 'Toggle View', that.toggleView);
         appendSingleIcon(container, 'transformControlIcon', 'help.png', 'Help/Info', that.showHelpPage);
+        appendSingleIcon(container, 'transformControlIcon', 'diffMask.svg', 'use delay mask technique', that.useDelayMask);
+        appendSingleIcon(container, 'transformControlIcon', 'diffGreenMask.svg', 'mask out green', that.useGreenMask);
+        appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
+        appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use original color', that.beigeMask);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -175,6 +194,20 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	if (!that.point1Defined && !that.point2Defined) {
     		that.setFixedPoint(1);
     	}
+    }
+    this.useDelayMask = function() {
+            that.uniforms.uMaskType.value = that.uniforms.uMaskType.value == 1 ? 0 : 1;
+            that.showToast('uMaskType = ' + that.uniforms.uMaskType.value, 1000);
+    }
+    this.useGreenMask = function() {
+            that.uniforms.uMaskType.value = that.uniforms.uMaskType.value == 2 ? 0 : 2;
+            that.showToast('uMaskType = ' + that.uniforms.uMaskType.value, 1000);
+    }
+    this.blackMask = function() {
+            that.uniforms.uBlackMask.value = 1;
+    }
+    this.beigeMask = function() {
+            that.uniforms.uBlackMask.value = 0;
     }
     this.setFixedPoint1 = function() {that.setFixedPoint(1); }
     this.setFixedPoint2 = function() {that.setFixedPoint(2); }
@@ -285,6 +318,10 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.uniforms.iGlobalTime.value = that.uniforms.iGlobalTime.value  + 1;
     	that.updateVariousNumbersForCamera();
         that.mediaUtils.animate(that.cameraVectorLength);
+        if (that.mediaUtils.animationFrame%30 == 0) {
+            that.uniforms.iChannelDelayMask.value.image = that.uniforms.iChannel0.value.image;
+            that.uniforms.iChannelDelayMask.value.needsUpdate = true;
+        }
     }
     this.reset = function() {
     	that.rotateDirection = 0;

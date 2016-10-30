@@ -115,6 +115,66 @@
         </script>
 
         <script id="fs" type="x-shader/x-fragment">
+bool checkMaskPoint(vec2 uv) {
+    vec4 t1 = texture2D( iChannel0,  uv);
+    vec4 t2 = texture2D( iChannelDelayMask,  uv);
+    vec4 clr = abs(t1-t2);
+    float threshold = .1;
+    return
+        (
+        clr.x < threshold && 
+        clr.y < threshold && 
+        clr.z < threshold
+        );
+}
+vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
+    vec4 textureValue;
+    if (uTextureNumber == 0)
+        textureValue = texture2D( iChannel0,  uv);
+    if (uTextureNumber == 1)
+        textureValue = texture2D( iChannelDelayMask,  uv);
+    
+    if (uMaskType == 0)
+         return textureValue;
+
+    vec4 clr;
+    if (uMaskType == 1) {   // delay mask
+        float d = .0001;
+        float dp = 1. + d;
+        float dm = 1. - d;
+        if (
+            checkMaskPoint(vec2(uv.x, uv.y))
+    //        && checkMaskPoint(vec2(uv.x*dp, uv.y*dp))
+    //        && checkMaskPoint(vec2(uv.x*dp, uv.y*dm))
+    //        && checkMaskPoint(vec2(uv.x*dm, uv.y*dp))
+    //        && checkMaskPoint(vec2(uv.x*dm, uv.y*dm)) 
+        )
+            clr = vec4(0.,0.,0.,0.);
+        else {
+            if (uBlackMask == 1)
+                clr = vec4(0.,0.,0.,1.);
+            else
+                clr = textureValue;
+        }
+        return clr;
+
+    }
+    if (uMaskType == 2) {   // green mask
+        vec4 t1 = texture2D( iChannel0,  uv);
+        if (t1.y > .7 && t1.x < .3 && t1.z < .3)
+            clr = vec4(0.,0.,0.,0.);
+        else {
+            if (uBlackMask == 1)
+                clr = vec4(0.,0.,0.,1.);
+            else
+                clr = textureValue;
+        }
+        return clr;
+
+    }
+
+}
+
 void main() {
         float theta;
         float phi;
@@ -146,25 +206,13 @@ void main() {
     //  the positive real axis. So flip y and x around in this next equation.
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
-    schottkyResult r = applySchottkyLoop(a);
-    a = r.inverseZ;
-    vec2 result = a;
-    /*
-    if (r.level > 2)
-        gl_FragColor = vec4(1.,0.,0.,1.);
-    else
-    if (r.level > 1)
-        gl_FragColor = vec4(1.,1.,0.,1.);
-    else
-    if (r.level > 0)
-        gl_FragColor = vec4(1.,0.,1.,1.);
-    else
-        gl_FragColor = vec4(0.,0.,0.,.5);
-    return;
-    */
-    //if (complexEffect5OnOff == 1) {
-        //a = applySchottky(a);
+    //schottkyResult r = applySchottkyLoop(a);
+    //if (r.level == -1) {
+    //    gl_FragColor = vec4(0.,0.,0.,0.0);
+    //    return;
     //}
+    //a = r.inverseZ;
+    vec2 result = a;
     vec2 e1 = vec2(e1x,e1y);
     vec2 e2 = vec2(e2x,e2y);
     vec3 e1InCartesian = complexToCartesian(e1);
@@ -236,8 +284,7 @@ void main() {
     float newv = 1.0 - theta/PI;
     float newu = phi/(2.0 * PI);
     vec2 newuv = vec2(newu, newv);
-    vec4 tex1 = texture2D( iChannel0,  newuv);
-    gl_FragColor = tex1;
+    gl_FragColor = applyMask(newuv);
 }
 </script>
 <script>
@@ -258,7 +305,7 @@ function init() {
     _scene = new THREE.Scene();
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
     _axes = new THREE.AxisHelper( 15000 );
-    _scene.add(_axes);
+    //_scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
     _mediaUtils = new mediaUtils(
         _scene, 
@@ -281,7 +328,8 @@ function init() {
     document.getElementById( 'container' ).innerHTML = "";
     _container.appendChild( _renderer.domElement );
 
-    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
+//    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
+    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide} );
     var skyGeometry = new THREE.SphereGeometry(100,32,32);
     var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
     _scene.add(skyMesh);

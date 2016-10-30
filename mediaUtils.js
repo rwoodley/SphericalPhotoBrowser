@@ -9,8 +9,7 @@ User might want to:
 
 **/ 
 function mediaUtils(scene, camera, stills, videos, 
-	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
-       onSpaceBarClick) {
+	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId) {
 	var that = this;
 	this.stills = stills;
 	this.videos = videos;
@@ -28,16 +27,17 @@ function mediaUtils(scene, camera, stills, videos,
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
     this.FOV = 90;
-    this.onSpaceBarClick = onSpaceBarClick;
+    this.onkeyup = undefined;
     this.material = new THREE.MeshNormalMaterial();
     this.geoIndex = 0;
 
     this.controlPanelVisible = true;
 	document.body.onkeyup = function(e){
+        console.log(e.keyCode);
         if(e.keyCode == 32) {
             that.toggleControlPanel();
-            if (that.onSpaceBarClick != undefined) that.onSpaceBarClick();
         }
+        if (that.onkeyup != undefined) that.onkeyup(e);
     };
 
     this.showToast = function(message, ms) {
@@ -50,7 +50,7 @@ function mediaUtils(scene, camera, stills, videos,
     };
 
     this.initMediaUtils = function() {
-        that.toggleView(1);
+        that.toggleView(0);
 	    that.initVideo();
 	    that.toggleControlPanel();
 	    that.setupMediaIcons();
@@ -85,6 +85,12 @@ function mediaUtils(scene, camera, stills, videos,
     	appendSingleIcon(container, 'videoControlIcon', 'stop', 'Video Stop', that.video_stop);
     	appendSingleIcon(container, 'videoControlIcon', 'ff', 'Video Forward', that.video_ff);
     	appendSingleIcon(container, 'videoControlIcon', 'replay', 'Video Restart', that.video_restart);
+
+    	el = document.createElement('span');
+        el.id = 'videoClock';
+        el.style='width: 30px; height: 30px;';
+        el.className='showhide videoControlIcon';
+        container.appendChild(el);
     }
     this.setupCameraControlIcons = function() {
     	var container = document.getElementById(that.cameraControlsContainerId);
@@ -122,7 +128,9 @@ function mediaUtils(scene, camera, stills, videos,
 			that.video_stop();
 		}
 	}
+    this.animationFrame = 0;
 	this.animate = function(cameraVectorLength) {
+        this.animationFrame++;
         if (that.geoIndex == 1) {       //plane
             that.setInitialCameraPosition();
             that.camera.position.x *=-1;
@@ -142,7 +150,9 @@ function mediaUtils(scene, camera, stills, videos,
 
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
 		  if (that.videoTexture) that.videoTexture.needsUpdate = true;
-		}		
+          var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
+          document.getElementById('videoClock').innerHTML = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
+		}
 	}
     this.updateSkyDome = function(event) {
         var pid = event.target.id.replace('textureSelector_','');
