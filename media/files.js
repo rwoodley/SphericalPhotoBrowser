@@ -1,1 +1,1 @@
-myTextures=["subtract.jpg","uv.jpg"]
+myTextures=["rgb.jpg","subtract.jpg","uv.jpg"]

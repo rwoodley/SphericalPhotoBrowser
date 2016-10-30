@@ -52,13 +52,20 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         drosteType: {type: 'i', value: 0 },
         drosteSpiral: {type: 'i', value: 0 },
         drosteZoom: {type: 'i', value: 0},
+        iChannel0:  { type: 't', value: 0 },
+        iChannelStillMask:  { type: 't', value: 0 },
+        iChannelDelayMask:  { type: 't', value: 0 },
 	};
     var pathToSubtractionTexture = 'media/subtract.jpg';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-        that.uniforms.iChannelDelayMask =  { type: 't', value: texture }; 
+        that.uniforms.iChannelStillMask.value =  texture; 
+    });
+    (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+        that.uniforms.iChannelDelayMask.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
     });
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
+        // that.uniforms.iChannelDelayMask =  { type: 't', value: texture }; 
         texture.minFilter = THREE.LinearFilter; // eliminates aliasing when tiling textures.
         var fragmentShaderCode = 
             ""
@@ -116,7 +123,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.toggleDebugInfo);
         appendSingleIcon(container, 'transformControlIcon', 'toggle.png', 'Toggle View', that.toggleView);
         appendSingleIcon(container, 'transformControlIcon', 'help.png', 'Help/Info', that.showHelpPage);
-        appendSingleIcon(container, 'transformControlIcon', 'diffMask.svg', 'use delay mask technique', that.useDelayMask);
+        appendSingleIcon(container, 'transformControlIcon', 'diffRedMask.svg', 'mask is still', that.useStillMask);
+        appendSingleIcon(container, 'transformControlIcon', 'diffMask.svg', 'mask is delayed feed', that.useDelayMask);
         appendSingleIcon(container, 'transformControlIcon', 'diffGreenMask.svg', 'mask out green', that.useGreenMask);
         appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
         appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use original color', that.beigeMask);
@@ -201,6 +209,10 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.useGreenMask = function() {
             that.uniforms.uMaskType.value = that.uniforms.uMaskType.value == 2 ? 0 : 2;
+            that.showToast('uMaskType = ' + that.uniforms.uMaskType.value, 1000);
+    }
+    this.useStillMask = function() {
+            that.uniforms.uMaskType.value = that.uniforms.uMaskType.value == 3 ? 0 : 3;
             that.showToast('uMaskType = ' + that.uniforms.uMaskType.value, 1000);
     }
     this.blackMask = function() {
@@ -318,7 +330,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.uniforms.iGlobalTime.value = that.uniforms.iGlobalTime.value  + 1;
     	that.updateVariousNumbersForCamera();
         that.mediaUtils.animate(that.cameraVectorLength);
-        if (that.mediaUtils.animationFrame%30 == 0) {
+        if (that.mediaUtils.animationFrame%120 == 0) {
             that.uniforms.iChannelDelayMask.value.image = that.uniforms.iChannel0.value.image;
             that.uniforms.iChannelDelayMask.value.needsUpdate = true;
         }

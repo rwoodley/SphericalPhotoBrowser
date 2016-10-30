@@ -117,7 +117,11 @@
         <script id="fs" type="x-shader/x-fragment">
 bool checkMaskPoint(vec2 uv) {
     vec4 t1 = texture2D( iChannel0,  uv);
-    vec4 t2 = texture2D( iChannelDelayMask,  uv);
+    vec4 t2;
+    if (uMaskType == 1)
+        t2 = texture2D( iChannelDelayMask,  uv);
+    else
+        t2 = texture2D( iChannelStillMask,  uv);
     vec4 clr = abs(t1-t2);
     float threshold = .1;
     return
@@ -133,12 +137,14 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         textureValue = texture2D( iChannel0,  uv);
     if (uTextureNumber == 1)
         textureValue = texture2D( iChannelDelayMask,  uv);
+    if (uTextureNumber == 2)
+        textureValue = texture2D( iChannelStillMask,  uv);
     
     if (uMaskType == 0)
          return textureValue;
 
     vec4 clr;
-    if (uMaskType == 1) {   // delay mask
+    if (uMaskType == 1 || uMaskType == 3) {   // delay mask
         float d = .0001;
         float dp = 1. + d;
         float dm = 1. - d;
