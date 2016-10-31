@@ -150,8 +150,8 @@ function mediaUtils(scene, camera, stills, videos,
 
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
 		  if (that.videoTexture) that.videoTexture.needsUpdate = true;
-          var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
-          document.getElementById('videoClock').innerHTML = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
+          //var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
+          //document.getElementById('videoClock').innerHTML = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
 		}
 	}
     this.updateSkyDome = function(event) {

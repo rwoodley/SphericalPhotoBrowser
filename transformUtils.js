@@ -4,6 +4,7 @@
 function transformUtils(camera, transformControlsContainerId, complexControlsContainerId, 
     transformControls2ContainerId,
     mediaUtils) {
+    this.canvas = document.querySelector('canvas');
 	this.camera = camera;
 	var that = this;
 	this.transformControlsContainerId = transformControlsContainerId;
@@ -23,6 +24,27 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         }
         if (e.keyCode == 77) {  // m
             that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
+        }
+        // TODO: This screen capture should probably go in mediaUtils at some point.
+        if (e.keyCode == 82) {  // r - start recording
+            console.log("Start recording");
+            that.capturer = new CCapture({
+                // framerate: 20,
+                // verbose: true,
+                format: 'webm'
+            });
+            // that.capturer = new CCapture( { format: 'webm' } );
+            //            that.capturer = new CCapture( { format: 'gif', workersPath: 'lib/' } );
+            that.capturer.start();
+            that.lasttiming = that.capturer.getTiming();
+            // that.mediaUtils.video.play();
+            document.getElementById('video').playbackRate = 60 / 25
+        }
+        if (e.keyCode == 83) {  // s - stop recording
+            console.log("Stop recording");
+            that.capturer.stop();
+            that.capturer.save();
+            that.capturer = undefined;
         }
         var textureNumber = e.keyCode - 48;
         if (textureNumber < 10 && textureNumber >= 0)
@@ -333,6 +355,18 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         if (that.mediaUtils.animationFrame%120 == 0) {
             that.uniforms.iChannelDelayMask.value.image = that.uniforms.iChannel0.value.image;
             that.uniforms.iChannelDelayMask.value.needsUpdate = true;
+        }
+        // if (that.capturer != undefined && that.mediaUtils.animationFrame%120 == 0)
+        if (that.capturer != undefined){
+            var recording_fps = 60;
+            timing = that.capturer.getTiming();
+            actual_fps = timing.performancetime - that.lasttiming.performancetime;
+            ratio = actual_fps / recording_fps;
+            // playbackRate is normalised
+            that.mediaUtils.video.playbackRate = ratio;
+            that.lasttiming = timing;
+
+            that.capturer.capture( that.canvas );
         }
     }
     this.reset = function() {

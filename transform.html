@@ -77,6 +77,10 @@
  		<script src="r73/stats.min.js"></script>
 		<script src="lib/jquery-3.1.0.min.js"></script>
         <script src="lib/toast.js"></script>
+        
+        <script src="lib/CCapture.js"></script>
+        <script src="lib/Whammy.js"></script>
+        <script src="lib/download.js"></script>
         <script src="myGeometries.js"></script>
 
         <script src="shaderCode/main.js"></script>
@@ -313,6 +317,12 @@ function init() {
     _axes = new THREE.AxisHelper( 15000 );
     //_scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
+    _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
+    _renderer.setSize( window.innerWidth, window.innerHeight );
+
+    document.getElementById( 'container' ).innerHTML = "";
+    _container.appendChild( _renderer.domElement );
+
     _mediaUtils = new mediaUtils(
         _scene, 
         _camera, 
@@ -327,12 +337,6 @@ function init() {
         "complexControlsContainerId", 
         "transformControls2ContainerId",
         _mediaUtils);
-
-    _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
-    _renderer.setSize( window.innerWidth, window.innerHeight );
-
-    document.getElementById( 'container' ).innerHTML = "";
-    _container.appendChild( _renderer.domElement );
 
 //    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
     var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide} );
