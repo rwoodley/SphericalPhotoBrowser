@@ -19,6 +19,7 @@ function mediaUtils(scene, camera, stills, videos,
 
 	this.camera = camera;
 	this.scene = scene;
+    this.meshManager = new meshManager(scene);
 
 	this.video = document.getElementById("video");
 	this.videoTexture = undefined; 
@@ -57,7 +58,7 @@ function mediaUtils(scene, camera, stills, videos,
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
-        that.updateSkyDomeForFileName('uv.jpg');
+        //that.updateSkyDomeForFileName('uv.jpg');
         //that.updateSkyDomeForFileName(myTextures[0]);
         //that.updateVideoForFileName(myVideos[0]);
         that.setInitialCameraPosition();
@@ -136,7 +137,7 @@ function mediaUtils(scene, camera, stills, videos,
             that.camera.position.x *=-1;
         }
         else {
-            if (cameraVectorLength > 0 && that.geoIndex == 0) { // sphere
+            if (1 ==2 && cameraVectorLength > 0 && that.geoIndex == 0) { // sphere
         		var unitVector = (new THREE.Vector3())
                     .copy(that.camera.position)
                     .normalize()
@@ -166,67 +167,11 @@ function mediaUtils(scene, camera, stills, videos,
         that.showToast("Loading '" + fileName + "'.", 2000);
         var pathToTexture = 'media/' + fileName;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
-            that.material = that.setMaterialForTexture(texture);
-            that.displayMesh.material = that.material;
+            that.meshManager.setTexture(texture, that.setMaterialForTexture);
         });
     }
     this.toggleView = function(desiredGeoIndex) {
-        that.geoIndex = desiredGeoIndex;
-        var segment = 256.;
-        var sphereRadius = 10;
-        that.scene.remove(that.displayMesh);
-        if (that.geoIndex == 0) {
-            that.displayGeometry = new THREE.SphereGeometry(sphereRadius,segment,segment);
-            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
-            that.displayMesh.scale.set(1,1,-1);
-        }
-        if (that.geoIndex == 1) {
-            that.displayGeometry = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
-            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
-            that.displayMesh.rotateY(Math.PI/2);
-        }
-        if (that.geoIndex == 2) {
-            that.displayGeometry = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
-            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
-            that.displayMesh.rotateX(Math.PI/2);
-        }
-        if (that.geoIndex == 3) {
-            that.displayGeometry = 
-            new THREE.ParametricGeometry( 
-                psphere, 
-                40, 40 );
-            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
-            that.displayMesh.rotateX(Math.PI/2);
-        }
-        if (that.geoIndex == 4) {
-            that.displayGeometry = 
-            new THREE.ParametricGeometry( 
-                klein, 
-                40, 40 );
-
-            // that.displayGeometry = new THREE.IcosahedronGeometry( 1,0 );
-            //that.displayGeometry = new THREE.TubeGeometry( helix, 128, 2.5, 32 )
-
-            // var points = [];
-            // var height = 5;
-            // var count = 30;
-            // for (var i = 0; i < count; i++) {
-            //     points.push(new THREE.Vector3((Math.sin(i * 0.2) 
-            //     + Math.cos(i * 0.3)) * height + 12, 
-            //     0, ( i - count ) + count / 2));
-            // }
-            // // use the same points to create a convexgeometry
-            // var latheGeometry = new THREE.LatheGeometry
-            //     (points, 40, 0, 3.1415926*2.);
-            // that.displayGeometry = latheGeometry;
-
-            that.displayMesh = new THREE.Mesh( that.displayGeometry, that.material );
-            // that.displayMesh.scale.set(1,-1,1);
-            that.displayMesh.rotateX(-Math.PI/2);
-        }
-        console.log("geoIndex = " + that.geoIndex);
-        that.displayMesh.position.set(0,0,0);
-        that.scene.add(that.displayMesh);
+        that.meshManager.newMesh(desiredGeoIndex);
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.setMaterialForTexture = function(texture) {
@@ -258,8 +203,8 @@ function mediaUtils(scene, camera, stills, videos,
         that.video.play();
 
         that.videoTexture.minFilter = THREE.LinearFilter;   // eliminates aliasing when tiling textures.
-        that.material = that.setMaterialForTexture(that.videoTexture);
-        that.displayMesh.material = that.material;
+//        that.material = that.setMaterialForTexture(that.videoTexture);
+        that.meshManager.setTexture(that.videoTexture, that.setMaterialForTexture);
         that.videoDisplayed = true;
         that.toggleVideoControls();
 	}

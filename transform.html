@@ -89,6 +89,7 @@
         <script src="shaderCode/mathUtils.js"></script>
         <script src="shaderCode/mobiusTransformUtils.js"></script>
 
+        <script src="meshManager.js"></script>
         <script src="mediaUtils.js"></script>
         <script src="transformUtils.js"></script>
         <script src="utils.js"></script>
@@ -317,6 +318,7 @@ function init() {
     _axes = new THREE.AxisHelper( 15000 );
     //_scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
+
     _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
     _renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -339,7 +341,7 @@ function init() {
         _mediaUtils);
 
 //    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
-    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide} );
+    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
     var skyGeometry = new THREE.SphereGeometry(100,32,32);
     var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
     _scene.add(skyMesh);
