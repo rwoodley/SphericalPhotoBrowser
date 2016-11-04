@@ -196,7 +196,7 @@ schottkyResult applySchottkyLoop(in vec2 z) {
     xform xforms[6];
     int level = -1;
     for (int i = 0; i < 4; i++) {
-        circle c = getInitialCircle(i);     // 0 = a, 1 = A
+        circle c = getInitialCircle(i);     // 0 = a, 1 = A, 2 = b, 3 = B
         if (insideCircle(c, z)) {
             xform T = getTransform(inverseTransformIndex(i));
             level++;
