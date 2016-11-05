@@ -78,7 +78,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         iChannelStillMask:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
 	};
-    var pathToSubtractionTexture = 'media/subtract.jpg';
+    var pathToSubtractionTexture = 'media/fenceStill.jpg';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         that.uniforms.iChannelStillMask.value =  texture; 
     });
@@ -351,7 +351,14 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.uniforms.iRotationAmount.value = that.uniforms.iRotationAmount.value  + .1*that.rotateDirection;
         that.uniforms.iGlobalTime.value = that.uniforms.iGlobalTime.value  + 1;
     	that.updateVariousNumbersForCamera();
-        that.mediaUtils.animate(that.cameraVectorLength);
+        var videoCurrentTime = 0;
+        if (that.mediaUtils.videoDisplayed) {
+            if (that.capturer == undefined)
+                videoCurrentTime = that.mediaUtils.video.currentTime;
+            else
+                videoCurrentTime = that.capturer.getTiming().performancetime;
+        }
+        that.mediaUtils.animate(that.cameraVectorLength, videoCurrentTime);
         if (that.mediaUtils.animationFrame%120 == 0) {
             that.uniforms.iChannelDelayMask.value.image = that.uniforms.iChannel0.value.image;
             that.uniforms.iChannelDelayMask.value.needsUpdate = true;

@@ -28,6 +28,7 @@ function meshManager(scene) {
         that.managedMeshes.push(mmesh);
         that.scene.add(mesh);
         //mesh.position.set(0,0,0);
+        newMaterialCallback(mesh, mesh.material);
         return mmesh;
     }
     this.setTexture = function(texture, materialGeneratorFromTexture) {
@@ -52,7 +53,7 @@ function meshManager(scene) {
             // see https://github.com/mrdoob/three.js/issues/2476
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
             var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
-            var mesh = new THREE.Mesh( geo, new THREE.MeshNormalMaterial() );
+            var mesh = new THREE.Mesh( geo, that.material );
             mesh.scale.set(1,1,-1);
             that._addMesh(mesh, function(msh, mat) {
                 mat.side = THREE.FrontSide;
@@ -72,6 +73,7 @@ function meshManager(scene) {
             var mesh = new THREE.Mesh( geo, that.material );
             mesh.rotateY(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;
             });
         }
@@ -80,6 +82,7 @@ function meshManager(scene) {
             var mesh = new THREE.Mesh( geo, that.material );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;
             });
         }
@@ -91,6 +94,7 @@ function meshManager(scene) {
             var mesh = new THREE.Mesh( geo, that.material );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;
             });
         }
@@ -103,6 +107,7 @@ function meshManager(scene) {
             var mesh = new THREE.Mesh( geo, that.material );
             mesh.rotateX(-Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;
             });
         }

@@ -130,7 +130,7 @@ function mediaUtils(scene, camera, stills, videos,
 		}
 	}
     this.animationFrame = 0;
-	this.animate = function(cameraVectorLength) {
+	this.animate = function(cameraVectorLength, videoCurrentTime) {
         this.animationFrame++;
         if (that.geoIndex == 1) {       //plane
             that.setInitialCameraPosition();
@@ -150,9 +150,9 @@ function mediaUtils(scene, camera, stills, videos,
         }
 
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
-		  if (that.videoTexture) that.videoTexture.needsUpdate = true;
-          //var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
-          //document.getElementById('videoClock').innerHTML = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
+		  if (that.videoTexture) that.videoTexture.needsUpdate = true; 
+          var timeRemaining = (that.video.duration - videoCurrentTime).toFixed(0);
+          document.getElementById('videoClock').innerHTML = videoCurrentTime.toFixed(0) + '<br/>' + timeRemaining;
 		}
 	}
     this.updateSkyDome = function(event) {

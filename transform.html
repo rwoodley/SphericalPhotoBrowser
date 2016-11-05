@@ -341,7 +341,10 @@ function init() {
         _mediaUtils);
 
 //    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
-    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
+    var text1 = THREE.ImageUtils.loadTexture("media/hdr1.jpg");
+    var skyMaterial = new THREE.MeshBasicMaterial({map: text1, side: THREE.DoubleSide });
+
+//    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide} );
     var skyGeometry = new THREE.SphereGeometry(100,32,32);
     var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
     _scene.add(skyMesh);
@@ -380,7 +383,7 @@ $().ready(function() {
         <div class="availableMediaPanel ">
             <div class="centerAlign">
                 <div id="mediaListContainer" >
-                    <span class='showhide wideLabel mediaLabel label'>Stills/Videos:</span>
+                    <span class='showhide  mediaLabel label'>Stills/Videos:</span>
                 </div>
             </div>
         </div>
