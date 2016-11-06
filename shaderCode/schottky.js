@@ -196,7 +196,7 @@ schottkyResult applySchottkyLoop(in vec2 z) {
     xform xforms[6];
     int level = -1;
     for (int i = 0; i < 4; i++) {
-        circle c = getInitialCircle(i);     // 0 = a, 1 = A
+        circle c = getInitialCircle(i);     // 0 = a, 1 = A, 2 = b, 3 = B
         if (insideCircle(c, z)) {
             xform T = getTransform(inverseTransformIndex(i));
             level++;
@@ -219,18 +219,19 @@ schottkyResult applySchottkyLoop(in vec2 z) {
                                 if (l == inverseTransformIndex(k)) continue;
                                 circle c6 = applyTransformsToCircle(getInitialCircle(l), xforms, level);
                                 if (insideCircle(c6, z)) {
-                                    //return getSchottkyResult(2, xforms, z, c6);
+                                    return getSchottkyResult(2, xforms, z, c6);
                                 }
                             }
-                            //return getSchottkyResult(2, xforms, z, c4);
+                            return getSchottkyResult(2, xforms, z, c4);
                         }
                     }
                     return getSchottkyResult(1, xforms, z, c2);
                 }
             }
-            //return getSchottkyResult(0, xforms, z, c);
+            return getSchottkyResult(0, xforms, z, c);
         }
     }
+    // if we get here Z is in the fundamental domain.
     schottkyResult rrr;
     rrr.level = -1;  // -1
     rrr.inverseZ = z;
