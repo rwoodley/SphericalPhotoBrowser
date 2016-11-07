@@ -19,7 +19,6 @@ struct circleGroup {
     circle B;
 };
 circleGroup initialCircles;
-float xtheta = 3.14159/4.;
 xform group_a;
 xform group_b;
 xform group_A;
@@ -53,9 +52,8 @@ xform getInitialCircleTransform(int i) {
     if (i == 3) return group_b;
     return group_B;
 }
-void defineInitialCircles() {   // indra's neckalce page 170
+void defineInitialCirclesOld() {   // indra's neckalce page 170
     float xradius = 1.;
-    float xctr = 1./cos(xtheta);
     float s2 = sqrt(2.0);
 
     initialCircles.a.center = -i*s2;
@@ -68,9 +66,6 @@ void defineInitialCircles() {   // indra's neckalce page 170
     initialCircles.B.center = vec2(s2,0.);
     initialCircles.B.radius = xradius;
 
-    float cnst = 1./sin(xtheta);
-    cnst = 1.;
-
     vec2 s2c = vec2(sqrt(2.0),0.);
     vec2 zero = vec2(0.,0.);
     vec2 one = vec2(1.,0.);
@@ -78,6 +73,32 @@ void defineInitialCircles() {   // indra's neckalce page 170
     group_b = xformCtor(s2c,one,one,s2c);
     group_A = inverseXformCtor(group_a);
     group_B = inverseXformCtor(group_b);
+}
+void defineInitialCircles() {   // indra's necklace page 118
+    float xtheta = 3.14159/6.;
+
+    float xctr = 1./cos(xtheta);
+    float xradius = tan(xtheta);
+    vec2 zero = vec2(0.,0.);
+    vec2 one = vec2(1.,0.);
+
+    initialCircles.a.center = i*xctr;
+    initialCircles.a.radius = xradius;
+    initialCircles.A.center = -i*xctr;
+    initialCircles.A.radius = xradius;
+
+    initialCircles.b.center = one*xctr;
+    initialCircles.b.radius = xradius;
+    initialCircles.B.center = -one*xctr;
+    initialCircles.B.radius = xradius;
+
+//    float cnst = 1./sin(xtheta);
+    float cnst = 1.;
+
+    group_A = xformCtor(one*cnst,i*cos(xtheta)*cnst,-i*cos(xtheta)*cnst,one*cnst);
+    group_B = xformCtor(one*cnst,vec2(cos(xtheta),0.)*cnst,vec2(cos(xtheta),0)*cnst,one*cnst);
+    group_a = inverseXformCtor(group_A);
+    group_b = inverseXformCtor(group_B);
 }
 bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
@@ -167,19 +188,22 @@ struct schottkyResult {
     float radius;
     xform inverseXform;
     vec2 inverseZ;
+    vec2 glitchZ;   // just a pretty effect i got by doing something wrong.
 };
 schottkyResult getSchottkyResult(int n, xform[6] xforms, vec2 z, circle c) {
     schottkyResult res;
     res.level = n;
     vec2 invZ = z;
+    vec2 glitchZ = z;
     for (int i = 0; i < 6; i++) {
         if (i <= n) {
             xform T = xformForIndex(xforms, i);
-            //invZ = applyMobiusTransformation(invZ, T);
+            glitchZ = applyMobiusTransformation(invZ, T);
             invZ = applyInverseMobiusTransformation(invZ, T);
         }
     }
     res.inverseZ = invZ;
+    res.glitchZ = glitchZ;
     return res;
 }
 circle applyTransformsToCircle(circle c, xform[6] xforms, int n) {

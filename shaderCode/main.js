@@ -27,6 +27,7 @@ var x = `
     uniform int complexEffect3OnOff;
     uniform int complexEffect4OnOff;
     uniform int complexEffect5OnOff;
+    uniform int schottkyEffectOnOff;
     uniform int drosteType;
     uniform int drosteSpiral;
     uniform int drosteZoom;

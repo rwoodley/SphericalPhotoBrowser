@@ -51,14 +51,14 @@ function mediaUtils(scene, camera, stills, videos,
     };
 
     this.initMediaUtils = function() {
-        that.toggleView(0);
+        that.toggleView(1);         // $$$
 	    that.initVideo();
 	    that.toggleControlPanel();
 	    that.setupMediaIcons();
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
-        //that.updateSkyDomeForFileName('uv.jpg');
+        that.updateSkyDomeForFileName('uv.jpg');    // $$$
         //that.updateSkyDomeForFileName(myTextures[0]);
         //that.updateVideoForFileName(myVideos[0]);
         that.setInitialCameraPosition();

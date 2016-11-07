@@ -217,12 +217,15 @@ void main() {
     //  the positive real axis. So flip y and x around in this next equation.
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
-    //schottkyResult r = applySchottkyLoop(a);
-    //if (r.level == -1) {
-    //    gl_FragColor = vec4(0.,0.,0.,0.0);
-    //    return;
-    //}
-    //a = r.inverseZ;
+    if (schottkyEffectOnOff == 1) {
+        schottkyResult r = applySchottkyLoop(a);
+ //       if (r.level == -1) {
+ //           gl_FragColor = vec4(0.,0.,0.,0.0);
+ //           return;
+ //       }
+        if (r.level > -1)
+            a = r.inverseZ;
+    }
     vec2 result = a;
     vec2 e1 = vec2(e1x,e1y);
     vec2 e2 = vec2(e2x,e2y);
@@ -260,7 +263,7 @@ void main() {
             //return;
         }
         if (complexEffect5OnOff == 1) {
-            //c = schottky(c);
+            c = bobMobius(c);
         }
         result = inverseTransformForFixedPoints(c, e1, e2);
     }
@@ -341,10 +344,10 @@ function init() {
         _mediaUtils);
 
 //    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
-    var text1 = THREE.ImageUtils.loadTexture("media/hdr1.jpg");
-    var skyMaterial = new THREE.MeshBasicMaterial({map: text1, side: THREE.DoubleSide });
+//    var text1 = THREE.ImageUtils.loadTexture("media/hdr1.jpg");
+//    var skyMaterial = new THREE.MeshBasicMaterial({map: text1, side: THREE.DoubleSide });
 
-//    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide} );
+    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide} );
     var skyGeometry = new THREE.SphereGeometry(100,32,32);
     var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
     _scene.add(skyMesh);

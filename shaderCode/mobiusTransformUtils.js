@@ -25,6 +25,12 @@ vec2 applyInverseMobiusTransformation(in vec2 z, xform x) {
 vec2 transformForFixedPoints(in vec2 z, in vec2 e1, in vec2 e2) {
     return applyMobiusTransformation(z,xformCtor(one,-e1,one,-e2));
 }
+vec2 bobMobius(in vec2 z) {
+    float xtheta = 3.14159/6.;
+    float cnst = 1./sin(xtheta);
+//    return applyMobiusTransformation(z,xformCtor(one,one,one,one));    
+    return applyMobiusTransformation(z, xformCtor(one*cnst,i*cos(xtheta)*cnst,-i*cos(xtheta)*cnst,one*cnst));
+}
 vec2 inverseTransformForFixedPoints(in vec2 z, in vec2 e1, in vec2 e2) {
     // inverse is (dz-b)/(-cz+a). a and c are 1.
     return applyInverseMobiusTransformation(z,xformCtor(one,-e1,one,-e2));
@@ -36,10 +42,10 @@ vec2 applyRotation(in vec2 z, in float radians) {
     return ans;
 }
 vec2 zoom(in vec2 z, in vec2 zoomDegree) {
-    // a real zoomDegree is a streight zoom without twist.
+    // a real zoomDegree is a straight zoom without twist.
     // a complex zoomDegree has a twist!
     vec2 ans = cx_product(zoomDegree,z);
-        ans = cx_product(zoomDegree,ans);
+    // ans = cx_product(zoomDegree,ans);
     return ans;
 }
 vec2 anotherTransform(vec2 z) {

@@ -61,6 +61,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },
         complexEffect5OnOff: { type: 'i', value: 0 },
+        schottkyEffectOnOff: { type: 'i', value: 0 },
 	    showFixedPoints: { type: 'i', value: 1 },
 	    uBlackMask: { type: 'i', value: 0 },
 	    uMaskType: { type: 'i', value: 0 },
@@ -156,8 +157,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'transform1Icon.png', 'Increase N', that.complexEffect1);                
         appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Decrease N', that.complexEffect2);                
         appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Apply transform', that.complexEffect3);                
-        appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);                
-        appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect5);                
+        appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);
+        appendSingleIcon(container, 'transformControlIcon', 'surprise.png', 'Apply transform', that.complexEffect5);                
+        appendSingleIcon(container, 'transformControlIcon', 'S.png', 'Apply schottky', that.schottkyEffect);
     }
     this.viewState = 0;
     this.toggleView = function() {
@@ -218,7 +220,10 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     this.complexEffect5 = function() { 
         that.uniforms.complexEffect5OnOff.value = 
         that.uniforms.complexEffect5OnOff.value == 0 ? 1 : 0;
-        // that.uniforms.complexEffect5OnOff.value++;
+    }
+    this.schottkyEffect = function() { 
+        that.uniforms.schottkyEffectOnOff.value = 
+        that.uniforms.schottkyEffectOnOff.value == 0 ? 1 : 0;
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.point1Defined && !that.point2Defined) {
@@ -388,6 +393,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.uniforms.complexEffect3OnOff.value = 0;
         that.uniforms.complexEffect4OnOff.value = 0;
         that.uniforms.complexEffect5OnOff.value = 0;
+        that.uniforms.schottkyEffectOnOff.value = 0;
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
         that.uniforms.loxodromicX.value = 1;
         that.uniforms.loxodromicY.value = 0;

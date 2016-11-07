@@ -1,0 +1,22 @@
+To Do:
+
+Make Droste spiral
+Change width of Droste so there is more space in the middle group.
+Control where square droste goes.
+
+
+http://blog.wolfram.com/2009/04/24/droste-effect-with-mathematica/
+http://www.math.leidenuniv.nl/~desmit/papers/bridges-2005-desmit.pdf
+http://archive.bridgesmathart.org/2013/bridges2013-217.pdf
+http://roy.red/infinite-regression-.html#infinite-regression
+
+equation for 2 squares:
+http://www.josleys.com/article_show.php?id=82
+
+Ideas for future dance performances:
+- Close to camera. 
+- Around camera.
+- Bright colors.
+- Steady lighting.
+
+Get a gallery of dance photos up. Edit out noise.
