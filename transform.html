@@ -217,14 +217,14 @@ void main() {
     //  the positive real axis. So flip y and x around in this next equation.
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
-    if (schottkyEffectOnOff == 1) {
+    if (schottkyEffectOnOff > 0) {
         schottkyResult r = applySchottkyLoop(a);
  //       if (r.level == -1) {
  //           gl_FragColor = vec4(0.,0.,0.,0.0);
  //           return;
  //       }
         if (r.level > -1)
-            a = r.inverseZ;
+            a = r.glitchZ;
     }
     vec2 result = a;
     vec2 e1 = vec2(e1x,e1y);

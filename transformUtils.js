@@ -158,8 +158,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Decrease N', that.complexEffect2);                
         appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Apply transform', that.complexEffect3);                
         appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);
-        appendSingleIcon(container, 'transformControlIcon', 'surprise.png', 'Apply transform', that.complexEffect5);                
-        appendSingleIcon(container, 'transformControlIcon', 'S.png', 'Apply schottky', that.schottkyEffect);
+        appendSingleIcon(container, 'transformControlIcon', 'surprise.png', 'Debugging transform', that.complexEffect5);                
+        appendSingleIcon(container, 'transformControlIcon', 'S1.png', 'Apply theta schottky', that.schottkyEffect1);
+        appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apply theta schottky', that.schottkyEffect2);
     }
     this.viewState = 0;
     this.toggleView = function() {
@@ -218,12 +219,14 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         that.uniforms.complexEffect4OnOff.value = that.uniforms.complexEffect4OnOff.value == 0 ? 1 : 0;
     }
     this.complexEffect5 = function() { 
-        that.uniforms.complexEffect5OnOff.value = 
-        that.uniforms.complexEffect5OnOff.value == 0 ? 1 : 0;
+        that.uniforms.complexEffect5OnOff.value = that.uniforms.complexEffect5OnOff.value == 0 ? 1 : 0;
     }
-    this.schottkyEffect = function() { 
-        that.uniforms.schottkyEffectOnOff.value = 
-        that.uniforms.schottkyEffectOnOff.value == 0 ? 1 : 0;
+    this.schottkyEffect1 = function() { 
+        that.uniforms.schottkyEffectOnOff.value = that.uniforms.schottkyEffectOnOff.value == 0 ? 1 : 0;
+    }
+    this.schottkyEffect2 = function() { 
+        that.uniforms.schottkyEffectOnOff.value = that.uniforms.schottkyEffectOnOff.value == 0 ? 2 : 0;
+        console.log(that.uniforms.schottkyEffectOnOff.value);
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.point1Defined && !that.point2Defined) {

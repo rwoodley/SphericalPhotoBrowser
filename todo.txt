@@ -20,3 +20,6 @@ Ideas for future dance performances:
 - Steady lighting.
 
 Get a gallery of dance photos up. Edit out noise.
+
+----------
+make index.html work.

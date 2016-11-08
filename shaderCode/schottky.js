@@ -46,25 +46,19 @@ xform getTransform(int i) {
     if (i == 2) return group_b;
     return group_B;
 }
-xform getInitialCircleTransform(int i) {
-    if (i == 1) return group_a;
-    if (i == 0) return group_A;
-    if (i == 3) return group_b;
-    return group_B;
-}
-void defineInitialCirclesOld() {   // indra's neckalce page 170
+void defineInitialCircles1() {   // indra's necklace page 170
     float xradius = 1.;
     float s2 = sqrt(2.0);
 
-    initialCircles.a.center = -i*s2;
-    initialCircles.a.radius = xradius;
-    initialCircles.A.center = i*s2;
+    initialCircles.A.center = -i*s2;
     initialCircles.A.radius = xradius;
+    initialCircles.a.center = i*s2;
+    initialCircles.a.radius = xradius;
 
-    initialCircles.b.center = vec2(-s2,0.);
-    initialCircles.b.radius = xradius;
-    initialCircles.B.center = vec2(s2,0.);
+    initialCircles.B.center = vec2(-s2,0.);
     initialCircles.B.radius = xradius;
+    initialCircles.b.center = vec2(s2,0.);
+    initialCircles.b.radius = xradius;
 
     vec2 s2c = vec2(sqrt(2.0),0.);
     vec2 zero = vec2(0.,0.);
@@ -74,8 +68,8 @@ void defineInitialCirclesOld() {   // indra's neckalce page 170
     group_A = inverseXformCtor(group_a);
     group_B = inverseXformCtor(group_b);
 }
-void defineInitialCircles() {   // indra's necklace page 118
-    float xtheta = 3.14159/6.;
+void defineInitialCircles2() {   // indra's necklace page 118
+    float xtheta = 3.14159/5.;
 
     float xctr = 1./cos(xtheta);
     float xradius = tan(xtheta);
@@ -95,10 +89,16 @@ void defineInitialCircles() {   // indra's necklace page 118
 //    float cnst = 1./sin(xtheta);
     float cnst = 1.;
 
-    group_A = xformCtor(one*cnst,i*cos(xtheta)*cnst,-i*cos(xtheta)*cnst,one*cnst);
-    group_B = xformCtor(one*cnst,vec2(cos(xtheta),0.)*cnst,vec2(cos(xtheta),0)*cnst,one*cnst);
-    group_a = inverseXformCtor(group_A);
-    group_b = inverseXformCtor(group_B);
+    group_a = xformCtor(one*cnst,i*cos(xtheta)*cnst,-i*cos(xtheta)*cnst,one*cnst);
+    group_b = xformCtor(one*cnst,vec2(cos(xtheta),0.)*cnst,vec2(cos(xtheta),0)*cnst,one*cnst);
+    group_A = inverseXformCtor(group_a);
+    group_B = inverseXformCtor(group_b);
+}
+void defineInitialCircles() {
+    if (schottkyEffectOnOff == 1)
+        defineInitialCircles1();
+    else
+        defineInitialCircles2();
 }
 bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
@@ -222,21 +222,21 @@ schottkyResult applySchottkyLoop(in vec2 z) {
     for (int i = 0; i < 4; i++) {
         circle c = getInitialCircle(i);     // 0 = a, 1 = A, 2 = b, 3 = B
         if (insideCircle(c, z)) {
-            xform T = getTransform(inverseTransformIndex(i));
+            xform T = getTransform(i);   // which xform got us inside this circle?
             level++;
             xforms[0] = T;
             for (int j = 0; j < 4; j++) {
                 if (j == inverseTransformIndex(i)) continue;
                 circle c2 = applyTransformsToCircle(getInitialCircle(j), xforms, level);
                 if (insideCircle(c2, z)) {
-                    xform T1 = getTransform(inverseTransformIndex(j));
+                    xform T1 = getTransform(j);
                     level++;
                     xforms[1] = T1;
                     for (int k = 0; k < 4; k++) {
                         if (k == inverseTransformIndex(j)) continue;
                         circle c4 = applyTransformsToCircle(getInitialCircle(k), xforms, level);
                         if (insideCircle(c4, z)) {
-                            xform T2 = getTransform(inverseTransformIndex(k));
+                            xform T2 = getTransform(k);
                             level++;
                             xforms[2] = T2;
                             for (int l = 0; l < 4; l++) {
