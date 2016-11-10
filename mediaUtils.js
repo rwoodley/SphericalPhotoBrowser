@@ -51,7 +51,7 @@ function mediaUtils(scene, camera, stills, videos,
     };
 
     this.initMediaUtils = function() {
-        that.toggleView(1);         // $$$
+        that.toggleView(0);         // $$$
 	    that.initVideo();
 	    that.toggleControlPanel();
 	    that.setupMediaIcons();

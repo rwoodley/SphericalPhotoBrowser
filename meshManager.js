@@ -15,7 +15,9 @@ function meshManager(scene) {
     // ALWAYS ALLOW FOR MULTIPLE MESHES!
     var that = this;
     this.scene = scene;
-    this.material = new THREE.MeshNormalMaterial();
+    that.materialGenerator = function () {
+        return new THREE.MeshNormalMaterial();
+    }
     this.managedMeshes = [];
     this.removeManagedMeshes = function() {
         for (var i = 0; i < that.managedMeshes.length; i++) {
@@ -40,9 +42,9 @@ function meshManager(scene) {
         for (var i = 0; i < that.managedMeshes.length; i++) {
             that.managedMeshes[i].updateMaterialCallback(
                 that.managedMeshes[i].mesh, 
-                materialGenerator());   // always a new mesh.
+                materialGenerator());   // always a new material since updateMaterialCallback() will modify it.
         }
-        that.material = newMaterial;
+        that.materialGenerator = materialGenerator;    // and one to keep around...
     }
     this.newMesh = function(desiredGeoIndex) {
         that.geoIndex = desiredGeoIndex;
@@ -53,13 +55,13 @@ function meshManager(scene) {
             // see https://github.com/mrdoob/three.js/issues/2476
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
             var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
-            var mesh = new THREE.Mesh( geo, that.material );
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.scale.set(1,1,-1);
             that._addMesh(mesh, function(msh, mat) {
                 mat.side = THREE.FrontSide;
                 msh.material = mat;
             });
-            var mesh2 = new THREE.Mesh( geo, new THREE.MeshNormalMaterial() );
+            var mesh2 = new THREE.Mesh( geo, that.materialGenerator() );
             mesh2.scale.set(1,1,-1);
             that._addMesh(mesh2, function(msh, mat) {
                 mat.side = THREE.BackSide;
@@ -70,7 +72,7 @@ function meshManager(scene) {
         }
         if (that.geoIndex == 1) {
             var geo = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
-            var mesh = new THREE.Mesh( geo, that.material );
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateY(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
                 newMaterial.side = THREE.DoubleSide;
@@ -79,7 +81,7 @@ function meshManager(scene) {
         }
         if (that.geoIndex == 2) {
             var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
-            var mesh = new THREE.Mesh( geo, that.material );
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
                 newMaterial.side = THREE.DoubleSide;
@@ -91,7 +93,7 @@ function meshManager(scene) {
             new THREE.ParametricGeometry( 
                 psphere, 
                 40, 40 );
-            var mesh = new THREE.Mesh( geo, that.material );
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
                 newMaterial.side = THREE.DoubleSide;
@@ -104,7 +106,7 @@ function meshManager(scene) {
                 klein, 
                 40, 40 );
 
-            var mesh = new THREE.Mesh( geo, that.material );
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(-Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
                 newMaterial.side = THREE.DoubleSide;
