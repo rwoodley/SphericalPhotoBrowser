@@ -175,7 +175,16 @@ function mediaUtils(scene, camera, stills, videos,
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.setMaterialForTexture = function(texture) {
-            return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
+        that.setMipMapOptions(texture);
+        return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
+    }
+    this.setMipMapOptions = function(texture) {
+        // since none of our textures are powers of 2, we need the
+        // following settings.
+        // more: https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
+        texture.minFilter = THREE.LinearFilter;   // eliminates pixellation.
+        texture.magFilter = THREE.LinearFilter;   // ditto
+        texture.generateMipmaps = false;
     }
     this.initVideo = function() {
         that.video  = document.getElementById('video');
@@ -196,14 +205,9 @@ function mediaUtils(scene, camera, stills, videos,
         that.video.load();
 
         that.videoTexture = new THREE.Texture(that.video);
-        that.videoTexture.minFilter = THREE.LinearFilter;
-        that.videoTexture.magFilter = THREE.LinearFilter;
-        that.videoTexture.generateMipmaps = false;
         that.video.pause();     
         that.video.play();
 
-        that.videoTexture.minFilter = THREE.LinearFilter;   // eliminates aliasing when tiling textures.
-//        that.material = that.setMaterialForTexture(that.videoTexture);
         that.meshManager.setTexture(that.videoTexture, that.setMaterialForTexture);
         that.videoDisplayed = true;
         that.toggleVideoControls();

@@ -22,8 +22,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
             that.uniforms.showFixedPoints.value = 0;
             $('.statusText').hide();
         }
-        if (e.keyCode == 77) {  // m
-            that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
+        if (e.keyCode == 77) {  // 'm'
+            that.useGreenMask();
+            // that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
         }
         // TODO: This screen capture should probably go in mediaUtils at some point.
         if (e.keyCode == 82) {  // r - start recording
@@ -64,6 +65,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         schottkyEffectOnOff: { type: 'i', value: 0 },
 	    showFixedPoints: { type: 'i', value: 1 },
 	    uBlackMask: { type: 'i', value: 0 },
+	    uNadirMask: { type: 'i', value: 0 },
 	    uMaskType: { type: 'i', value: 0 },
 	    uTextureNumber: { type: 'i', value: 0 },
 	    e1x: { type: 'f', value: 0. },
@@ -79,17 +81,22 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         iChannelStillMask:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
 	};
-    var pathToSubtractionTexture = 'media/fenceStill.jpg';
+    var pathToSubtractionTexture = 'media/stillMask.jpg';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+        mediaUtils.setMipMapOptions(texture);
         that.uniforms.iChannelStillMask.value =  texture; 
     });
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+        mediaUtils.setMipMapOptions(texture);
         that.uniforms.iChannelDelayMask.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
     });
+
+    // this is where we over-ride the default in mediaUtils.
+    // this is where we hook in all of our transformation code that is in the shaders.
     mediaUtils.setMaterialForTexture = function(texture) {
         that.uniforms.iChannel0 =  { type: 't', value: texture }; 
+        mediaUtils.setMipMapOptions(texture);
         // that.uniforms.iChannelDelayMask =  { type: 't', value: texture }; 
-        texture.minFilter = THREE.LinearFilter; // eliminates aliasing when tiling textures.
         var fragmentShaderCode = 
             ""
             + SHADERCODE.uniformsAndGlobals()
@@ -151,6 +158,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'diffGreenMask.svg', 'mask out green', that.useGreenMask);
         appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
         appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use original color', that.beigeMask);
+        appendSingleIcon(container, 'transformControlIcon', 'nadir.png', 'mask out nadir', that.nadirMask);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -250,6 +258,9 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.beigeMask = function() {
             that.uniforms.uBlackMask.value = 0;
+    }
+    this.nadirMask = function() {
+            that.uniforms.uNadirMask.value = that.uniforms.uNadirMask.value == 1 ? 0 : 1;
     }
     this.setFixedPoint1 = function() {that.setFixedPoint(1); }
     this.setFixedPoint2 = function() {that.setFixedPoint(2); }

@@ -34,6 +34,7 @@ var x = `
     uniform int uNumCircles;
 
     uniform int  uBlackMask;
+    uniform int  uNadirMask;
     uniform int  uMaskType;
     uniform int  uTextureNumber;
 

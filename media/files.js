@@ -1,1 +1,1 @@
-myTextures=["ash_uvgrid01.jpg","colors.jpg","fence.jpg","fenceStill.jpg","hdr1.jpg","hdr2.jpg","rgb.jpg","seldomsFence.jpg","subtract.jpg","uv.jpg"]
+myTextures=["green2still (1).jpg","green2still (2).jpg","green2still (3).jpg","green2still.jpg","greenTest.jpg","hdr1.jpg","hdr2.jpg","stillMask.jpg","uv.jpg"]
