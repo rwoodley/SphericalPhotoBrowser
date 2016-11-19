@@ -70,6 +70,7 @@ void defineInitialCircles1() {   // indra's necklace page 170
 }
 void defineInitialCircles2() {   // indra's necklace page 118
     float xtheta = 3.14159/5.;
+    float s2 = sqrt(2.0);
 
     float xctr = 1./cos(xtheta);
     float xradius = tan(xtheta);
@@ -90,15 +91,39 @@ void defineInitialCircles2() {   // indra's necklace page 118
     float cnst = 1.;
 
     group_a = xformCtor(one*cnst,i*cos(xtheta)*cnst,-i*cos(xtheta)*cnst,one*cnst);
-    group_b = xformCtor(one*cnst,vec2(cos(xtheta),0.)*cnst,vec2(cos(xtheta),0)*cnst,one*cnst);
+    //group_b = xformCtor(one*cnst,vec2(cos(xtheta),0.)*cnst,vec2(cos(xtheta),0)*cnst,one*cnst);
+    group_b = xformCtor(vec2(1.5,1.), vec2(s2,1.0606602), vec2(s2,-1.0606602), vec2(1.5,-1.));
     group_A = inverseXformCtor(group_a);
     group_B = inverseXformCtor(group_b);
+}
+void defineInitialCircles3() {   // indra's necklace page 165, 170
+    float y = 1.684;
+    float x = sqrt(1. + y*y);
+
+    float u = 1.143;
+    float v = sqrt(u*u - 1.);
+    float k = 1.;
+
+    group_b = xformCtor(vec2(x,0.), vec2(y,0.), vec2(y,0.), vec2(x,0.));
+    group_a = xformCtor(vec2(u,0.), vec2(0.,k*v), vec2(0.,-k*v), vec2(u,0.));
+    group_A = inverseXformCtor(group_a);
+    group_B = inverseXformCtor(group_b);
+
+    initialCircles.a.center = vec2(0.,k*u/v);
+    initialCircles.a.radius = k/v;
+    initialCircles.A.center = vec2(0.,-k*u/v);
+    initialCircles.A.radius = k/v;
+
+    initialCircles.b.center = vec2(x/y,0.);
+    initialCircles.b.radius = 1./y;
+    initialCircles.B.center = vec2(-x/y,0.);
+    initialCircles.B.radius = 1./y;
 }
 void defineInitialCircles() {
     if (schottkyEffectOnOff == 1)
         defineInitialCircles1();
     else
-        defineInitialCircles2();
+        defineInitialCircles3();
 }
 bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;

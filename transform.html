@@ -20,12 +20,17 @@
             }
             .videoPanel {
                 position: fixed;
-                bottom: 40%;
+                bottom: 50%;
                 width: 95%;
             }
             .cameraPanel {
                 position: fixed;
                 bottom: 0%;
+                width: 95%;
+            }
+            .texturePanel {
+                position: fixed;
+                bottom: 40%;
                 width: 95%;
             }
             .transformPanel {
@@ -120,20 +125,30 @@
         </script>
 
         <script id="fs" type="x-shader/x-fragment">
+vec4 wrappedTexture2D(sampler2D texture, vec2 inUV) {
+    vec2 uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(inUV.y + textureVAdjustment, 1.));
+    return texture2D(texture, uv);
+}
 bool checkMaskPoint(vec2 uv) {
-    vec4 t1 = texture2D( iChannel0,  uv);
+    vec4 t1 = wrappedTexture2D( iChannel0,  uv);
     vec4 t2;
-    if (uMaskType == 1)
-        t2 = texture2D( iChannelDelayMask,  uv);
-    else
-        t2 = texture2D( iChannelStillMask,  uv);
+    vec4 t3;
+    if (uMaskType == 1) {
+        t2 = wrappedTexture2D( iChannelDelayMask,  uv);
+        t3 = t2;
+    }
+    else {
+        t2 = wrappedTexture2D( iChannelStillMask1,  uv);
+        t3 = wrappedTexture2D( iChannelStillMask2,  uv);        
+    }
     vec4 clr = abs(t1-t2);
+    vec4 clr2 = abs(t1-t3);
     float threshold = .1;
     return
         (
-        clr.x < threshold && 
-        clr.y < threshold && 
-        clr.z < threshold
+        (clr.x < threshold || clr2.x < threshold) && 
+        (clr.y < threshold || clr2.y < threshold) && 
+        (clr.z < threshold || clr2.z < threshold)
         );
 }
 vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
@@ -144,11 +159,11 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     }
 
     if (uTextureNumber == 0)
-        textureValue = texture2D( iChannel0,  uv);
+        textureValue = wrappedTexture2D( iChannel0,  uv);
     if (uTextureNumber == 1)
-        textureValue = texture2D( iChannelDelayMask,  uv);
+        textureValue = wrappedTexture2D( iChannelDelayMask,  uv);
     if (uTextureNumber == 2)
-        textureValue = texture2D( iChannelStillMask,  uv);
+        textureValue = wrappedTexture2D( iChannelStillMask1,  uv);
     
     if (uMaskType == 0)
          return textureValue;
@@ -176,7 +191,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
 
     }
     if (uMaskType == 2) {
-        vec4 t1 = texture2D( iChannel0,  uv);
+        vec4 t1 = wrappedTexture2D( iChannel0,  uv);
 
         if (uBlackMask == 1)
             clr = vec4(0.,0.,0.,1.);
@@ -358,6 +373,7 @@ function init() {
 
     _scene = new THREE.Scene();
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
+    _controls.keys = {};    // this disable arrow keys which are now used for moving the texture.
     _axes = new THREE.AxisHelper( 15000 );
     //_scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
@@ -381,6 +397,7 @@ function init() {
         "transformControlsContainerId", 
         "complexControlsContainerId", 
         "transformControls2ContainerId",
+        "textureControlsContainerId",
         _mediaUtils);
 
 //    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
@@ -427,6 +444,14 @@ $().ready(function() {
             <div class="centerAlign">
                 <div id="mediaListContainer" >
                     <span class='showhide  wideLabel label'>Stills/Videos:</span>
+                </div>
+            </div>
+        </div>
+        <div class="texturePanel">
+            <div class="centerAlign">
+                <div id="textureControlsContainerId">
+                    <span class='showhide wideLabel label'>Texture controls:</span>
+                    </span>
                 </div>
             </div>
         </div>

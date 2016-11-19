@@ -1,8 +1,9 @@
 // Functions specific to doing mobius transforms on videos or stills.
 // this must be paired with the appropriate shaders of course.
 // issues: zoom sometimes fires on its own for now good reason.
-function transformUtils(camera, transformControlsContainerId, complexControlsContainerId, 
-    transformControls2ContainerId,
+function transformUtils(camera, 
+    transformControlsContainerId, complexControlsContainerId, 
+    transformControls2ContainerId, textureControlsContainerId,
     mediaUtils) {
     this.canvas = document.querySelector('canvas');
 	this.camera = camera;
@@ -10,6 +11,7 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 	this.transformControlsContainerId = transformControlsContainerId;
     this.complexControlsContainerId = complexControlsContainerId;
     this.transformControls2ContainerId = transformControls2ContainerId;
+    this.textureControlsContainerId = textureControlsContainerId;
     this.unitVector = (new THREE.Vector3()).copy(this.camera.position).normalize();;
     this.point1Defined = false;
     this.point2Defined = false;
@@ -47,9 +49,18 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
             that.capturer.save();
             that.capturer = undefined;
         }
+        if (e.keyCode == 39)    // right arrow
+            that.uniforms.textureUAdjustment.value += .1;
+        if (e.keyCode == 37)    // right arrow
+            that.uniforms.textureUAdjustment.value -= .1;
+        if (e.keyCode == 38)    // up arrow
+            that.uniforms.textureVAdjustment.value += .1;
+        if (e.keyCode == 40)    // down arrow
+            that.uniforms.textureVAdjustment.value -= .1;
         var textureNumber = e.keyCode - 48;
         if (textureNumber < 10 && textureNumber >= 0)
             that.uniforms.uTextureNumber.value = textureNumber;
+        e.preventDefault();
     }
 
     this.cameraVectorLength = 1;    // by default, unit vector.
@@ -58,6 +69,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
 	    startTime:    { type: 'f', value: 0.0 },
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
+        textureUAdjustment: { type: 'f', value: 0 },
+        textureVAdjustment: { type: 'f', value: 0 },
         complexEffect1OnOff: { type: 'i', value: 1 },
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },
@@ -78,13 +91,19 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         drosteSpiral: {type: 'i', value: 0 },
         drosteZoom: {type: 'i', value: 0},
         iChannel0:  { type: 't', value: 0 },
-        iChannelStillMask:  { type: 't', value: 0 },
+        iChannelStillMask1:  { type: 't', value: 0 },
+        iChannelStillMask2:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
 	};
-    var pathToSubtractionTexture = 'media/stillMask.jpg';
+    var pathToSubtractionTexture = 'media/stillMask1.jpg';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
-        that.uniforms.iChannelStillMask.value =  texture; 
+        that.uniforms.iChannelStillMask1.value =  texture; 
+    });
+    var pathToSubtractionTexture = 'media/stillMask2.jpg';
+    (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+        mediaUtils.setMipMapOptions(texture);
+        that.uniforms.iChannelStillMask2.value =  texture; 
     });
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
@@ -159,6 +178,13 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
         appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
         appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use original color', that.beigeMask);
         appendSingleIcon(container, 'transformControlIcon', 'nadir.png', 'mask out nadir', that.nadirMask);
+
+    	var container = document.getElementById(that.textureControlsContainerId);
+    	appendSingleIcon(container, 'cameraControlIcon', 'left.png', 'texture Left', that.textureLeft);
+    	appendSingleIcon(container, 'cameraControlIcon', 'up.png', 'texture Up', that.textureUp);
+    	appendSingleIcon(container, 'cameraControlIcon', 'down.png', 'texture Down', that.textureDown);
+    	appendSingleIcon(container, 'cameraControlIcon', 'right.png', 'texture Right', that.textureRight);
+    	appendSingleIcon(container, 'cameraControlIcon', 'stop.png', 'texture Stop', that.textureStop);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -211,6 +237,14 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     }
     this.showHelpPage = function() {
         window.location.href = 'info.html';
+    }
+    this.textureLeft = function() { that.uniforms.textureUAdjustment.value += .1; }
+    this.textureRight = function() { that.uniforms.textureUAdjustment.value -= .1; }
+    this.textureUp = function() { that.uniforms.textureVAdjustment.value += .1; }
+    this.textureDown = function() { that.uniforms.textureVAdjustment.value -= .1; }
+    this.textureStop = function() { 
+        that.uniforms.textureUAdjustment.value = 0; 
+        that.uniforms.textureVAdjustment.value = 0; 
     }
     this.complexEffect1 = function() { 
         that.uniforms.complexEffect1OnOff.value += 1;
@@ -402,6 +436,8 @@ function transformUtils(camera, transformControlsContainerId, complexControlsCon
     	that.point1Defined = false;
     	that.point2Defined = false;
     	that.uniforms.mobiusEffectsOnOff.value = 0;
+        that.uniforms.textureUAdjustment.value = 0; 
+        that.uniforms.textureVAdjustment.value = 0; 
         that.uniforms.complexEffect1OnOff.value = 1;
         // that.uniforms.complexEffect2OnOff.value = 0;
         that.uniforms.complexEffect3OnOff.value = 0;

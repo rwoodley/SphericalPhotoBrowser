@@ -10,7 +10,8 @@ var x = `
     // ===== shader control variables
     uniform sampler2D iChannel0;
     uniform sampler2D iChannelDelayMask;
-    uniform sampler2D iChannelStillMask;
+    uniform sampler2D iChannelStillMask1;
+    uniform sampler2D iChannelStillMask2;
     varying vec2 vUv;  
     uniform float iRotationAmount;
     uniform float iGlobalTime;
@@ -22,6 +23,8 @@ var x = `
     uniform float e2x;
     uniform float e2y;
     uniform int mobiusEffectsOnOff; 
+    uniform float textureUAdjustment;
+    uniform float textureVAdjustment;
     uniform int complexEffect1OnOff;
     uniform int complexEffect2OnOff;
     uniform int complexEffect3OnOff;
