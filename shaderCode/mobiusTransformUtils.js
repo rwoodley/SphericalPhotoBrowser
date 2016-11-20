@@ -45,7 +45,6 @@ vec2 zoom(in vec2 z, in vec2 zoomDegree) {
     // a real zoomDegree is a straight zoom without twist.
     // a complex zoomDegree has a twist!
     vec2 ans = cx_product(zoomDegree,z);
-    // ans = cx_product(zoomDegree,ans);
     return ans;
 }
 vec2 anotherTransform(vec2 z) {

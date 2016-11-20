@@ -50,13 +50,13 @@ function transformUtils(camera,
             that.capturer = undefined;
         }
         if (e.keyCode == 39)    // right arrow
-            that.uniforms.textureUAdjustment.value += .1;
+            that.uniforms.textureUAdjustment.value += .01;
         if (e.keyCode == 37)    // right arrow
-            that.uniforms.textureUAdjustment.value -= .1;
+            that.uniforms.textureUAdjustment.value -= .01;
         if (e.keyCode == 38)    // up arrow
-            that.uniforms.textureVAdjustment.value += .1;
+            that.uniforms.textureVAdjustment.value += .01;
         if (e.keyCode == 40)    // down arrow
-            that.uniforms.textureVAdjustment.value -= .1;
+            that.uniforms.textureVAdjustment.value -= .01;
         var textureNumber = e.keyCode - 48;
         if (textureNumber < 10 && textureNumber >= 0)
             that.uniforms.uTextureNumber.value = textureNumber;
