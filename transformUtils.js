@@ -19,7 +19,7 @@ function transformUtils(camera,
     this.cameraLookAtComplexX = 0;
     this.cameraLookAtComplexY = 0;
     this.mediaUtils = mediaUtils;
-    this.mediaUtils.onkeyup = function(e){
+    this.mediaUtils.onkeydown = function(e){
         if(e.keyCode == 32) {
             that.uniforms.showFixedPoints.value = 0;
             $('.statusText').hide();

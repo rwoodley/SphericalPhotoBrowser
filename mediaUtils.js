@@ -28,17 +28,17 @@ function mediaUtils(scene, camera, stills, videos,
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
     this.FOV = 90;
-    this.onkeyup = undefined;
+    this.onkeydown = undefined;
     this.material = new THREE.MeshNormalMaterial();
     this.geoIndex = 0;
 
     this.controlPanelVisible = true;
-	document.body.onkeyup = function(e){
+	document.body.onkeydown = function(e){
         console.log(e.keyCode);
         if(e.keyCode == 32) {
             that.toggleControlPanel();
         }
-        if (that.onkeyup != undefined) that.onkeyup(e);
+        if (that.onkeydown != undefined) that.onkeydown(e);
     };
 
     this.showToast = function(message, ms) {
