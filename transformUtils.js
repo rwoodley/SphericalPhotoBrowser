@@ -69,6 +69,7 @@ function transformUtils(camera,
 	    startTime:    { type: 'f', value: 0.0 },
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
+        textureScale: { type: 'f', value: 1. },
         textureUAdjustment: { type: 'f', value: 0 },
         textureVAdjustment: { type: 'f', value: 0 },
         complexEffect1OnOff: { type: 'i', value: 1 },
@@ -185,6 +186,8 @@ function transformUtils(camera,
     	appendSingleIcon(container, 'cameraControlIcon', 'down.png', 'texture Down', that.textureDown);
     	appendSingleIcon(container, 'cameraControlIcon', 'right.png', 'texture Right', that.textureRight);
     	appendSingleIcon(container, 'cameraControlIcon', 'stop.png', 'texture Stop', that.textureStop);
+        appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow.png', 'Scale Factor', that.textureSmaller);
+        appendSingleIcon(container, 'cameraControlIcon', 'fovWide.png', 'Scale Factor', that.textureLarger);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -246,6 +249,9 @@ function transformUtils(camera,
         that.uniforms.textureUAdjustment.value = 0; 
         that.uniforms.textureVAdjustment.value = 0; 
     }
+    this.textureSmaller = function() { 
+        that.uniforms.textureScale.value *= 1.5; }
+    this.textureLarger = function() { that.uniforms.textureScale.value /= 1.5; }
     this.complexEffect1 = function() { 
         that.uniforms.complexEffect1OnOff.value += 1;
         that.showToast("n = " + that.uniforms.complexEffect1OnOff.value, 1000);
@@ -436,6 +442,7 @@ function transformUtils(camera,
     	that.point1Defined = false;
     	that.point2Defined = false;
     	that.uniforms.mobiusEffectsOnOff.value = 0;
+        that.uniforms.textureScale.value = 0;
         that.uniforms.textureUAdjustment.value = 0; 
         that.uniforms.textureVAdjustment.value = 0; 
         that.uniforms.complexEffect1OnOff.value = 1;
