@@ -28,17 +28,26 @@ function mediaUtils(scene, camera, stills, videos,
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
     this.FOV = 90;
-    this.onkeydown = undefined;
+    this.onkeydown = undefined;     // this gets defined by transformUtils... 
     this.material = new THREE.MeshNormalMaterial();
     this.geoIndex = 0;
 
     this.controlPanelVisible = true;
+    this.extraKey = 0;
+	document.body.onkeyup = function(e){
+        if (e.keyCode == 16 || e.keyCode == 17)
+            this.extraKey = 0;
+    }
 	document.body.onkeydown = function(e){
         console.log(e.keyCode);
-        if(e.keyCode == 32) {
-            that.toggleControlPanel();
+        if (e.keyCode == 16 || e.keyCode == 17) // shift & ctrl, respectively...
+            this.extraKey = e.keyCode;
+        else {
+            if(e.keyCode == 32) {
+                that.toggleControlPanel();
+            }
+            if (that.onkeydown != undefined) that.onkeydown(e, this.extraKey);
         }
-        if (that.onkeydown != undefined) that.onkeydown(e);
     };
 
     this.showToast = function(message, ms) {

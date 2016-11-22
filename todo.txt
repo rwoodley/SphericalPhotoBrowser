@@ -24,3 +24,8 @@ Get a gallery of dance photos up. Edit out noise.
 
 ----------
 make index.html work.
+----------
+arrow moves texture
+shift-arrow moves camera
+ctrl-arrow moves mobius
+ws - camera in/out

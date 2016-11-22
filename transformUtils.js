@@ -19,7 +19,7 @@ function transformUtils(camera,
     this.cameraLookAtComplexX = 0;
     this.cameraLookAtComplexY = 0;
     this.mediaUtils = mediaUtils;
-    this.mediaUtils.onkeydown = function(e){
+    this.mediaUtils.onkeydown = function(e, extraKey){
         if(e.keyCode == 32) {
             that.uniforms.showFixedPoints.value = 0;
             $('.statusText').hide();
@@ -49,14 +49,32 @@ function transformUtils(camera,
             that.capturer.save();
             that.capturer = undefined;
         }
-        if (e.keyCode == 39)    // right arrow
-            that.uniforms.textureUAdjustment.value += .01;
-        if (e.keyCode == 37)    // right arrow
-            that.uniforms.textureUAdjustment.value -= .01;
-        if (e.keyCode == 38)    // up arrow
-            that.uniforms.textureVAdjustment.value += .01;
-        if (e.keyCode == 40)    // down arrow
-            that.uniforms.textureVAdjustment.value -= .01;
+        if (extraKey == 0) {
+            if (e.keyCode == 39)    // right arrow
+                that.uniforms.textureUAdjustment.value += .01;
+            if (e.keyCode == 37)    // left arrow
+                that.uniforms.textureUAdjustment.value -= .01;
+            if (e.keyCode == 38)    // up arrow
+                that.uniforms.textureVAdjustment.value += .01;
+            if (e.keyCode == 40)    // down arrow
+                that.uniforms.textureVAdjustment.value -= .01;
+        }
+        if (extraKey == 16) {       // shift
+            if (e.keyCode == 39)    // right arrow
+                that.rotateLeft();
+            if (e.keyCode == 37)    // left arrow
+                that.rotateRight();
+        }
+        if (extraKey == 17) {       // ctrl
+            if (e.keyCode == 39)    // right arrow
+                that.mediaUtils.cameraRight();
+            if (e.keyCode == 37)    // left arrow
+                that.mediaUtils.cameraLeft();
+            if (e.keyCode == 38)    // up arrow
+                that.mediaUtils.cameraUp();
+            if (e.keyCode == 40)    // down arrow
+                that.mediaUtils.cameraDown();
+        }
         var textureNumber = e.keyCode - 48;
         if (textureNumber < 10 && textureNumber >= 0)
             that.uniforms.uTextureNumber.value = textureNumber;
