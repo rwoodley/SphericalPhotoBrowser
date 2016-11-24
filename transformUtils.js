@@ -511,6 +511,9 @@ function transformUtils(camera,
             	that.cameraLookAtComplexX.toFixed(2) + " + " + 
             	that.cameraLookAtComplexY.toFixed(2) + "i";
 
+            document.getElementById('windowSizeText').innerHTML = "Window (wxh): " + 
+            	window.innerWidth + " , " + window.innerHeight;
+
  		}
 		catch (x) {}
     }

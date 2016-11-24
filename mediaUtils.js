@@ -25,6 +25,7 @@ function mediaUtils(scene, camera, stills, videos,
 	this.videoTexture = undefined; 
 	this.videoSource = "";
     this.videoDisplayed = false;
+    this.rotateZAmount = 0;
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
     this.FOV = 90;
@@ -108,6 +109,8 @@ function mediaUtils(scene, camera, stills, videos,
     	appendSingleIcon(container, 'cameraControlIcon', 'up', 'Camera Up', that.cameraUp);
     	appendSingleIcon(container, 'cameraControlIcon', 'down', 'Camera Down', that.cameraDown);
     	appendSingleIcon(container, 'cameraControlIcon', 'right', 'Camera Right', that.cameraRight);
+    	appendSingleIcon(container, 'cameraControlIcon', 'rotateLeft', 'Rotate Left', that.cameraRotateLeft);
+    	appendSingleIcon(container, 'cameraControlIcon', 'rotateRight', 'Rotate Right', that.cameraRotateRight);
     	appendSingleIcon(container, 'cameraControlIcon', 'stop', 'Camera Stop', that.cameraStop);
         appendSingleIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
         appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', that.narrowFOV);
@@ -156,6 +159,11 @@ function mediaUtils(scene, camera, stills, videos,
             that.camera.lookAt(new THREE.Vector3(0,0,0));
             rotateCameraY(that.camera, that.rotateYAmount);
             rotateCameraUpDown(that.camera, that.rotateXAmount);
+            if (that.rotateZAmount > 0)
+                that.camera.up.set(0,1,1);
+            //that.camera.rotateZ(that.rotateZAmount+that.camera.rotation.z);
+            // that.camera.rotateY(that.rotateZAmount);
+            // that.camera.rotateX(that.rotateZAmount);
         }
 
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
@@ -265,6 +273,12 @@ function mediaUtils(scene, camera, stills, videos,
     this.cameraStop = function() {
         that.rotateYAmount = 0.;
         that.rotateXAmount = 0.;
+    }  
+    this.cameraRotateLeft = function() {
+        that.rotateZAmount -= 0.2;
+    }  
+    this.cameraRotateRight = function() {
+        that.rotateZAmount += 0.2;
     }  
     this.flipCamera = function() {
     	that.camera.position.x = - that.camera.position.x;

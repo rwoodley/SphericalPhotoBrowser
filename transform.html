@@ -382,6 +382,8 @@ function init() {
     _camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
 
     _scene = new THREE.Scene();
+
+
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
     _controls.keys = {};    // this disable arrow keys which are now used for moving the texture.
     _axes = new THREE.AxisHelper( 15000 );
@@ -449,6 +451,7 @@ $().ready(function() {
              <div id='cameraText' class="statusText"></div>
              <div id='unitVectorText' class="statusText"></div>
              <div id='complexPointText' class="statusText"></div>
+             <div id='windowSizeText' class="statusText"></div>
         </div>
         <div class="availableMediaPanel ">
             <div class="centerAlign">
