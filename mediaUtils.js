@@ -115,6 +115,39 @@ function mediaUtils(scene, camera, stills, videos,
         appendSingleIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
         appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', that.narrowFOV);
         appendSingleIcon(container, 'cameraControlIcon', 'fovWide', 'Wider Viewport', that.widerFOV);
+
+    	el = document.createElement('span');
+        el.style='width: 30px; height: 30px;';
+        el.className='showhide cameraControlIcon';
+        el.innerHTML="1920<br/>1080"
+        container.appendChild(el);
+    	$(el).click(screenSizeLarge);
+
+    	el = document.createElement('span');
+        el.style='width: 30px; height: 30px;';
+        el.className='showhide cameraControlIcon';
+        el.innerHTML="1280<br/>720"
+        container.appendChild(el);
+    	$(el).click(screenSizeMedium);
+
+    	el = document.createElement('span');
+        el.style='width: 30px; height: 30px;';
+        el.className='showhide cameraControlIcon';
+        el.innerHTML="720<br/>480"
+        container.appendChild(el);
+    	$(el).click(screenSizeSmall);
+    }
+    function screenSizeLarge() {
+        document.getElementsByTagName( 'canvas' )[0].style.width = "1920px";
+        document.getElementsByTagName( 'canvas' )[0].style.height = "1080px";
+    }
+    function screenSizeMedium() {
+        document.getElementsByTagName( 'canvas' )[0].style.width = "1280px";
+        document.getElementsByTagName( 'canvas' )[0].style.height = "720px";
+    }
+    function screenSizeSmall() {
+        document.getElementsByTagName( 'canvas' )[0].style.width = "720px";
+        document.getElementsByTagName( 'canvas' )[0].style.height = "480px";
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;
@@ -259,10 +292,10 @@ function mediaUtils(scene, camera, stills, videos,
     	that.video_skip(10);
     }
     this.cameraLeft = function() {
-        that.rotateYAmount -= 0.002;
+        that.rotateYAmount -= 0.0005;
     }  
     this.cameraRight = function() {
-        that.rotateYAmount += 0.002;
+        that.rotateYAmount += 0.0005;
     }  
     this.cameraUp = function() {
         that.rotateXAmount -= 0.002;

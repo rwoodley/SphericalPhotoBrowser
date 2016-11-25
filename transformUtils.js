@@ -19,6 +19,7 @@ function transformUtils(camera,
     this.cameraLookAtComplexX = 0;
     this.cameraLookAtComplexY = 0;
     this.mediaUtils = mediaUtils;
+    that.recording = false;
     this.mediaUtils.onkeydown = function(e, extraKey){
         if(e.keyCode == 32) {
             that.uniforms.showFixedPoints.value = 0;
@@ -29,41 +30,50 @@ function transformUtils(camera,
             // that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
         }
         // TODO: This screen capture should probably go in mediaUtils at some point.
-        if (e.keyCode == 82) {  // r - start recording
-            console.log("Start recording");
-            that.capturer = new CCapture({
-                // framerate: 20,
-                // verbose: true,
-                format: 'webm'
-            });
-            // that.capturer = new CCapture( { format: 'webm' } );
-            //            that.capturer = new CCapture( { format: 'gif', workersPath: 'lib/' } );
-            that.capturer.start();
-            that.lasttiming = that.capturer.getTiming();
-            // that.mediaUtils.video.play();
-            document.getElementById('video').playbackRate = 60 / 25
-        }
-        if (e.keyCode == 83) {  // s - stop recording
-            console.log("Stop recording");
-            that.capturer.stop();
-            that.capturer.save();
-            that.capturer = undefined;
+        if (e.keyCode == 82) {  // r - start/stop recording
+            if (!that.recording) {
+                console.log("Start recording");
+                that.recording = true;
+                that.capturer = new CCapture({
+                    // framerate: 20,
+                    // verbose: true,
+                    format: 'webm'
+                });
+                // that.capturer = new CCapture( { format: 'webm' } );
+                //            that.capturer = new CCapture( { format: 'gif', workersPath: 'lib/' } );
+                that.capturer.start();
+                that.lasttiming = that.capturer.getTiming();
+                // that.mediaUtils.video.play();
+                document.getElementById('video').playbackRate = 60 / 25
+            }
+            else {
+                console.log("Stop recording");
+                that.recording = false;
+                that.capturer.stop();
+                that.capturer.save();
+                that.capturer = undefined;
+            }
         }
         if (extraKey == 0) {
             if (e.keyCode == 39)    // right arrow
-                that.uniforms.textureUAdjustment.value += .01;
+                that.uniforms.textureUAdjustment.value += .0025;
             if (e.keyCode == 37)    // left arrow
-                that.uniforms.textureUAdjustment.value -= .01;
+                that.uniforms.textureUAdjustment.value -= .0025;
             if (e.keyCode == 38)    // up arrow
-                that.uniforms.textureVAdjustment.value += .01;
+                that.uniforms.textureVAdjustment.value += .0025;
             if (e.keyCode == 40)    // down arrow
-                that.uniforms.textureVAdjustment.value -= .01;
+                that.uniforms.textureVAdjustment.value -= .0025;
+            if (e.keyCode == 83) {  // s - stop
+                that.uniforms.textureVAdjustment.value = 0;
+            }
         }
         if (extraKey == 16) {       // shift
             if (e.keyCode == 39)    // right arrow
                 that.rotateLeft();
             if (e.keyCode == 37)    // left arrow
                 that.rotateRight();
+            if (e.keyCode == 83)  // s - stop
+                that.rotationOff();
         }
         if (extraKey == 17) {       // ctrl
             if (e.keyCode == 39)    // right arrow
@@ -74,6 +84,8 @@ function transformUtils(camera,
                 that.mediaUtils.cameraUp();
             if (e.keyCode == 40)    // down arrow
                 that.mediaUtils.cameraDown();
+            if (e.keyCode == 83)  // s - stop
+                that.mediaUtils.cameraStop();
         }
         var textureNumber = e.keyCode - 48;
         if (textureNumber < 10 && textureNumber >= 0)
@@ -513,6 +525,11 @@ function transformUtils(camera,
 
             document.getElementById('windowSizeText').innerHTML = "Window (wxh): " + 
             	window.innerWidth + " , " + window.innerHeight;
+
+            document.getElementById('canvasSizeText').innerHTML = "Canvas (wxh): " + 
+            	        document.getElementsByTagName( 'canvas' )[0].style.width  + 
+                " , " +
+            	        document.getElementsByTagName( 'canvas' )[0].style.height; 
 
  		}
 		catch (x) {}
