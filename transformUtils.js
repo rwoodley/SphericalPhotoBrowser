@@ -126,12 +126,12 @@ function transformUtils(camera,
         iChannelStillMask2:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
 	};
-    var pathToSubtractionTexture = 'media/stillMask1.jpg';
+    var pathToSubtractionTexture = 'media/stillMask1.png';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
         that.uniforms.iChannelStillMask1.value =  texture; 
     });
-    var pathToSubtractionTexture = 'media/stillMask2.jpg';
+    var pathToSubtractionTexture = 'media/stillMask2.png';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
         that.uniforms.iChannelStillMask2.value =  texture; 

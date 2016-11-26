@@ -112,9 +112,44 @@
   ga('send', 'pageview');
 
 </script>
+<script id="fs2" type="x-shader/x-fragment">
+    uniform sampler2D iChannelStillMask1;
+    uniform sampler2D iChannelStillMask2;
+    varying vec2 vUv;  
+    vec4 wrappedTexture2D(sampler2D texture, vec2 inUV, float textureScale, float textureUAdjustment, float textureVAdjustment) {
+        vec2 uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(inUV.y + textureVAdjustment, 1.));
+        float scaleFactor = textureScale;
+        float widthx = 1./scaleFactor;
+        float minx = .5 - widthx/2.;
+        float maxx = .5 + widthx/2.;
+        if (uv.x < minx || uv.x > maxx || uv.y < minx || uv.y > maxx)
+            return vec4(0.0,0.0,0.0,0.0);
+        else {
+            uv = vec2((uv.x-minx)/widthx, (uv.y-minx)/widthx);
+            return texture2D(texture, uv);    
+        }
+        
+    }
+    void main() {
+        vec2 uv = vUv;
+        vec4 t1 = texture2D( iChannelStillMask1,  uv);
+        //vec4 t2 = wrappedTexture2D( iChannelStillMask1,  uv, 1.0, .1, 0.);        
+        vec4 t2 = wrappedTexture2D( iChannelStillMask1,  uv, 1.0, 0.2, 0.);        
+        vec4 clr = abs(t1-t2);
+        float threshold = .05;
+        if
+            (
+            (clr.x < threshold ) && 
+            (clr.y < threshold ) && 
+            (clr.z < threshold )
+            )
+            gl_FragColor = vec4(0.5,0.5,.5,1.);
+        else
+            gl_FragColor = vec4(1.,1.,1.,1.);
+}
+</script>
 
-
-        <script id="vs" type="x-shader/x-vertex">
+<script id="vs2" type="x-shader/x-vertex">
             varying vec2 vUv; 
             void main()
             {
@@ -123,8 +158,17 @@
                 vUv = uv;
             }
         </script>
+        <script id="vs" type="x-shader/x-vertex">
+            varying vec2 vUv; 
+            void main()
+            {
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0 );
+                gl_Position = projectionMatrix * mvPosition;
+                vUv = uv;
+            }
+</script>
 
-        <script id="fs" type="x-shader/x-fragment">
+<script id="fs" type="x-shader/x-fragment">
 vec4 wrappedTexture2D(sampler2D texture, vec2 inUV) {
     vec2 uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(inUV.y + textureVAdjustment, 1.));
     float scaleFactor = textureScale;
@@ -390,12 +434,49 @@ function init() {
     //_scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
 
+    _renderer.sortObjects = false;          // see: http://stackoverflow.com/a/15995475
     _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
     _renderer.setSize( window.innerWidth, window.innerHeight );
 
     document.getElementById( 'container' ).innerHTML = "";
     _container.appendChild( _renderer.domElement );
 
+//    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
+//    var text1 = THREE.ImageUtils.loadTexture("media/hdr1.jpg");
+//    var skyMaterial = new THREE.MeshBasicMaterial({map: text1, side: THREE.DoubleSide });
+
+    var skyMaterialOld = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
+    var uniforms = {
+        iChannelStillMask1:  { type: 't', value: 0 },
+        iChannelStillMask2:  { type: 't', value: 0 },
+	};
+    var pathToSubtractionTexture = 'media/stillMask2.png';
+    (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+        _mediaUtils.setMipMapOptions(texture);
+        uniforms.iChannelStillMask1.value =  texture; 
+    });
+    var pathToSubtractionTexture = 'media/stillMask3.png';
+    (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+        _mediaUtils.setMipMapOptions(texture);
+        uniforms.iChannelStillMask2.value =  texture; 
+    });
+    var skyMaterial = new THREE.ShaderMaterial( {
+        uniforms: uniforms,
+        vertexShader: document.getElementById( 'vs2' ).textContent,
+        fragmentShader: document.getElementById( 'fs2' ).textContent,
+        side: THREE.DoubleSide,
+        transparent: true,
+        // wireframe: true
+    } );
+
+    var skyGeometry = new THREE.SphereGeometry(100,32,32);
+    var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
+    _scene.add(skyMesh);
+    
+    _stats = new Stats();
+    document.getElementById('statsDivInner').appendChild( _stats.domElement );    
+
+    // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
     _mediaUtils = new mediaUtils(
         _scene, 
         _camera, 
@@ -411,18 +492,6 @@ function init() {
         "transformControls2ContainerId",
         "textureControlsContainerId",
         _mediaUtils);
-
-//    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
-//    var text1 = THREE.ImageUtils.loadTexture("media/hdr1.jpg");
-//    var skyMaterial = new THREE.MeshBasicMaterial({map: text1, side: THREE.DoubleSide });
-
-    var skyMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide} );
-    var skyGeometry = new THREE.SphereGeometry(100,32,32);
-    var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
-    _scene.add(skyMesh);
-    
-    _stats = new Stats();
-    document.getElementById('statsDivInner').appendChild( _stats.domElement );    
 
     animate();
 }
