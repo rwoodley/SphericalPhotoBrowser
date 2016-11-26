@@ -154,11 +154,11 @@ function transformUtils(camera,
             + SHADERCODE.mobiusTransformUtils()
             + SHADERCODE.drosteUtils()
             + SHADERCODE.schottkyUtils()
-            + document.getElementById( 'fs' ).textContent
+            + SHADERCODE.mainShader_fs()
         ;
         newMaterial = new THREE.ShaderMaterial( {
             uniforms: that.uniforms,
-            vertexShader: document.getElementById( 'vs' ).textContent,
+            vertexShader: SHADERCODE.mainShader_vs(),
             fragmentShader: fragmentShaderCode,
             side: THREE.DoubleSide,
             transparent: true,
