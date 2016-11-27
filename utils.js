@@ -85,50 +85,6 @@ function drawAxes(size,position, rotation) {
 
 
 
-// see: http://stackoverflow.com/questions/4878145/javascript-and-webgl-external-scripts
-function loadShaderFile(url, data, callback, errorCallback) {
-    // Set up an asynchronous request
-    var request = new XMLHttpRequest();
-    request.open('GET', url, true);
-
-    // Hook the event that gets called as the request progresses
-    request.onreadystatechange = function () {
-        // If the request is "DONE" (completed or failed)
-        if (request.readyState == 4) {
-            // If we got HTTP status 200 (OK)
-            if (request.status == 200) {
-                callback(request.responseText, data)
-            } else { // Failed
-                errorCallback(url);
-            }
-        }
-    };
-
-    request.send(null);    
-}
-
-function loadShaderFiles(urls, callback, errorCallback) {
-    var numUrls = urls.length;
-    var numComplete = 0;
-    var result = [];
-
-    // Callback for a single file
-    function partialCallback(text, urlIndex) {
-        result[urlIndex] = text;
-        numComplete++;
-
-        // When all files have downloaded
-        if (numComplete == numUrls) {
-            callback(result);
-        }
-    }
-
-    for (var i = 0; i < numUrls; i++) {
-        loadShaderFile(urls[i], i, partialCallback, errorCallback);
-    }
-}
-
-var gl;
 // -------------
 function doSkyDome(pathToTexture) {
     var skyGeometry = new THREE.SphereGeometry(5000,50,50);
@@ -142,4 +98,13 @@ function doSkyDome(pathToTexture) {
     _skyBox.scale.set(-1,1,1);
     //_skyBox.rotation.x = Math.PI/4;
     _scene.add( _skyBox );
+}
+// ----
+function getParameter( name, url ) {
+    if (!url) url = location.href;
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( url );
+    return results == null ? null : results[1];
 }

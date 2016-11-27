@@ -112,8 +112,21 @@ function init() {
     _stats = new Stats();
     document.getElementById('statsDivInner').appendChild( _stats.domElement );    
 
+    var textureName = getParameter('still', window.location.href);
+    var textureType = '';
+    if (textureName != null)
+        textureType = 'still';
+    else {
+        textureName = getParameter('video', window.location.href);
+        if (textureName != null)
+            textureType = 'video';
+    }
+
+    // render inner objects
     // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
     _mediaUtils = new mediaUtils(
+        textureName,
+        textureType,
         _scene, 
         _camera, 
         myTextures, 
@@ -129,6 +142,17 @@ function init() {
         "textureControlsContainerId",
         _mediaUtils);
 
+    if (textureName != null) {
+        _mediaUtils.toggleControlPanel();
+        _mediaUtils.initForCannedMode();
+        _transformUtils.initForCannedMode();
+        if (textureType == 'still')
+            _mediaUtils.updateSkyDomeForFileName(textureName);    // $$$
+        else
+            _mediaUtils.updateVideoForFileName(textureName);
+    }
+    else
+        _mediaUtils.updateSkyDomeForFileName('uv.jpg');
     animate();
 }
 

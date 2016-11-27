@@ -30,7 +30,7 @@ function transformUtils(camera,
             // that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
         }
         // TODO: This screen capture should probably go in mediaUtils at some point.
-        if (e.keyCode == 82) {  // r - start/stop recording
+        if (e.keyCode == 82222) {  // r - start/stop recording
             if (!that.recording) {
                 console.log("Start recording");
                 that.recording = true;
@@ -126,6 +126,22 @@ function transformUtils(camera,
         iChannelStillMask2:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
 	};
+    this.initForCannedMode = function() {   // when still or video is defined in URL
+        if (!that.mediaUtils.createMode) return;
+        if (that.mediaUtils.textureType == 'video') {
+            if (that.mediaUtils.textureName == 'couple') {
+                that.uniforms.complexEffect4OnOff.value = 1;
+                that.uniforms.textureScale.value *= 3.5; 
+            }
+        }
+        if (that.mediaUtils.textureType == 'still') {
+            if (that.mediaUtils.textureName == 'uv.jpg') {
+                that.uniforms.complexEffect4OnOff.value = 1;
+                that.uniforms.textureScale.value *= 3.5; 
+            }
+        }
+
+    }
     var pathToSubtractionTexture = 'media/stillMask1.png';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
@@ -472,7 +488,7 @@ function transformUtils(camera,
     	that.point1Defined = false;
     	that.point2Defined = false;
     	that.uniforms.mobiusEffectsOnOff.value = 0;
-        that.uniforms.textureScale.value = 0;
+        that.uniforms.textureScale.value = 1;
         that.uniforms.textureUAdjustment.value = 0; 
         that.uniforms.textureVAdjustment.value = 0; 
         that.uniforms.complexEffect1OnOff.value = 1;

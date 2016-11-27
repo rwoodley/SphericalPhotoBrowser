@@ -8,9 +8,12 @@ User might want to:
 - add their own icons
 
 **/ 
-function mediaUtils(scene, camera, stills, videos, 
+function mediaUtils(textureName, textureType, scene, camera, stills, videos, 
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId) {
 	var that = this;
+    this.textureName = textureName == null ? 'uv.jpg' : textureName;
+    this.createMode = textureName != null;
+    this.textureType = textureName == null ? 'still' : textureType; // video or still
 	this.stills = stills;
 	this.videos = videos;
 	this.mediaListContainerId = mediaListContainerId;
@@ -40,6 +43,7 @@ function mediaUtils(scene, camera, stills, videos,
             this.extraKey = 0;
     }
 	document.body.onkeydown = function(e){
+        if (!that.createMode) return;
         console.log(e.keyCode);
         if (e.keyCode == 16 || e.keyCode == 17) // shift & ctrl, respectively...
             this.extraKey = e.keyCode;
@@ -52,6 +56,8 @@ function mediaUtils(scene, camera, stills, videos,
     };
 
     this.showToast = function(message, ms) {
+        console.log(message);
+        if (!that.createMode) return;
         var options = {
             settings: {
                 duration: ms
@@ -68,11 +74,24 @@ function mediaUtils(scene, camera, stills, videos,
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
-        that.updateSkyDomeForFileName('uv.jpg');    // $$$
-        //that.updateSkyDomeForFileName(myTextures[0]);
-        //that.updateVideoForFileName(myVideos[0]);
         that.setInitialCameraPosition();
 	};
+    this.initForCannedMode = function() {   // when still or video is defined in URL
+        if (!that.createMode) return;
+        if (that.textureType == 'video') {
+            if (that.textureName == 'couple') {
+                that.camera.position.set(9.4,0.4,6.);
+                that.rotateYAmount -= 0.0005;
+            }
+        }
+        if (that.textureType == 'still') {
+            if (that.textureName == 'uv.jpg') {
+                that.camera.position.set(9.4,0.4,6.);
+                that.rotateYAmount -= 0.0005;
+            }
+        }
+
+    }
     this.setInitialCameraPosition = function() {
         that.camera.position.x = -1; that.camera.position.y = 0.0; that.camera.position.z = 0;   
     };
