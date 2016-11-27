@@ -130,13 +130,13 @@ function transformUtils(camera,
         if (!that.mediaUtils.createMode) return;
         if (that.mediaUtils.textureType == 'video') {
             if (that.mediaUtils.textureName == 'couple') {
-                that.uniforms.complexEffect4OnOff.value = 1;
+                that.uniforms.complexEffect3OnOff.value = 1;
                 that.uniforms.textureScale.value *= 3.5; 
             }
         }
         if (that.mediaUtils.textureType == 'still') {
             if (that.mediaUtils.textureName == 'uv.jpg') {
-                that.uniforms.complexEffect4OnOff.value = 1;
+                that.uniforms.complexEffect3OnOff.value = 1;
                 that.uniforms.textureScale.value *= 3.5; 
             }
         }

@@ -48,6 +48,7 @@ ga('send', 'pageview');
 <script>
 var _container, _stats;
 var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
+var _mirrorSphere, mirrorCubeCamera;
 var myMesh;
 function init() {
     if ( ! Detector.webgl ) {
@@ -153,6 +154,22 @@ function init() {
     }
     else
         _mediaUtils.updateSkyDomeForFileName('uv.jpg');
+
+    // mirror sphere...
+    var sphereGeom =  new THREE.SphereGeometry( 5, 32, 32 ); // radius, segmentsWidth, segmentsHeight
+    _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+    _scene.add( _mirrorSphereCamera );
+    var _mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
+        { color: 0xffcccc, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide } );
+
+    // var cubeMaterial3 = new THREE.MeshLambertMaterial( { color: 0xff6600, envMap: reflectionCube, 
+    //     combine: THREE.MixOperation, reflectivity: 0.3 } );
+
+    _mirrorSphere = new THREE.Mesh( sphereGeom, _mirrorSphereMaterial );
+    _mirrorSphere.position.set(0,-5,0);
+    _mirrorSphereCamera.position = _mirrorSphere.position;
+    _scene.add(_mirrorSphere);
+
     animate();
 }
 
@@ -161,6 +178,10 @@ function animate() {
     _controls.update( _clock.getDelta() );
     _renderer.render( _scene, _camera );
     _transformUtils.animate();
+
+    _mirrorSphere.visible = false;
+    _mirrorSphereCamera.updateCubeMap( _renderer, _scene );
+    _mirrorSphere.visible = true;
     _stats.update();
 }
 $().ready(function() {

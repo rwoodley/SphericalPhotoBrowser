@@ -87,7 +87,7 @@ function mediaUtils(textureName, textureType, scene, camera, stills, videos,
         if (that.textureType == 'still') {
             if (that.textureName == 'uv.jpg') {
                 that.camera.position.set(9.4,0.4,6.);
-                that.rotateYAmount -= 0.0005;
+                //that.rotateYAmount -= 0.0005;
             }
         }
 
@@ -211,8 +211,10 @@ function mediaUtils(textureName, textureType, scene, camera, stills, videos,
             that.camera.lookAt(new THREE.Vector3(0,0,0));
             rotateCameraY(that.camera, that.rotateYAmount);
             rotateCameraUpDown(that.camera, that.rotateXAmount);
-            if (that.rotateZAmount > 0)
+            if (that.rotateZAmount > 0) {
+                console.log("Changing Camera up!");
                 that.camera.up.set(0,1,1);
+            }
             //that.camera.rotateZ(that.rotateZAmount+that.camera.rotation.z);
             // that.camera.rotateY(that.rotateZAmount);
             // that.camera.rotateX(that.rotateZAmount);
