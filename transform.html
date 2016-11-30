@@ -27,6 +27,7 @@
         <script src="shaderCode/mainShader_vs.js"></script>
 
         <script src="meshManager.js"></script>
+        <script src="canned.js"></script>
         <script src="mediaUtils.js"></script>
         <script src="transformUtils.js"></script>
         <script src="utils.js"></script>
@@ -113,21 +114,12 @@ function init() {
     _stats = new Stats();
     document.getElementById('statsDivInner').appendChild( _stats.domElement );    
 
-    var textureName = getParameter('still', window.location.href);
-    var textureType = '';
-    if (textureName != null)
-        textureType = 'still';
-    else {
-        textureName = getParameter('video', window.location.href);
-        if (textureName != null)
-            textureType = 'video';
-    }
+    var canned = new cannedRun();
 
     // render inner objects
     // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
     _mediaUtils = new mediaUtils(
-        textureName,
-        textureType,
+        canned,
         _scene, 
         _camera, 
         myTextures, 
@@ -143,24 +135,14 @@ function init() {
         "textureControlsContainerId",
         _mediaUtils);
 
-    if (textureName != null) {
-        _mediaUtils.toggleControlPanel();
-        _mediaUtils.initForCannedMode();
-        _transformUtils.initForCannedMode();
-        if (textureType == 'still')
-            _mediaUtils.updateSkyDomeForFileName(textureName);    // $$$
-        else
-            _mediaUtils.updateVideoForFileName(textureName);
-    }
-    else
-        _mediaUtils.updateSkyDomeForFileName('uv.jpg');
+    canned.setup(_mediaUtils, _transformUtils);     // if this is a canned run, configure.
 
     // mirror sphere...
     var sphereGeom =  new THREE.SphereGeometry( 5, 32, 32 ); // radius, segmentsWidth, segmentsHeight
     _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
     _scene.add( _mirrorSphereCamera );
     var _mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
-        { color: 0xffcccc, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide } );
+        { color: 0xccccff, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide, reflectivity: 0.6 } );
 
     // var cubeMaterial3 = new THREE.MeshLambertMaterial( { color: 0xff6600, envMap: reflectionCube, 
     //     combine: THREE.MixOperation, reflectivity: 0.3 } );

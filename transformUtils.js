@@ -126,22 +126,6 @@ function transformUtils(camera,
         iChannelStillMask2:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
 	};
-    this.initForCannedMode = function() {   // when still or video is defined in URL
-        if (!that.mediaUtils.createMode) return;
-        if (that.mediaUtils.textureType == 'video') {
-            if (that.mediaUtils.textureName == 'couple') {
-                that.uniforms.complexEffect3OnOff.value = 1;
-                that.uniforms.textureScale.value *= 3.5; 
-            }
-        }
-        if (that.mediaUtils.textureType == 'still') {
-            if (that.mediaUtils.textureName == 'uv.jpg') {
-                that.uniforms.complexEffect3OnOff.value = 1;
-                that.uniforms.textureScale.value *= 3.5; 
-            }
-        }
-
-    }
     var pathToSubtractionTexture = 'media/stillMask1.png';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
