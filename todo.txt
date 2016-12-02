@@ -33,3 +33,4 @@ ws - camera in/out
 make index.html work.
 make mirror ball on/off configurable.
 person tracking.
+put in some canned links.

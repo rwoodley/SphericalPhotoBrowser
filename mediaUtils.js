@@ -41,7 +41,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
             this.extraKey = 0;
     }
 	document.body.onkeydown = function(e){
-        if (!that.createMode) return;
+        if (!that.canned.createMode) return;
         console.log(e.keyCode);
         if (e.keyCode == 16 || e.keyCode == 17) // shift & ctrl, respectively...
             this.extraKey = e.keyCode;

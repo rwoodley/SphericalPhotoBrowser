@@ -138,7 +138,7 @@ function init() {
     canned.setup(_mediaUtils, _transformUtils);     // if this is a canned run, configure.
 
     // mirror sphere...
-    var sphereGeom =  new THREE.SphereGeometry( 5, 32, 32 ); // radius, segmentsWidth, segmentsHeight
+    var sphereGeom =  new THREE.SphereGeometry( 8, 32, 32 ); // radius, segmentsWidth, segmentsHeight
     _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
     _scene.add( _mirrorSphereCamera );
     var _mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
@@ -148,7 +148,7 @@ function init() {
     //     combine: THREE.MixOperation, reflectivity: 0.3 } );
 
     _mirrorSphere = new THREE.Mesh( sphereGeom, _mirrorSphereMaterial );
-    _mirrorSphere.position.set(0,-5,0);
+    _mirrorSphere.position.set(0,-8,0);
     _mirrorSphereCamera.position = _mirrorSphere.position;
     _scene.add(_mirrorSphere);
 

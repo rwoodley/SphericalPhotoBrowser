@@ -29,6 +29,16 @@ function cannedRun() {
             this.textureScale = 3.5;
             this.schottkyEffect = 0;
         }
+        if (mode == 'couple2') {
+            this.createMode = false;
+            this.textureName = 'coupleCropped';
+            this.textureType = 'video';
+            this.cameraPosition = [-8.4,3.6,10.1];
+            this.rotateYAmount = 0.0005;
+            this.complexEffect3OnOff = 1;
+            this.textureScale = 2.25;
+            this.schottkyEffect = 0;
+        }
         if (mode == 'benchmark') {
             this.createMode = false;
             this.textureName = 'couple';
