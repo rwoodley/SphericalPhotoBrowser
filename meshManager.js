@@ -51,7 +51,7 @@ function meshManager(scene) {
         var segment = 256.;
         var sphereRadius = 10;
         that.removeManagedMeshes();
-        if (that.geoIndex == 0) {
+        if (that.geoIndex == "sphere") {
             // see https://github.com/mrdoob/three.js/issues/2476
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
             var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
@@ -70,7 +70,7 @@ function meshManager(scene) {
             mesh.position.set(0,0,0);
             mesh2.position.set(0,0,0);
         }
-        if (that.geoIndex == 1) {
+        if (that.geoIndex == "plane") {
             var geo = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateY(Math.PI/2);
@@ -79,7 +79,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == 2) {
+        if (that.geoIndex == "torus") {
             var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
@@ -88,7 +88,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == 3) {
+        if (that.geoIndex == "psphere") {
             var geo = 
             new THREE.ParametricGeometry( 
                 psphere, 
@@ -100,7 +100,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == 4) {
+        if (that.geoIndex == "klein") {
             var geo = 
             new THREE.ParametricGeometry( 
                 klein, 

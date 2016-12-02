@@ -232,33 +232,27 @@ function transformUtils(camera,
     this.viewState = 0;
     this.toggleView = function() {
         that.viewState++;
-        that.viewState = that.viewState % 6;
+        that.viewState = that.viewState % 3;
         if (that.viewState == 0) {
             that.cameraVectorLength = 1;
-            that.mediaUtils.toggleView(0);
-        }
-        else
-        if (that.viewState == 5) {
-            that.cameraVectorLength = -1;
-            that.mediaUtils.toggleView(1);
-        }
-        else
-        if (that.viewState == 3) {
-            that.cameraVectorLength = 15;
-            that.mediaUtils.toggleView(0);
-        }
-        if (that.viewState == 4) {
-            that.cameraVectorLength = 1;
-            that.mediaUtils.toggleView(2);
+            that.mediaUtils.toggleView("sphere");
         }
         if (that.viewState == 1) {
-            that.cameraVectorLength = 15;
-            that.mediaUtils.toggleView(4);
+            that.cameraVectorLength = 1;
+            that.mediaUtils.toggleView("torus");
         }
         if (that.viewState == 2) {
-            that.cameraVectorLength = 15;
-            that.mediaUtils.toggleView(3);
+            that.cameraVectorLength = -1;
+            that.mediaUtils.toggleView("plane");
         }
+        // if (that.viewState == 3) {
+        //     that.cameraVectorLength = 15;
+        //     that.mediaUtils.toggleView("sphere");
+        // }
+        // if (that.viewState == 1) {
+        //     that.cameraVectorLength = 15;
+        //     that.mediaUtils.toggleView("psphere");
+        // }
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;

@@ -47,7 +47,7 @@ ga('send', 'pageview');
 </script>
 
 <script>
-var _container, _stats;
+var _container, _stats, _canned;
 var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
 var _mirrorSphere, mirrorCubeCamera;
 var myMesh;
@@ -114,12 +114,12 @@ function init() {
     _stats = new Stats();
     document.getElementById('statsDivInner').appendChild( _stats.domElement );    
 
-    var canned = new cannedRun();
+    _canned = new cannedRun();
 
     // render inner objects
     // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
     _mediaUtils = new mediaUtils(
-        canned,
+        _canned,
         _scene, 
         _camera, 
         myTextures, 
@@ -135,23 +135,24 @@ function init() {
         "textureControlsContainerId",
         _mediaUtils);
 
-    canned.setup(_mediaUtils, _transformUtils);     // if this is a canned run, configure.
+    _canned.setup(_mediaUtils, _transformUtils);     // if this is a canned run, configure.
 
     // mirror sphere...
-    var sphereGeom =  new THREE.SphereGeometry( 8, 32, 32 ); // radius, segmentsWidth, segmentsHeight
-    _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
-    _scene.add( _mirrorSphereCamera );
-    var _mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
-        { color: 0xccccff, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide, reflectivity: 0.6 } );
+    if (_canned.showMirrorBall) {
+        var sphereGeom =  new THREE.SphereGeometry( 8, 32, 32 ); // radius, segmentsWidth, segmentsHeight
+        _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+        _scene.add( _mirrorSphereCamera );
+        var _mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
+            { color: 0xccccff, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide, reflectivity: 0.6 } );
 
-    // var cubeMaterial3 = new THREE.MeshLambertMaterial( { color: 0xff6600, envMap: reflectionCube, 
-    //     combine: THREE.MixOperation, reflectivity: 0.3 } );
+        // var cubeMaterial3 = new THREE.MeshLambertMaterial( { color: 0xff6600, envMap: reflectionCube, 
+        //     combine: THREE.MixOperation, reflectivity: 0.3 } );
 
-    _mirrorSphere = new THREE.Mesh( sphereGeom, _mirrorSphereMaterial );
-    _mirrorSphere.position.set(0,-8,0);
-    _mirrorSphereCamera.position = _mirrorSphere.position;
-    _scene.add(_mirrorSphere);
-
+        _mirrorSphere = new THREE.Mesh( sphereGeom, _mirrorSphereMaterial );
+        _mirrorSphere.position.set(0,-8,0);
+        _mirrorSphereCamera.position = _mirrorSphere.position;
+        _scene.add(_mirrorSphere);
+    }
     animate();
 }
 
@@ -161,9 +162,11 @@ function animate() {
     _renderer.render( _scene, _camera );
     _transformUtils.animate();
 
-    _mirrorSphere.visible = false;
-    _mirrorSphereCamera.updateCubeMap( _renderer, _scene );
-    _mirrorSphere.visible = true;
+    if (_canned.showMirrorBall) {
+        _mirrorSphere.visible = false;
+        _mirrorSphereCamera.updateCubeMap( _renderer, _scene );
+        _mirrorSphere.visible = true;
+    }
     _stats.update();
 }
 $().ready(function() {

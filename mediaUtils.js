@@ -65,7 +65,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
     };
 
     this.initMediaUtils = function() {
-        that.toggleView(0);         // $$$
+        that.toggleView(this.canned.geometry);         // $$$
 	    that.initVideo();
 	    that.toggleControlPanel();
 	    that.setupMediaIcons();
