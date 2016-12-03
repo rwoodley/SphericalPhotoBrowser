@@ -1,12 +1,45 @@
 // handles canned runs.
 function cannedRun() {
     var that = this;
+    function addSkyDomeToScene(scene, skyMaterial) {
+        var skyGeometry = new THREE.SphereGeometry(100,32,32);
+        var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
+        scene.add(skyMesh);
+        return skyMesh;
+    }
+    this.createSkyDome = function(scene) {
+        var skyMaterial;
+        if (this.skyMaterial == "normal") {
+            skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});    
+            addSkyDomeToScene(_scene, skyMaterial);
+        }
+        if (this.skyMaterial == "greyOutline") {
+            skyMaterial = new THREE.ShaderMaterial( {
+                uniforms: uniforms,
+                vertexShader: SHADERCODE.mainShader_vs(),
+                fragmentShader: SHADERCODE.outerShader_fs(),
+                side: THREE.DoubleSide,
+                transparent: true,
+                // wireframe: true
+            } );            
+            addSkyDomeToScene(_scene, skyMaterial);
+        }
+        if (this.skyMaterial == "hdr1") {
+            (new THREE.TextureLoader()).load("media/stillMask3.png", function ( texture ) {
+                skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
+                var mesh = addSkyDomeToScene(_scene, skyMaterial);
+                mesh.scale.set(-1,1,1);
+            });
+        }
+    }
     this.init = function() {
         var mode = getParameter('mode', window.location.href);
 
         // overall defaults
         this.showMirrorBall = false;
         this.geometry = "sphere";
+        this.skyMaterial = "normal";
+        this.textureUAdjustment = 0;
 
         if (mode == null) {
             this.createMode = true;
@@ -34,6 +67,7 @@ function cannedRun() {
             this.textureName = 'couple';
             this.complexEffect3OnOff = 1;
             this.textureScale = 3.5;
+            this.skyMaterial = "greyOutline";
         }
         if (mode == 'couple2') {
             this.textureName = 'coupleCropped';
@@ -41,17 +75,21 @@ function cannedRun() {
             this.complexEffect3OnOff = 1;
             this.textureScale = 2.25;
             this.showMirrorBall = true;
+            this.skyMaterial = "greyOutline";
         }
         if (mode == 'torusDance') {
             this.textureName = 'dance200';
             this.geometry = "torus";
             this.cameraPosition = [-7.8,4.8,-2.7];
+            this.skyMaterial = "hdr1";
+            this.textureUAdjustment = 0.415;
         }
         if (mode == 'benchmark') {
             this.textureName = 'couple';
             this.complexEffect3OnOff = 1;
             this.textureScale = 3.5;
             this.schottkyEffect = 1;
+            this.skyMaterial = "greyOutline";
         }
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
@@ -66,6 +104,7 @@ function cannedRun() {
         uniforms.complexEffect3OnOff.value = that.complexEffect3OnOff;
         uniforms.schottkyEffectOnOff.value = that.schottkyEffect;
         uniforms.textureScale.value *= that.textureScale; 
+        uniforms.textureUAdjustment.value = this.textureUAdjustment;
     }    
     this.setup = function(mediaUtils, transformUtils) {
         if (!that.createMode) {

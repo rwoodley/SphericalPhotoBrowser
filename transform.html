@@ -74,9 +74,11 @@ function init() {
     _renderer.sortObjects = false;          // see: http://stackoverflow.com/a/15995475
     _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
     _renderer.setSize( window.innerWidth, window.innerHeight );
-
+    _renderer.setClearColor( 0xbfd1ff );
     document.getElementById( 'container' ).innerHTML = "";
     _container.appendChild( _renderer.domElement );
+
+    _canned = new cannedRun();
 
 //    var skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});
 //    var text1 = THREE.ImageUtils.loadTexture("media/hdr1.jpg");
@@ -98,23 +100,10 @@ function init() {
         uniforms.iChannelStillMask2.value =  texture; 
     });
 
-    var skyMaterial = new THREE.ShaderMaterial( {
-        uniforms: uniforms,
-        vertexShader: SHADERCODE.mainShader_vs(),
-        fragmentShader: SHADERCODE.outerShader_fs(),
-        side: THREE.DoubleSide,
-        transparent: true,
-        // wireframe: true
-    } );
+    _canned.createSkyDome(_scene);
 
-    var skyGeometry = new THREE.SphereGeometry(100,32,32);
-    var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
-    _scene.add(skyMesh);
-    
     _stats = new Stats();
     document.getElementById('statsDivInner').appendChild( _stats.domElement );    
-
-    _canned = new cannedRun();
 
     // render inner objects
     // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
