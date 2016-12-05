@@ -38,7 +38,7 @@ function cannedRun() {
         // overall defaults
         this.showMirrorBall = false;
         this.geometry = "sphere";
-        this.skyMaterial = "normal";
+        this.skyMaterial = "Gallery.jpg";
         this.textureUAdjustment = 0;
 
         if (mode == null) {
@@ -82,7 +82,7 @@ function cannedRun() {
             this.geometry = "torus";
             this.cameraPosition = [-7.8,4.8,-2.7];
             this.skyMaterial = "hdr1";
-            this.textureUAdjustment = 0.415;
+            this.textureUAdjustment = 0.44;
         }
         if (mode == 'benchmark') {
             this.textureName = 'couple';

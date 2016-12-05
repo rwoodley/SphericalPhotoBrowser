@@ -119,11 +119,28 @@ void defineInitialCircles3() {   // indra's necklace page 165, 170
     initialCircles.B.center = vec2(-x/y,0.);
     initialCircles.B.radius = 1./y;
 }
+void defineInitialCircles4() {   // indra's necklace page 201
+
+    group_a = xformCtor(vec2(1.,0.), vec2(0.,0.), vec2(0.,-2.), vec2(1.,0.));
+    group_b = xformCtor(vec2(1.,-1.), vec2(1.,0.), vec2(1.,0.), vec2(1.,1.));
+    group_A = inverseXformCtor(group_a);
+    group_B = inverseXformCtor(group_b);
+
+    initialCircles.a.center = vec2(0., 5000.);
+    initialCircles.a.radius = 5000.;
+    initialCircles.A.center = vec2(0.,-0.25);
+    initialCircles.A.radius = 0.25;
+
+    initialCircles.b.center = vec2(1.,-1.);
+    initialCircles.b.radius = 1.;
+    initialCircles.B.center = vec2(-1.,-1.);
+    initialCircles.B.radius = 1.;
+}
 void defineInitialCircles() {
     if (schottkyEffectOnOff == 1)
         defineInitialCircles1();
     else
-        defineInitialCircles3();
+        defineInitialCircles4();
 }
 bool insideCircle(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
@@ -268,6 +285,20 @@ schottkyResult applySchottkyLoop(in vec2 z) {
                                 if (l == inverseTransformIndex(k)) continue;
                                 circle c6 = applyTransformsToCircle(getInitialCircle(l), xforms, level);
                                 if (insideCircle(c6, z)) {
+
+
+                                    xform T3 = getTransform(l);
+                                    level++;
+                                    xforms[3] = T3;
+                                    for (int m = 0; m < 4; m++) {
+                                        if (m == inverseTransformIndex(l)) continue;
+                                        circle c8 = applyTransformsToCircle(getInitialCircle(m), xforms, level);
+                                        if (insideCircle(c8, z)) {
+                                            return getSchottkyResult(3, xforms, z, c8);
+                                        }
+                                    }
+
+
                                     return getSchottkyResult(2, xforms, z, c6);
                                 }
                             }

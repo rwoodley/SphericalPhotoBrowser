@@ -18,6 +18,8 @@ Ideas for future dance performances:
 - Around camera. Walk around camera!
 - Bright colors.
 - Steady lighting.
+- Have people emerge from a door and run around the camera to the other side of the room. looks good on torus.
+
 
 
 Get a gallery of dance photos up. Edit out noise.
@@ -30,5 +32,7 @@ shift-arrow moves camera
 ctrl-arrow moves mobius
 ws - camera in/out
 
+
 person tracking.
-put in some canned links.
+video repeat.
+apollonius circles.

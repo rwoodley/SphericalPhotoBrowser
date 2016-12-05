@@ -160,13 +160,27 @@ void main() {
 
     if (schottkyEffectOnOff > 0) {
         schottkyResult r = applySchottkyLoop(a);
- //       if (r.level == -1) {
- //           gl_FragColor = vec4(0.,0.,0.,0.0);
- //           return;
- //       }
+        if (r.level == 0) {
+            gl_FragColor = vec4(0.3,.7,0.6,1.0);
+            return;
+        }
+        if (r.level == 1) {
+            gl_FragColor = vec4(.2,1.,.9,0.8);
+            return;
+        }
+        if (r.level == 2) {
+            gl_FragColor = vec4(0.2,.5,.6,1.0);
+            return;
+        }
+        if (r.level == 3) {
+            gl_FragColor = vec4(0.,0.,1.,0.8);
+            return;
+        }
         if (r.level > -1)
-            a = r.inverseZ;
+             a = r.glitchZ;
     }
+    gl_FragColor = vec4(0.,0.,0.,0.0);
+    return;
     vec2 result = a;
     vec2 e1 = vec2(e1x,e1y);
     vec2 e2 = vec2(e2x,e2y);
