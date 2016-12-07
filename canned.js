@@ -31,6 +31,13 @@ function cannedRun() {
                 mesh.scale.set(-1,1,1);
             });
         }
+        else {
+            (new THREE.TextureLoader()).load(this.skyMaterial, function ( texture ) {
+                skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
+                var mesh = addSkyDomeToScene(_scene, skyMaterial);
+                mesh.scale.set(-1,1,1);
+            });            
+        }
     }
     this.init = function() {
         var mode = getParameter('mode', window.location.href);
@@ -38,8 +45,9 @@ function cannedRun() {
         // overall defaults
         this.showMirrorBall = false;
         this.geometry = "sphere";
-        this.skyMaterial = "Gallery.jpg";
+        this.skyMaterial = "media/eso_dark.jpg";
         this.textureUAdjustment = 0;
+//            this.showMirrorBall = true;
 
         if (mode == null) {
             this.createMode = true;

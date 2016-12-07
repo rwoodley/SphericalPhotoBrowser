@@ -35,4 +35,4 @@ ws - camera in/out
 
 person tracking.
 video repeat.
-apollonius circles.
+Add dedicated Schottky button for Apollonian Gasket.

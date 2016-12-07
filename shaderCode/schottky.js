@@ -47,6 +47,7 @@ xform getTransform(int i) {
     return group_B;
 }
 void defineInitialCircles1() {   // indra's necklace page 170
+    // kissing theta circles
     float xradius = 1.;
     float s2 = sqrt(2.0);
 
@@ -69,6 +70,7 @@ void defineInitialCircles1() {   // indra's necklace page 170
     group_B = inverseXformCtor(group_b);
 }
 void defineInitialCircles2() {   // indra's necklace page 118
+    // non-kissing circles
     float xtheta = 3.14159/5.;
     float s2 = sqrt(2.0);
 
@@ -97,6 +99,7 @@ void defineInitialCircles2() {   // indra's necklace page 118
     group_B = inverseXformCtor(group_b);
 }
 void defineInitialCircles3() {   // indra's necklace page 165, 170
+    // kissing, different size circles. limit set = unit circle
     float y = 1.684;
     float x = sqrt(1. + y*y);
 
@@ -139,11 +142,19 @@ void defineInitialCircles4() {   // indra's necklace page 201
 void defineInitialCircles() {
     if (schottkyEffectOnOff == 1)
         defineInitialCircles1();
-    else
+    if (schottkyEffectOnOff == 2)
+        defineInitialCircles3();
+    if (schottkyEffectOnOff == 3)
         defineInitialCircles4();
 }
-bool insideCircle(circle a, vec2 z) {
+bool insideCircleOld(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
+}
+bool insideCircle(circle a, vec2 z) {
+    float dx = z.x - a.center.x;
+    float dy = z.y - a.center.y;
+    float dsquared = dx*dx + dy*dy; 
+    return dsquared < a.radius*a.radius;
 }
 bool nearCircleRim(circle a, vec2 z) {
     float d = distance(z,a.center);
@@ -267,22 +278,25 @@ schottkyResult applySchottkyLoop(in vec2 z) {
             xform T = getTransform(i);   // which xform got us inside this circle?
             level++;
             xforms[0] = T;
+            int inverseTransformIndex_i = inverseTransformIndex(i);
             for (int j = 0; j < 4; j++) {
-                if (j == inverseTransformIndex(i)) continue;
+                if (j == inverseTransformIndex_i) continue;
                 circle c2 = applyTransformsToCircle(getInitialCircle(j), xforms, level);
                 if (insideCircle(c2, z)) {
                     xform T1 = getTransform(j);
                     level++;
                     xforms[1] = T1;
+                    int inverseTransformIndex_j = inverseTransformIndex(j);
                     for (int k = 0; k < 4; k++) {
-                        if (k == inverseTransformIndex(j)) continue;
+                        if (k == inverseTransformIndex_j) continue;
                         circle c4 = applyTransformsToCircle(getInitialCircle(k), xforms, level);
                         if (insideCircle(c4, z)) {
                             xform T2 = getTransform(k);
                             level++;
                             xforms[2] = T2;
+                            int inverseTransformIndex_k = inverseTransformIndex(k);
                             for (int l = 0; l < 4; l++) {
-                                if (l == inverseTransformIndex(k)) continue;
+                                if (l == inverseTransformIndex_k) continue;
                                 circle c6 = applyTransformsToCircle(getInitialCircle(l), xforms, level);
                                 if (insideCircle(c6, z)) {
 
@@ -290,8 +304,9 @@ schottkyResult applySchottkyLoop(in vec2 z) {
                                     xform T3 = getTransform(l);
                                     level++;
                                     xforms[3] = T3;
+                                    int inverseTransformIndex_l = inverseTransformIndex(l);
                                     for (int m = 0; m < 4; m++) {
-                                        if (m == inverseTransformIndex(l)) continue;
+                                        if (m == inverseTransformIndex_l) continue;
                                         circle c8 = applyTransformsToCircle(getInitialCircle(m), xforms, level);
                                         if (insideCircle(c8, z)) {
                                             return getSchottkyResult(3, xforms, z, c8);

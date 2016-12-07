@@ -30,7 +30,7 @@ function transformUtils(camera,
             // that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
         }
         // TODO: This screen capture should probably go in mediaUtils at some point.
-        if (e.keyCode == 82222) {  // r - start/stop recording
+        if (e.keyCode == 82) {  // r - start/stop recording
             if (!that.recording) {
                 console.log("Start recording");
                 that.recording = true;
@@ -226,8 +226,9 @@ function transformUtils(camera,
         appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Apply transform', that.complexEffect3);                
         appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);
         appendSingleIcon(container, 'transformControlIcon', 'surprise.png', 'Debugging transform', that.complexEffect5);                
-        appendSingleIcon(container, 'transformControlIcon', 'S1.png', 'Apply theta schottky', that.schottkyEffect1);
-        appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apply theta schottky', that.schottkyEffect2);
+        appendSingleIcon(container, 'transformControlIcon', 'S1.png', 'Apply theta schottky (Equal Circles)', that.schottkyEffect1);
+        appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apply theta schottky (Uneven Circles)', that.schottkyEffect2);
+        appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apollonian Gasket', that.schottkyEffect3);
     }
     this.viewState = 0;
     this.toggleView = function() {
@@ -298,7 +299,9 @@ function transformUtils(camera,
     }
     this.schottkyEffect2 = function() { 
         that.uniforms.schottkyEffectOnOff.value = that.uniforms.schottkyEffectOnOff.value == 0 ? 2 : 0;
-        console.log(that.uniforms.schottkyEffectOnOff.value);
+    }
+    this.schottkyEffect3 = function() { 
+        that.uniforms.schottkyEffectOnOff.value = that.uniforms.schottkyEffectOnOff.value == 0 ? 3 : 0;
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.point1Defined && !that.point2Defined) {
