@@ -233,7 +233,7 @@ function transformUtils(camera,
     this.viewState = 0;
     this.toggleView = function() {
         that.viewState++;
-        that.viewState = that.viewState % 3;
+        that.viewState = that.viewState % 4;
         if (that.viewState == 0) {
             that.cameraVectorLength = 1;
             that.mediaUtils.toggleView("sphere");
@@ -250,10 +250,10 @@ function transformUtils(camera,
         //     that.cameraVectorLength = 15;
         //     that.mediaUtils.toggleView("sphere");
         // }
-        // if (that.viewState == 1) {
-        //     that.cameraVectorLength = 15;
-        //     that.mediaUtils.toggleView("psphere");
-        // }
+        if (that.viewState == 3) {
+            that.cameraVectorLength = 15;
+            that.mediaUtils.toggleView("psphere");
+        }
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;

@@ -126,6 +126,12 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     }
 
 }
+vec3 hsv2rgb(vec3 c)
+{
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
 void setSchottkyColorForLevel(schottkyResult r) {
     if (r.level == 0) {
         gl_FragColor = vec4(0.3,.7,0.6,1.0);
@@ -177,12 +183,16 @@ void main() {
     //  the positive real axis. So flip y and x around in this next equation.
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
+    schottkyResult r = applySchottkyLoop(a);
+    vec3 temp = hsv2rgb(vec3(0.02 * float(r.level),1.0,1.0));
+    float alpha = mod(float(r.level),2.0);
+    gl_FragColor = vec4(temp, alpha);
+    //setSchottkyColorForLevel(r);
+    return;
     if (schottkyEffectOnOff > 0) {
         schottkyResult r = applySchottkyLoop(a);
-        // setSchottkyColorForLevel(r);
-        // return;
         if (r.level > -1)
-             a = r.glitchZ;
+             a = r.inverseZ;
     }
     // return;
     vec2 result = a;
