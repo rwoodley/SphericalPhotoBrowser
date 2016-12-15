@@ -24,6 +24,9 @@ var x = `
     uniform float e2y;
     uniform int mobiusEffectsOnOff; 
     uniform float textureScale;
+    uniform int enableTracking;
+    uniform float trackingX;
+    uniform float trackingY;
     uniform float textureUAdjustment;
     uniform float textureVAdjustment;
     uniform int complexEffect1OnOff;

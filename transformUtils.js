@@ -100,6 +100,9 @@ function transformUtils(camera,
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
         textureScale: { type: 'f', value: 1. },
+        enableTracking: { type: 'i', value: 0 },
+        textureX: { type: 'f', value: 0. },
+        textureY: { type: 'f', value: 0. },
         textureUAdjustment: { type: 'f', value: 0 },
         textureVAdjustment: { type: 'f', value: 0 },
         complexEffect1OnOff: { type: 'i', value: 1 },
@@ -218,6 +221,7 @@ function transformUtils(camera,
     	appendSingleIcon(container, 'cameraControlIcon', 'stop.png', 'texture Stop', that.textureStop);
         appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow.png', 'Scale Factor', that.textureSmaller);
         appendSingleIcon(container, 'cameraControlIcon', 'fovWide.png', 'Scale Factor', that.textureLarger);
+        appendSingleIcon(container, 'cameraControlIcon', 'crosshairs.png', 'Track', that.textureTrack);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -277,6 +281,11 @@ function transformUtils(camera,
     this.textureSmaller = function() { 
         that.uniforms.textureScale.value *= 1.5; }
     this.textureLarger = function() { that.uniforms.textureScale.value /= 1.5; }
+    this.textureTrack = function() { 
+        that.uniforms.enableTracking.value = that.uniforms.enableTracking.value == 1 ? 0 : 1; 
+        if (that.uniforms.enableTracking.value == 1)
+            that.trackerUtils = new trackerUtils();
+    }
     this.complexEffect1 = function() { 
         that.uniforms.complexEffect1OnOff.value += 1;
         that.showToast("n = " + that.uniforms.complexEffect1OnOff.value, 1000);
@@ -443,6 +452,11 @@ function transformUtils(camera,
                 videoCurrentTime = that.mediaUtils.video.currentTime;
             else
                 videoCurrentTime = that.capturer.getTiming().performancetime;
+            if (that.uniforms.enableTracking.value == 1) {
+                var coords = that.trackerUtils.getXY(videoCurrentTime);
+                that.uniforms.textureUAdjustment.value = coords[0];
+                that.uniforms.textureVAdjustment.value = 1.5-coords[1];
+            }
         }
         that.mediaUtils.animate(that.cameraVectorLength, videoCurrentTime);
         if (that.mediaUtils.animationFrame%120 == 0) {
@@ -470,6 +484,7 @@ function transformUtils(camera,
     	that.point2Defined = false;
     	that.uniforms.mobiusEffectsOnOff.value = 0;
         that.uniforms.textureScale.value = 1;
+        that.uniforms.enableTracking.value = 0;
         that.uniforms.textureUAdjustment.value = 0; 
         that.uniforms.textureVAdjustment.value = 0; 
         that.uniforms.complexEffect1OnOff.value = 1;

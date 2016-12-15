@@ -332,8 +332,9 @@ schottkyResult applySchottkyLoopOld(in vec2 z) {
     rrr.inverseZ = z;
     return rrr;
 }
-schottkyResult applySchottkyLoop(in vec2 z) {
+schottkyResult applySchottkyLoopNew(in vec2 z) {
     defineInitialCircles();
+    vec2 y = z;
     for (int iter = 0; iter < 100; iter++) {
         bool cont = false;
         for (int i = 0; i < 4; i++) {
@@ -341,6 +342,7 @@ schottkyResult applySchottkyLoop(in vec2 z) {
             if (insideCircle(c, z)) {
                 xform T = getTransform(i);
                 z = applyInverseMobiusTransformation(z, T);
+                y = applyMobiusTransformation(y, T);
                 cont = true;
                 break;
             }
@@ -349,8 +351,28 @@ schottkyResult applySchottkyLoop(in vec2 z) {
             schottkyResult res;
             res.level = iter;
             res.inverseZ = z;
+            res.glitchZ = y;
             return res;
         }
+    }
+    // if we get here Z is in the fundamental domain.
+    schottkyResult rrr;
+    rrr.level = -1;  // -1
+    rrr.inverseZ = z;
+    return rrr;
+}
+schottkyResult applySchottkyLoop(in vec2 z) {
+    vec2 y = z;
+    for (int iter = 0; iter < 1; iter++) {
+        xform T = getTransform(1);
+        z = applyInverseMobiusTransformation(z, T);
+        // if (distance(y,z) > .3) {
+        //     schottkyResult res;
+        //     res.level = iter;
+        //     res.inverseZ = z;
+        //     return res;
+        // }
+        // y = z;
     }
     // if we get here Z is in the fundamental domain.
     schottkyResult rrr;

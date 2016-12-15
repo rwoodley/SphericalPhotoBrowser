@@ -132,26 +132,6 @@ vec3 hsv2rgb(vec3 c)
     vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
-void setSchottkyColorForLevel(schottkyResult r) {
-    if (r.level == 0) {
-        gl_FragColor = vec4(0.3,.7,0.6,1.0);
-        return;
-    }
-    if (r.level == 1) {
-        gl_FragColor = vec4(.2,1.,.9,0.8);
-        return;
-    }
-    if (r.level == 2) {
-        gl_FragColor = vec4(0.2,.5,.6,1.0);
-        return;
-    }
-    if (r.level == 3) {
-        gl_FragColor = vec4(0.,0.,1.,0.8);
-        return;
-    }    
-    gl_FragColor = vec4(0.,0.,0.,0.0);
-    return;
-}
 void main() {
         float theta;
         float phi;
@@ -184,14 +164,13 @@ void main() {
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
     schottkyResult r = applySchottkyLoop(a);
-    vec3 temp = hsv2rgb(vec3(0.02 * float(r.level),1.0,1.0));
-    float alpha = mod(float(r.level),2.0);
-    gl_FragColor = vec4(temp, alpha);
-    //setSchottkyColorForLevel(r);
-    return;
+    // vec3 temp = hsv2rgb(vec3(0.02 * float(r.level),1.0,1.0));
+    // float alpha = mod(float(r.level),2.0);
+    // gl_FragColor = vec4(temp, alpha);
+    // return;
     if (schottkyEffectOnOff > 0) {
-        schottkyResult r = applySchottkyLoop(a);
-        if (r.level > -1)
+        schottkyResult r = applySchottkyLoopNew(a);
+        //if (r.level > -1)
              a = r.inverseZ;
     }
     // return;
