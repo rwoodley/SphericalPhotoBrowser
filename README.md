@@ -52,6 +52,9 @@ http://eigenstuff.com/
 
 https://twitter.com/dandersod/status/751374408120410113
 
+- Conformal Mapping:
+http://davidbau.com/archives/2013/02/10/conformal_map_viewer.html
+
 
 https://maxwelldemon.com/
 
