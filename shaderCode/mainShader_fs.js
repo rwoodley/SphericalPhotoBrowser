@@ -163,17 +163,23 @@ void main() {
     //  the positive real axis. So flip y and x around in this next equation.
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
-    schottkyResult r = applySchottkyLoop(a);
+    //schottkyResult r = applySchottkyLoop(a);
     // vec3 temp = hsv2rgb(vec3(0.02 * float(r.level),1.0,1.0));
     // float alpha = mod(float(r.level),2.0);
     // gl_FragColor = vec4(temp, alpha);
     // return;
     if (schottkyEffectOnOff > 0) {
-        schottkyResult r = applySchottkyLoopNew(a);
+        schottkyResult r = applySchottkyLoop(a);
         //if (r.level > -1)
-             a = r.inverseZ;
+        a = r.inverseZ;
     }
-    // return;
+    if (fractalEffectOnOff > 0) {
+        schottkyResult r = applyFractal(a);
+        //if (r.level > -1)
+        a = r.inverseZ;
+    }
+
+
     vec2 result = a;
     vec2 e1 = vec2(e1x,e1y);
     vec2 e2 = vec2(e2x,e2y);
