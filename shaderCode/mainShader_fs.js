@@ -174,9 +174,19 @@ void main() {
         a = r.inverseZ;
     }
     if (fractalEffectOnOff > 0) {
-        schottkyResult r = applyFractal(a);
-        //if (r.level > -1)
-        a = r.inverseZ;
+        // fractal is in the bottom half plane. Rotate so it is over-head.
+        vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
+        vec2 b1 = applyRotation(b, 2.718);
+        a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
+
+        int iter = applyFractal(a);
+        float fiter = 0.01 * float(iter);
+        float bfiter = .5 + fiter/2.0;
+//        vec3 temp = hsv2rgb(vec3(fiter));
+        float alpha = fiter;
+        gl_FragColor = vec4(vec3(fiter,fiter, bfiter), alpha);
+        return;
+
     }
 
 

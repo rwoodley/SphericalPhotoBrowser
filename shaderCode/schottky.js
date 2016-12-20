@@ -361,17 +361,18 @@ schottkyResult applySchottkyLoop(in vec2 z) {
     rrr.inverseZ = z;
     return rrr;
 }
-schottkyResult applyFractal(in vec2 z) {
-    vec2 y = z;
-    vec2 c = vec2(-.4,.6);
-    for (int iter = 0; iter < 40; iter++) {
+int applyFractal(in vec2 z0) {
+    vec2 z = z0;
+    vec3 z0InCartesian = complexToCartesian(z0);
+    // see https://en.wikipedia.org/wiki/Julia_set for other C values
+    vec2 c = vec2(-.7269,.1889);
+    for (int iter = 0; iter < 100; iter++) {
         z = cx_product(z,z) + c;
+        vec3 zInCartesian = complexToCartesian(z);
+        if (length(cx_divide(z, z0)) > 3000.)
+            return iter;
     }
-    // if we get here Z is in the fundamental domain.
-    schottkyResult rrr;
-    rrr.level = -1;  // -1
-    rrr.inverseZ = z; // cx_divide(vec2(1.,0.),y);
-    return rrr;
+    return -1;
 }
 `;
 return x;
