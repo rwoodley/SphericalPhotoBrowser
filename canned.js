@@ -69,11 +69,11 @@ function cannedRun() {
         // overall defaults
         this.showMirrorBall = false;
         this.geometry = "sphere";
-        this.skyMaterial = "fractalDome";
-        // this.skyMaterial = "greyOutline";
-        // this.skyMaterial = "media/eso_dark.jpg";
+        // this.skyMaterial = "fractalDome";
+        //this.skyMaterial = "greyOutline";
+        this.skyMaterial = "media/eso_dark.jpg";
         this.textureUAdjustment = 0;
-        this.showMirrorBall = true;
+        this.showMirrorBall = false;
         if (mode == null) {
             this.createMode = true;
             this.textureName = 'uv.jpg';
