@@ -69,13 +69,13 @@ function init() {
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
     _controls.keys = {};    // this disable arrow keys which are now used for moving the texture.
     _axes = new THREE.AxisHelper( 15000 );
-    _scene.add(_axes);
+    //_scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
 
     _renderer.sortObjects = false;          // see: http://stackoverflow.com/a/15995475
     _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
     _renderer.setSize( window.innerWidth, window.innerHeight );
-    _renderer.setClearColor( 0xbfd1ff );
+    // _renderer.setClearColor( 0xbfd1ff );
     document.getElementById( 'container' ).innerHTML = "";
     _container.appendChild( _renderer.domElement );
 
@@ -86,20 +86,6 @@ function init() {
 //    var skyMaterial = new THREE.MeshBasicMaterial({map: text1, side: THREE.DoubleSide });
 
     var skyMaterialOld = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
-    var uniforms = {
-        iChannelStillMask1:  { type: 't', value: 0 },
-        iChannelStillMask2:  { type: 't', value: 0 },
-	};
-    var pathToSubtractionTexture = 'media/stillMask2.png';
-    (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-        _mediaUtils.setMipMapOptions(texture);
-        uniforms.iChannelStillMask1.value =  texture; 
-    });
-    var pathToSubtractionTexture = 'media/stillMask3.png';
-    (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-        _mediaUtils.setMipMapOptions(texture);
-        uniforms.iChannelStillMask2.value =  texture; 
-    });
 
     _canned.createSkyDome(_scene);
 

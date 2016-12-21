@@ -1,6 +1,68 @@
 // Functions specific to doing mobius transforms on videos or stills.
 // this must be paired with the appropriate shaders of course.
 // issues: zoom sometimes fires on its own for now good reason.
+function getCleanSetOfUniforms() {
+      var uniforms = {
+	    iRotationAmount:    { type: 'f', value: 0.0 },
+	    startTime:    { type: 'f', value: 0.0 },
+	    iGlobalTime:    { type: 'f', value: 0.0 },
+        mobiusEffectsOnOff: { type: 'i', value: 0 },
+        textureScale: { type: 'f', value: 1. },
+        enableTracking: { type: 'i', value: 0 },
+        textureX: { type: 'f', value: 0. },
+        textureY: { type: 'f', value: 0. },
+        textureUAdjustment: { type: 'f', value: 0 },
+        textureVAdjustment: { type: 'f', value: 0 },
+        complexEffect1OnOff: { type: 'i', value: 1 },
+        complexEffect3OnOff: { type: 'i', value: 0 },
+        complexEffect4OnOff: { type: 'i', value: 0 },
+        complexEffect5OnOff: { type: 'i', value: 0 },
+        schottkyEffectOnOff: { type: 'i', value: 0 },
+        fractalEffectOnOff: { type: 'i', value: 0 },
+	    showFixedPoints: { type: 'i', value: 1 },
+	    uBlackMask: { type: 'i', value: 0 },
+	    uNadirMask: { type: 'i', value: 0 },
+	    uMaskType: { type: 'i', value: 0 },
+	    uTextureNumber: { type: 'i', value: 0 },
+	    e1x: { type: 'f', value: 0. },
+	    e1y: { type: 'f', value: 0. },
+	    e2x: { type: 'f', value: 0. }, 
+	    e2y: { type: 'f', value: 0. },
+        loxodromicX: {type: 'f', value: 1. },
+        loxodromicY: {type: 'f', value: 0. },
+        drosteType: {type: 'i', value: 0 },
+        drosteSpiral: {type: 'i', value: 0 },
+        drosteZoom: {type: 'i', value: 0},
+        iChannel0:  { type: 't', value: 0 },
+        iChannelStillMask1:  { type: 't', value: 0 },
+        iChannelStillMask2:  { type: 't', value: 0 },
+        iChannelDelayMask:  { type: 't', value: 0 },
+      };
+      return uniforms;
+	};
+function getBigAssShaderMaterial(texture, uniforms) {
+        if (texture != undefined)
+            uniforms.iChannel0 =  { type: 't', value: texture }; 
+        var fragmentShaderCode = 
+            ""
+            + SHADERCODE.uniformsAndGlobals()
+            + SHADERCODE.mathUtils()
+            + SHADERCODE.mobiusTransformUtils()
+            + SHADERCODE.drosteUtils()
+            + SHADERCODE.schottkyUtils()
+            + SHADERCODE.mainShader_fs()
+        ;
+        var newMaterial = new THREE.ShaderMaterial( {
+            uniforms: uniforms,
+            vertexShader: SHADERCODE.mainShader_vs(),
+            fragmentShader: fragmentShaderCode,
+            side: THREE.DoubleSide,
+            transparent: true,
+            // wireframe: true
+        } );
+        return newMaterial;                    
+    }
+
 function transformUtils(camera, 
     transformControlsContainerId, complexControlsContainerId, 
     transformControls2ContainerId, textureControlsContainerId,
@@ -94,42 +156,7 @@ function transformUtils(camera,
     }
 
     this.cameraVectorLength = 1;    // by default, unit vector.
-    this.uniforms = {
-	    iRotationAmount:    { type: 'f', value: 0.0 },
-	    startTime:    { type: 'f', value: 0.0 },
-	    iGlobalTime:    { type: 'f', value: 0.0 },
-        mobiusEffectsOnOff: { type: 'i', value: 0 },
-        textureScale: { type: 'f', value: 1. },
-        enableTracking: { type: 'i', value: 0 },
-        textureX: { type: 'f', value: 0. },
-        textureY: { type: 'f', value: 0. },
-        textureUAdjustment: { type: 'f', value: 0 },
-        textureVAdjustment: { type: 'f', value: 0 },
-        complexEffect1OnOff: { type: 'i', value: 1 },
-        complexEffect3OnOff: { type: 'i', value: 0 },
-        complexEffect4OnOff: { type: 'i', value: 0 },
-        complexEffect5OnOff: { type: 'i', value: 0 },
-        schottkyEffectOnOff: { type: 'i', value: 0 },
-        fractalEffectOnOff: { type: 'i', value: 0 },
-	    showFixedPoints: { type: 'i', value: 1 },
-	    uBlackMask: { type: 'i', value: 0 },
-	    uNadirMask: { type: 'i', value: 0 },
-	    uMaskType: { type: 'i', value: 0 },
-	    uTextureNumber: { type: 'i', value: 0 },
-	    e1x: { type: 'f', value: 0. },
-	    e1y: { type: 'f', value: 0. },
-	    e2x: { type: 'f', value: 0. }, 
-	    e2y: { type: 'f', value: 0. },
-        loxodromicX: {type: 'f', value: 1. },
-        loxodromicY: {type: 'f', value: 0. },
-        drosteType: {type: 'i', value: 0 },
-        drosteSpiral: {type: 'i', value: 0 },
-        drosteZoom: {type: 'i', value: 0},
-        iChannel0:  { type: 't', value: 0 },
-        iChannelStillMask1:  { type: 't', value: 0 },
-        iChannelStillMask2:  { type: 't', value: 0 },
-        iChannelDelayMask:  { type: 't', value: 0 },
-	};
+    this.uniforms = getCleanSetOfUniforms();
     var pathToSubtractionTexture = 'media/stillMask1.png';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
@@ -148,27 +175,9 @@ function transformUtils(camera,
     // this is where we over-ride the default in mediaUtils.
     // this is where we hook in all of our transformation code that is in the shaders.
     mediaUtils.setMaterialForTexture = function(texture) {
-        that.uniforms.iChannel0 =  { type: 't', value: texture }; 
+        var newMaterial = getBigAssShaderMaterial(texture, that.uniforms);
         mediaUtils.setMipMapOptions(texture);
-        // that.uniforms.iChannelDelayMask =  { type: 't', value: texture }; 
-        var fragmentShaderCode = 
-            ""
-            + SHADERCODE.uniformsAndGlobals()
-            + SHADERCODE.mathUtils()
-            + SHADERCODE.mobiusTransformUtils()
-            + SHADERCODE.drosteUtils()
-            + SHADERCODE.schottkyUtils()
-            + SHADERCODE.mainShader_fs()
-        ;
-        newMaterial = new THREE.ShaderMaterial( {
-            uniforms: that.uniforms,
-            vertexShader: SHADERCODE.mainShader_vs(),
-            fragmentShader: fragmentShaderCode,
-            side: THREE.DoubleSide,
-            transparent: true,
-            // wireframe: true
-        } );
-        return newMaterial;                    
+        return newMaterial; 
     }
     this.showToast = function(message, ms) {
         console.log("Showing " + message + " for " + ms) ;
@@ -315,7 +324,7 @@ function transformUtils(camera,
         that.uniforms.schottkyEffectOnOff.value = that.uniforms.schottkyEffectOnOff.value == 0 ? 3 : 0;
     }
     this.fractalEffect = function() { 
-        that.uniforms.fractalEffectOnOff.value = that.uniforms.fractalEffectOnOff.value == 0 ? 3 : 0;
+        that.uniforms.fractalEffectOnOff.value = that.uniforms.fractalEffectOnOff.value == 0 ? 1 : 0;
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.point1Defined && !that.point2Defined) {

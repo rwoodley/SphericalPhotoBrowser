@@ -1,6 +1,7 @@
 // handles canned runs.
 function cannedRun() {
     var that = this;
+    this.transformUtils = undefined;    // will be setup in setup().
     function addSkyDomeToScene(scene, skyMaterial) {
         var skyGeometry = new THREE.SphereGeometry(100,32,32);
         var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
@@ -14,6 +15,20 @@ function cannedRun() {
             addSkyDomeToScene(_scene, skyMaterial);
         }
         if (this.skyMaterial == "greyOutline") {
+            var uniforms = {
+                iChannelStillMask1:  { type: 't', value: 0 },
+                iChannelStillMask2:  { type: 't', value: 0 },
+            };
+            var pathToSubtractionTexture = 'media/stillMask2.png';
+            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+                _mediaUtils.setMipMapOptions(texture);
+                uniforms.iChannelStillMask1.value =  texture; 
+            });
+            var pathToSubtractionTexture = 'media/stillMask3.png';
+            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+                _mediaUtils.setMipMapOptions(texture);
+                uniforms.iChannelStillMask2.value =  texture; 
+            });
             skyMaterial = new THREE.ShaderMaterial( {
                 uniforms: uniforms,
                 vertexShader: SHADERCODE.mainShader_vs(),
@@ -24,6 +39,15 @@ function cannedRun() {
             } );            
             addSkyDomeToScene(_scene, skyMaterial);
         }
+        if (this.skyMaterial == "fractalDome") {
+            var uniforms = getCleanSetOfUniforms();
+            uniforms.fractalEffectOnOff.value = 2;
+            var newMaterial = getBigAssShaderMaterial(undefined, uniforms);
+            var mesh = addSkyDomeToScene(_scene, newMaterial);
+            mesh.scale.set(-1,-1,1);
+        }
+
+
         if (this.skyMaterial == "hdr1") {
             (new THREE.TextureLoader()).load("media/stillMask3.png", function ( texture ) {
                 skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
@@ -45,10 +69,11 @@ function cannedRun() {
         // overall defaults
         this.showMirrorBall = false;
         this.geometry = "sphere";
-        this.skyMaterial = "media/eso_dark.jpg";
+        this.skyMaterial = "fractalDome";
+        // this.skyMaterial = "greyOutline";
+        // this.skyMaterial = "media/eso_dark.jpg";
         this.textureUAdjustment = 0;
-//            this.showMirrorBall = true;
-
+        this.showMirrorBall = true;
         if (mode == null) {
             this.createMode = true;
             this.textureName = 'uv.jpg';
@@ -61,6 +86,7 @@ function cannedRun() {
         this.rotateYAmount = 0.0005;
         this.textureType = 'video';
         this.complexEffect3OnOff = 0;
+        this.fractalEffectOnOff = 0;
         this.schottkyEffect = 0;
         this.textureScale = 1.;
 
@@ -99,6 +125,13 @@ function cannedRun() {
             this.schottkyEffect = 1;
             this.skyMaterial = "greyOutline";
         }
+        if (mode == 'doubleFractal') {
+            this.textureName = 'uv';
+            this.cameraPosition = [-8.4,3.6,10.1];
+            this.fractalEffectOnOff = 1;
+            this.showMirrorBall = true;
+            this.skyMaterial = "fractalDome";
+        }
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
         mediaUtils.camera.position.set(
@@ -111,6 +144,7 @@ function cannedRun() {
     this._initTransformUtils = function(uniforms) {
         uniforms.complexEffect3OnOff.value = that.complexEffect3OnOff;
         uniforms.schottkyEffectOnOff.value = that.schottkyEffect;
+        uniforms.fractalEffectOnOff.value = that.fractalEffectOnOff;
         uniforms.textureScale.value *= that.textureScale; 
         uniforms.textureUAdjustment.value = this.textureUAdjustment;
     }    

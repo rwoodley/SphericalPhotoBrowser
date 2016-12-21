@@ -181,10 +181,13 @@ void main() {
 
         int iter = applyFractal(a);
         float fiter = 0.01 * float(iter);
-        float bfiter = .5 + fiter/2.0;
+        float bfiter = .75 + fiter/4.0;
 //        vec3 temp = hsv2rgb(vec3(fiter));
-        float alpha = fiter;
-        gl_FragColor = vec4(vec3(fiter,fiter, bfiter), alpha);
+        float alpha = sqrt(fiter);
+        if (fractalEffectOnOff == 1)
+            gl_FragColor = vec4(vec3(fiter,fiter, bfiter), alpha);
+        else
+            gl_FragColor = vec4(vec3(bfiter,fiter, fiter), alpha);
         return;
 
     }
