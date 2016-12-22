@@ -23,10 +23,26 @@ function trackerUtils() {
         var fullIntervalLength = c[2] - pc[2];
         var partialIntervalLength = ct - pc[2];
         var factor = partialIntervalLength/fullIntervalLength;
-        return [
-            (c[0] - pc[0])*factor + pc[0],
-            (c[1] - pc[1])*factor + pc[1],
-            ct
-        ]
+
+        // remember this is 360. take the shortest route between the 2 points which may 
+        // mean going off the edge of the texture and back on the other side.
+        if (Math.abs(c[0] - pc[0]) > .5) {
+            var sign = -Math.sign(c[0] - pc[0]);
+            newx = (sign + c[0] - pc[0])*factor + pc[0] + 1;    // that last 1 is not always needed, but mod takes care of it.
+            newx = newx%1;
+        }
+        else
+            newx = (c[0] - pc[0])*factor + pc[0];
+
+        if (Math.abs(c[1] - pc[1]) > .5) {
+            var sign = -Math.sign(c[1] - pc[1]);
+            newy = (sign + c[1] - pc[1])*factor + pc[1] + 1;    // that last 1 is not always needed, but mod takes care of it.
+            newy = newy%1;
+        }
+        else
+            newy = (c[1] - pc[1])*factor + pc[1];
+
+
+        return [newx, newy, ct];
     }
 }
