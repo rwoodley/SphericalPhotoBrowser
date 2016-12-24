@@ -145,6 +145,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
     function screenSizeMedium() {
         document.getElementsByTagName( 'canvas' )[0].style.width = "1280px";
         document.getElementsByTagName( 'canvas' )[0].style.height = "720px";
+        window.resizeTo(1280, 720)
     }
     function screenSizeSmall() {
         document.getElementsByTagName( 'canvas' )[0].style.width = "720px";

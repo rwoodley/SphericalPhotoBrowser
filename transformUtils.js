@@ -8,6 +8,7 @@ function getCleanSetOfUniforms() {
 	    iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
         textureScale: { type: 'f', value: 1. },
+        tesselate: { type: 'f', value: 0. },
         enableTracking: { type: 'i', value: 0 },
         textureX: { type: 'f', value: 0. },
         textureY: { type: 'f', value: 0. },
@@ -231,6 +232,7 @@ function transformUtils(camera,
     	appendSingleIcon(container, 'cameraControlIcon', 'stop.png', 'texture Stop', that.textureStop);
         appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow.png', 'Scale Factor', that.textureSmaller);
         appendSingleIcon(container, 'cameraControlIcon', 'fovWide.png', 'Scale Factor', that.textureLarger);
+        appendSingleIcon(container, 'cameraControlIcon', 'tesselate.png', 'Tesselate', that.tesselate);
         appendSingleIcon(container, 'cameraControlIcon', 'crosshairs.png', 'Track', that.textureTrack);
     }
     this.setupComplexControlIcons = function() {
@@ -297,6 +299,7 @@ function transformUtils(camera,
         if (that.uniforms.enableTracking.value == 1)
             that.trackerUtils = new trackerUtils();
     }
+    this.tesselate = function() { that.uniforms.tesselate.value = that.uniforms.tesselate.value == 0 ? 1 : 0; }
     this.complexEffect1 = function() { 
         that.uniforms.complexEffect1OnOff.value += 1;
         that.showToast("n = " + that.uniforms.complexEffect1OnOff.value, 1000);

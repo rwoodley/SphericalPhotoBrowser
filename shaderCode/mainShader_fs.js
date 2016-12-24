@@ -163,6 +163,11 @@ void main() {
     //  the positive real axis. So flip y and x around in this next equation.
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
 
+    if (tesselate == 1.) {
+        a.x = my_mod(a.x, 1.);
+        a.y = my_mod(a.y, 1.);
+    }
+
     //schottkyResult r = applySchottkyLoop(a);
     // vec3 temp = hsv2rgb(vec3(0.02 * float(r.level),1.0,1.0));
     // float alpha = mod(float(r.level),2.0);

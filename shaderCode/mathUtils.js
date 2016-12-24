@@ -16,6 +16,7 @@ var x = `
     #define cx_conj(a) vec2(a.x,-a.y)
     #define cx_arg(a) atan2(a.y,a.x)
 
+    #define my_mod(x,y) x < 0. ? 1.-mod(-x,y) : mod(x,y);
     float atan2(in float y, in float x) {
         // http://stackoverflow.com/questions/26070410/robust-atany-x-on-glsl-for-converting-xy-coordinate-to-angle
         bool s = (abs(x) >= abs(y));
