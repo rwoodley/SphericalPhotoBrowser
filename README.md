@@ -62,6 +62,11 @@ https://maxwelldemon.com/2015/09/27/eigencurves/
 
 Hyperbolic Planar Tesselations:
 http://www.plunk.org/~hatch/HyperbolicTesselations/
+Vladimir Bulatov: http://archive.bridgesmathart.org/2013/bridges2013-167.pdf
+Douglas Dunham: https://www.d.umn.edu/~ddunham/md07tlk.pdf
+Schartz-Cristoffel: http://mathfaculty.fullerton.edu/mathews/c2003/SchwarzChristoffelMod.html
+Hyperbolic Geometry: Poincaré Disc Tessellation How-to: http://moniker.name/worldmaking/?p=385
+
 
 Ideas:
 - nice graphics by Altered Qualia: http://alteredqualia.com/xg/examples/thebox.html
