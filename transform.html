@@ -87,10 +87,15 @@ function init() {
 
     var skyMaterialOld = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
 
-    _canned.createSkyDome(_scene);
+    _canned.changeSkyDome(_scene);
 
     _stats = new Stats();
     document.getElementById('statsDivInner').appendChild( _stats.domElement );    
+
+    var rightClickHandler = function(event) {
+        var pid = 'media/' + event.target.id.replace('textureSelector_','');
+        _canned.changeSkyDome(_scene, pid);
+    }
 
     // render inner objects
     // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
@@ -102,7 +107,8 @@ function init() {
         myVideos, 
         "mediaListContainer", 
         "cameraControlsContainer",
-        "videoControlsContainerId");
+        "videoControlsContainerId",
+        rightClickHandler);
 
     _transformUtils = new transformUtils(_camera, 
         "transformControlsContainerId", 

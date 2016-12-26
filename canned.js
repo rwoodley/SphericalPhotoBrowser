@@ -1,20 +1,27 @@
 // handles canned runs.
 function cannedRun() {
     var that = this;
+    this.skyDomeMesh = undefined;
     this.transformUtils = undefined;    // will be setup in setup().
     function addSkyDomeToScene(scene, skyMaterial) {
         var skyGeometry = new THREE.SphereGeometry(100,32,32);
         var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
         scene.add(skyMesh);
+        this.skyDomeMesh = skyMesh;
         return skyMesh;
     }
-    this.createSkyDome = function(scene) {
-        var skyMaterial;
-        if (this.skyMaterial == "normal") {
-            skyMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide});    
-            addSkyDomeToScene(_scene, skyMaterial);
+    this.changeSkyDome = function(scene, skyMaterialName) {
+        if (that.skyDomeMesh != undefined)
+            scene.remove(that.skyDomeMesh);
+        this.createSkyDome(scene, skyMaterialName);
+    }
+    this.createSkyDome = function(scene, skyMaterialName) {
+        if (skyMaterialName != undefined)
+            this.skyMaterialName = skyMaterialName;
+        if (this.skyMaterialName == "normal") {
+            addSkyDomeToScene(_scene, new THREE.MeshNormalMaterial({ side: THREE.DoubleSide}));
         }
-        if (this.skyMaterial == "greyOutline") {
+        if (this.skyMaterialName == "greyOutline") {
             var uniforms = {
                 iChannelStillMask1:  { type: 't', value: 0 },
                 iChannelStillMask2:  { type: 't', value: 0 },
@@ -29,7 +36,7 @@ function cannedRun() {
                 _mediaUtils.setMipMapOptions(texture);
                 uniforms.iChannelStillMask2.value =  texture; 
             });
-            skyMaterial = new THREE.ShaderMaterial( {
+            var skyMaterial = new THREE.ShaderMaterial( {
                 uniforms: uniforms,
                 vertexShader: SHADERCODE.mainShader_vs(),
                 fragmentShader: SHADERCODE.outerShader_fs(),
@@ -39,7 +46,7 @@ function cannedRun() {
             } );            
             addSkyDomeToScene(_scene, skyMaterial);
         }
-        if (this.skyMaterial == "fractalDome") {
+        if (this.skyMaterialName == "fractalDome") {
             var uniforms = getCleanSetOfUniforms();
             uniforms.fractalEffectOnOff.value = 2;
             var newMaterial = getBigAssShaderMaterial(undefined, uniforms);
@@ -48,16 +55,16 @@ function cannedRun() {
         }
 
 
-        if (this.skyMaterial == "hdr1") {
+        if (this.skyMaterialName == "hdr1") {
             (new THREE.TextureLoader()).load("media/stillMask3.png", function ( texture ) {
-                skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
+                var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
                 var mesh = addSkyDomeToScene(_scene, skyMaterial);
                 mesh.scale.set(-1,1,1);
             });
         }
         else {
-            (new THREE.TextureLoader()).load(this.skyMaterial, function ( texture ) {
-                skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
+            (new THREE.TextureLoader()).load(this.skyMaterialName, function ( texture ) {
+                var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
                 var mesh = addSkyDomeToScene(_scene, skyMaterial);
                 mesh.scale.set(-1,1,1);
             });            
@@ -69,9 +76,9 @@ function cannedRun() {
         // overall defaults
         this.showMirrorBall = false;
         this.geometry = "sphere";
-        // this.skyMaterial = "fractalDome";
-        //this.skyMaterial = "greyOutline";
-        this.skyMaterial = "media/eso_dark.jpg";
+        // this.skyMaterialName = "fractalDome";
+        //this.skyMaterialName = "greyOutline";
+        this.skyMaterialName = "media/eso_dark.jpg";
         this.textureUAdjustment = 0;
         this.showMirrorBall = false;
         if (mode == null) {
@@ -101,7 +108,7 @@ function cannedRun() {
             this.textureName = 'couple';
             this.complexEffect3OnOff = 1;
             this.textureScale = 3.5;
-            this.skyMaterial = "greyOutline";
+            this.skyMaterialName = "greyOutline";
         }
         if (mode == 'couple2') {
             this.textureName = 'coupleCropped';
@@ -109,13 +116,13 @@ function cannedRun() {
             this.complexEffect3OnOff = 1;
             this.textureScale = 2.25;
             this.showMirrorBall = true;
-            this.skyMaterial = "greyOutline";
+            this.skyMaterialName = "greyOutline";
         }
         if (mode == 'torusDance') {
             this.textureName = 'dance200';
             this.geometry = "torus";
             this.cameraPosition = [-7.8,4.8,-2.7];
-            this.skyMaterial = "hdr1";
+            this.skyMaterialName = "hdr1";
             this.textureUAdjustment = 0.44;
         }
         if (mode == 'benchmark') {
@@ -123,14 +130,14 @@ function cannedRun() {
             this.complexEffect3OnOff = 1;
             this.textureScale = 3.5;
             this.schottkyEffect = 1;
-            this.skyMaterial = "greyOutline";
+            this.skyMaterialName = "greyOutline";
         }
         if (mode == 'doubleFractal') {
             this.textureName = 'uv';
             this.cameraPosition = [-8.4,3.6,10.1];
             this.fractalEffectOnOff = 1;
             this.showMirrorBall = true;
-            this.skyMaterial = "fractalDome";
+            this.skyMaterialName = "fractalDome";
         }
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
@@ -153,6 +160,9 @@ function cannedRun() {
             mediaUtils.toggleControlPanel();
             this._initMediaUtils(mediaUtils);
             this._initTransformUtils(transformUtils.uniforms);
+            // when mediaUtils refers to a skyDome it means the inner dome.
+            // in this file skyDome means the outer dome. it uses skyMaterial.
+            // the inner dome uses textureName.
             if (this.textureType == 'still')
                 mediaUtils.updateSkyDomeForFileName(this.textureName);
             else

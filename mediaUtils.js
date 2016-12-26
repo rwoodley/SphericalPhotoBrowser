@@ -9,7 +9,8 @@ User might want to:
 
 **/ 
 function mediaUtils(canned, scene, camera, stills, videos, 
-	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId) {
+	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
+       rightClickHandler) {
 	var that = this;
     this.canned = canned;
 	this.stills = stills;
@@ -17,6 +18,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
 	this.mediaListContainerId = mediaListContainerId;
 	this.cameraControlsContainerId = cameraControlsContainerId;
 	this.videoControlsContainerId = videoControlsContainerId;
+    this.rightClickHandler = rightClickHandler;
 
 	this.camera = camera;
 	this.scene = scene;
@@ -88,6 +90,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 
         $('.tselector').click(that.updateSkyDome);
+        $('.tselector').contextmenu(that.rightClickHandler);
         $('.vselector').click(that.updateVideo);
     };
     this.setupVideoControlIcons = function() {
