@@ -26,10 +26,11 @@ vec2 transformForFixedPoints(in vec2 z, in vec2 e1, in vec2 e2) {
     return applyMobiusTransformation(z,xformCtor(one,-e1,one,-e2));
 }
 vec2 bobMobius(in vec2 z) {
-    float xtheta = 3.14159/6.;
-    float cnst = 1./sin(xtheta);
+   return applyMobiusTransformation(z,xformCtor(i,one,one,i));    
+    // float xtheta = 3.14159/6.;
+    // float cnst = 1./sin(xtheta);
 //    return applyMobiusTransformation(z,xformCtor(one,one,one,one));    
-    return applyMobiusTransformation(z, xformCtor(one*cnst,i*cos(xtheta)*cnst,-i*cos(xtheta)*cnst,one*cnst));
+    // return applyMobiusTransformation(z, xformCtor(one*cnst,i*cos(xtheta)*cnst,-i*cos(xtheta)*cnst,one*cnst));
 }
 vec2 inverseTransformForFixedPoints(in vec2 z, in vec2 e1, in vec2 e2) {
     // inverse is (dz-b)/(-cz+a). a and c are 1.
