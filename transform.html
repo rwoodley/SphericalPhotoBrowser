@@ -93,7 +93,11 @@ function init() {
     document.getElementById('statsDivInner').appendChild( _stats.domElement );    
 
     var rightClickHandler = function(event) {
-        var pid = 'media/' + event.target.id.replace('textureSelector_','');
+        var pid;
+        if (event.target.id.indexOf('textureSelector_') > -1)
+            pid = 'media/' + event.target.id.replace('textureSelector_','');
+        else
+            pid = event.target.id.replace('effectSelector_','');
         _canned.changeSkyDome(_scene, pid);
     }
 

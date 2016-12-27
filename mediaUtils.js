@@ -86,6 +86,10 @@ function mediaUtils(canned, scene, camera, stills, videos,
 
         for (var i = 0; i < myVideos.length; i++)
             textureListHTML += "<span id='textureSelector_xxx' class='showhide vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
+
+        var myEffects = ['fractalDome', 'greyOutline'];
+        for (var i = 0; i < myEffects.length; i++)
+            textureListHTML += "<span id='effectSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
         
         document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 

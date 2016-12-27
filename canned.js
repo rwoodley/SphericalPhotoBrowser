@@ -7,7 +7,7 @@ function cannedRun() {
         var skyGeometry = new THREE.SphereGeometry(100,32,32);
         var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
         scene.add(skyMesh);
-        this.skyDomeMesh = skyMesh;
+        that.skyDomeMesh = skyMesh;
         return skyMesh;
     }
     this.changeSkyDome = function(scene, skyMaterialName) {
@@ -76,9 +76,9 @@ function cannedRun() {
         // overall defaults
         this.showMirrorBall = false;
         this.geometry = "sphere";
-        // this.skyMaterialName = "fractalDome";
+        this.skyMaterialName = "fractalDome";
         //this.skyMaterialName = "greyOutline";
-        this.skyMaterialName = "media/eso_dark.jpg";
+        //this.skyMaterialName = "media/eso_dark.jpg";
         this.textureUAdjustment = 0;
         this.showMirrorBall = false;
         if (mode == null) {
