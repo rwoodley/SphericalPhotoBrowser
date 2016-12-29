@@ -52,7 +52,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         textureValue = wrappedTexture2D( iChannelStillMask1,  uv);
     
     if (uMaskType == 0)
-         return textureValue;
+         return vec4(vec3(textureValue),.6);
 
     vec4 clr;
     if (uMaskType == 1 || uMaskType == 3) {   // delay mask

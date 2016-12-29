@@ -21,6 +21,27 @@ function cannedRun() {
         if (this.skyMaterialName == "normal") {
             addSkyDomeToScene(_scene, new THREE.MeshNormalMaterial({ side: THREE.DoubleSide}));
         }
+        if (this.skyMaterialName == "shiny") {
+            addSkyDomeToScene(_scene, new THREE.MeshPhongMaterial({ 
+                side: THREE.DoubleSide,
+                color: 'red',
+                emissive: 0x260841,
+                specular: 0x111111,
+                shininess: 100,
+            }));
+        }
+        if (this.skyMaterialName == "black") {
+            addSkyDomeToScene(_scene, new THREE.MeshBasicMaterial({ 
+                side: THREE.DoubleSide,
+                color: 0x000000,
+            }));
+        }
+        if (this.skyMaterialName == "white") {
+            addSkyDomeToScene(_scene, new THREE.MeshBasicMaterial({ 
+                side: THREE.DoubleSide,
+                color: 0xffffff,
+            }));
+        }
         if (this.skyMaterialName == "greyOutline") {
             var uniforms = {
                 iChannelStillMask1:  { type: 't', value: 0 },

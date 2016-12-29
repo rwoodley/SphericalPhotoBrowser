@@ -87,7 +87,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         for (var i = 0; i < myVideos.length; i++)
             textureListHTML += "<span id='textureSelector_xxx' class='showhide vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
 
-        var myEffects = ['fractalDome', 'greyOutline'];
+        var myEffects = ['fractalDome', 'greyOutline', 'normal','shiny','black','white'];
         for (var i = 0; i < myEffects.length; i++)
             textureListHTML += "<span id='effectSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
         
@@ -256,6 +256,8 @@ function mediaUtils(canned, scene, camera, stills, videos,
     	var pid = event.target.id.replace('textureSelector_','');
         that.updateVideoForFileName(pid);
     }
+    this.postProcessingAfterVideoLoad = function(pid) {
+    }
     this.updateVideoForFileName = function(pid) {
         that.videoFileName = pid;
         console.log('in video: ' + pid);
@@ -271,7 +273,8 @@ function mediaUtils(canned, scene, camera, stills, videos,
 
         that.meshManager.setTexture(that.videoTexture, that.setMaterialForTexture);
         that.videoDisplayed = true;
-        that.toggleVideoControls();
+        that.toggleVideoControls();        
+        that.postProcessingAfterVideoLoad(pid);
 	}
     this.video_play = function() {
         // all this messing around to avoid a chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=593273
@@ -287,11 +290,13 @@ function mediaUtils(canned, scene, camera, stills, videos,
     this.video_stop = function() {
 		that.video.pause();    	
     }
+    this.postProcessingAfterVideoRestart = function() {}
     this.video_restart = function() {
         that.video.pause();
         that.video.currentTime = 0;
         // that.updateVideoForFileName(that.videoFileName);
 		that.video_play();
+        that.postProcessingAfterVideoRestart();
     }
     this.video_skip = function(value) {
         that.video.currentTime += value;

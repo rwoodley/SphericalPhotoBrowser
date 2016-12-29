@@ -83,6 +83,22 @@ function transformUtils(camera,
     this.cameraLookAtComplexY = 0;
     this.mediaUtils = mediaUtils;
     that.recording = false;
+    this.mediaUtils.postProcessingAfterVideoRestart = function() {
+        that.trackerUtils.reset();        
+    }
+    this.mediaUtils.postProcessingAfterVideoLoad = function(pid) {
+        // Load stills for this video if they exist.
+        var pathToSubtractionTexture = 'media/' + pid + 'Still1.png';
+        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            mediaUtils.setMipMapOptions(texture);
+            that.uniforms.iChannelStillMask1.value =  texture; 
+        });
+        var pathToSubtractionTexture = 'media/' + pid + 'Still2.png';
+        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            mediaUtils.setMipMapOptions(texture);
+            that.uniforms.iChannelStillMask2.value =  texture; 
+        });        
+    }
     this.mediaUtils.onkeydown = function(e, extraKey){
         if(e.keyCode == 32) {
             that.uniforms.showFixedPoints.value = 0;
@@ -95,6 +111,7 @@ function transformUtils(camera,
         // TODO: This screen capture should probably go in mediaUtils at some point.
         if (e.keyCode == 82) {  // r - start/stop recording
             if (!that.recording) {
+                that.mediaUtils.video_restart();
                 console.log("Start recording");
                 that.recording = true;
                 that.capturer = new CCapture({
@@ -158,12 +175,14 @@ function transformUtils(camera,
 
     this.cameraVectorLength = 1;    // by default, unit vector.
     this.uniforms = getCleanSetOfUniforms();
-    var pathToSubtractionTexture = 'media/stillMask1.png';
+
+    // Initialize the masks to something so everything comes up.
+    // These will be changed later as needed.
+    var pathToSubtractionTexture = 'media/placeholderStill.png';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
         that.uniforms.iChannelStillMask1.value =  texture; 
     });
-    var pathToSubtractionTexture = 'media/stillMask2.png';
     (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
         mediaUtils.setMipMapOptions(texture);
         that.uniforms.iChannelStillMask2.value =  texture; 
@@ -501,7 +520,8 @@ function transformUtils(camera,
     	that.point2Defined = false;
     	that.uniforms.mobiusEffectsOnOff.value = 0;
         that.uniforms.textureScale.value = 1;
-        that.uniforms.enableTracking.value = 0;
+        // that.uniforms.enableTracking.value = 0;
+        that.trackerUtils.reset();
         that.uniforms.textureUAdjustment.value = 0; 
         that.uniforms.textureVAdjustment.value = 0; 
         that.uniforms.complexEffect1OnOff.value = 1;

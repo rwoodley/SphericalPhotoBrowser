@@ -8,6 +8,10 @@ function trackerUtils() {
         that.previousCoord = that.coords[0];
         that.coordIndex = 0;
     });
+    this.reset = function() {
+        that.previousCoord = that.coords[0];
+        that.coordIndex = 0;
+    }
     this.getXY = function(currentTime) {
         while ( that.coordIndex < that.coords.length-1) {
             var coord = that.coords[that.coordIndex];
