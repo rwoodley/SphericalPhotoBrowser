@@ -24,9 +24,8 @@ function cannedRun() {
         if (this.skyMaterialName == "shiny") {
             addSkyDomeToScene(_scene, new THREE.MeshPhongMaterial({ 
                 side: THREE.DoubleSide,
-                color: 'red',
-                emissive: 0x260841,
-                specular: 0x111111,
+                color: 0x255c78,
+                emissive: 0x51252,
                 shininess: 100,
             }));
         }

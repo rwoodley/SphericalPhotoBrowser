@@ -25,6 +25,7 @@ var x = `
     uniform int mobiusEffectsOnOff; 
     uniform float textureScale;
     uniform float tesselate;
+    uniform float uAlpha;
     uniform int enableTracking;
     uniform float trackingX;
     uniform float trackingY;
