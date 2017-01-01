@@ -38,6 +38,7 @@ var x = `
     uniform int complexEffect5OnOff;
     uniform int schottkyEffectOnOff;
     uniform int fractalEffectOnOff;
+    uniform int hyperbolicTilingEffectOnOff;
     uniform int drosteType;
     uniform int drosteSpiral;
     uniform int drosteZoom;

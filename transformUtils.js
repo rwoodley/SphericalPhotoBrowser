@@ -21,6 +21,7 @@ function getCleanSetOfUniforms() {
         complexEffect5OnOff: { type: 'i', value: 0 },
         schottkyEffectOnOff: { type: 'i', value: 0 },
         fractalEffectOnOff: { type: 'i', value: 0 },
+        hyperbolicTilingEffectOnOff: { type: 'i', value: 0},
 	    showFixedPoints: { type: 'i', value: 1 },
 	    uBlackMask: { type: 'i', value: 0 },
 	    uNadirMask: { type: 'i', value: 0 },
@@ -266,8 +267,9 @@ function transformUtils(camera,
         appendSingleIcon(container, 'transformControlIcon', 'surprise.png', 'Debugging transform', that.complexEffect5);                
         appendSingleIcon(container, 'transformControlIcon', 'S1.png', 'Apply theta schottky (Equal Circles)', that.schottkyEffect1);
         appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apply theta schottky (Uneven Circles)', that.schottkyEffect2);
-        appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apollonian Gasket', that.schottkyEffect3);
-        appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Fractal', that.fractalEffect);
+        appendSingleIcon(container, 'transformControlIcon', 'A.png', 'Apollonian Gasket', that.schottkyEffect3);
+        appendSingleIcon(container, 'transformControlIcon', 'F.png', 'Fractal', that.fractalEffect);
+        appendSingleIcon(container, 'transformControlIcon', 'triangles.png', 'Hyperbolic Triangles', that.hyperbolicTilingEffect);
     }
     this.viewState = 0;
     this.toggleView = function() {
@@ -357,6 +359,9 @@ function transformUtils(camera,
     }
     this.fractalEffect = function() { 
         that.uniforms.fractalEffectOnOff.value = that.uniforms.fractalEffectOnOff.value == 0 ? 1 : 0;
+    }
+    this.hyperbolicTilingEffect = function() { 
+        that.uniforms.hyperbolicTilingEffectOnOff.value = that.uniforms.hyperbolicTilingEffectOnOff.value == 0 ? 1 : 0;
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.point1Defined && !that.point2Defined) {
@@ -543,6 +548,7 @@ function transformUtils(camera,
         that.uniforms.complexEffect5OnOff.value = 0;
         that.uniforms.schottkyEffectOnOff.value = 0;
         that.uniforms.fractalEffectOnOff.value = 0;
+        that.uniforms.hyperbolicTilingEffectOnOff.value = 0;
     	that.uniforms.e1x.value = that.uniforms.e1y.value = that.uniforms.e2x.value = that.uniforms.e2y.value = 0;
         that.uniforms.loxodromicX.value = 1;
         that.uniforms.loxodromicY.value = 0;

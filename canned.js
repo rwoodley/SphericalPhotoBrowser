@@ -73,6 +73,13 @@ function cannedRun() {
             var mesh = addSkyDomeToScene(_scene, newMaterial);
             mesh.scale.set(-1,-1,1);
         }
+        if (this.skyMaterialName == "triangleDome") {
+            var uniforms = getCleanSetOfUniforms();
+            uniforms.hyperbolicTilingEffectOnOff.value = 2;
+            var newMaterial = getBigAssShaderMaterial(undefined, uniforms);
+            var mesh = addSkyDomeToScene(_scene, newMaterial);
+            mesh.scale.set(-1,-1,1);
+        }
 
 
         if (this.skyMaterialName == "hdr1") {
@@ -114,6 +121,7 @@ function cannedRun() {
         this.textureType = 'video';
         this.complexEffect3OnOff = 0;
         this.fractalEffectOnOff = 0;
+        this.hyperbolicTilingEffectOnOff = 0;
         this.schottkyEffect = 0;
         this.textureScale = 1.;
 
@@ -172,6 +180,7 @@ function cannedRun() {
         uniforms.complexEffect3OnOff.value = that.complexEffect3OnOff;
         uniforms.schottkyEffectOnOff.value = that.schottkyEffect;
         uniforms.fractalEffectOnOff.value = that.fractalEffectOnOff;
+        uniforms.hyperbolicTilingEffectOnOff.value = that.hyperbolicTilingEffectOnOff;
         uniforms.textureScale.value *= that.textureScale; 
         uniforms.textureUAdjustment.value = this.textureUAdjustment;
     }    

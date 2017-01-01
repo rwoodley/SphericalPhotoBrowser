@@ -178,7 +178,7 @@ void main() {
         //if (r.level > -1)
         a = r.inverseZ;
     }
-    if (fractalEffectOnOff > 0) {
+    if (hyperbolicTilingEffectOnOff > 0) {
         // fractal is in the bottom half plane. Rotate so it is over-head.
         vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
         vec2 b1 = applyRotation(b, 0.5*3.1415926);
@@ -191,7 +191,7 @@ void main() {
         // gl_FragColor = vec4(temp, 1.0);
         // return;
     }
-    if (fractalEffectOnOff == -99) {
+    if (fractalEffectOnOff > 0) {
         // fractal is in the bottom half plane. Rotate so it is over-head.
         vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
         vec2 b1 = applyRotation(b, 2.718);
