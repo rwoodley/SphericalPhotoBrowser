@@ -10,7 +10,7 @@ function getCleanSetOfUniforms() {
         textureScale: { type: 'f', value: 1. },
         tesselate: { type: 'f', value: 0. },
         uAlpha: { type: 'f', value: 1. },
-        uColorVideoMode: { type: 'f', value: 0. },
+        uColorVideoMode: { type: 'f', value: 1. },  // need value = 1 for outer texture.
         enableTracking: { type: 'i', value: 0 },
         textureX: { type: 'f', value: 0. },
         textureY: { type: 'f', value: 0. },
@@ -561,7 +561,7 @@ function transformUtils(camera,
         that.uniforms.drosteType.value = 0;
         that.uniforms.tesselate.value = 0;
         that.uniforms.uAlpha.value = 1.0;
-        that.uniforms.uColorVideoMode.value = 0.0;
+        that.uniforms.uColorVideoMode.value = 1.0;      // need for outer texture.
     }
     this.updateVariousNumbersForCamera = function() {
         // Camera coordinates are in three.js space where Y is up.

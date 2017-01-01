@@ -51,8 +51,12 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     if (uTextureNumber == 2)
         textureValue = wrappedTexture2D( iChannelStillMask1,  uv);
     
-    if (uMaskType == 0)
-         return vec4(vec3(textureValue),uAlpha);
+    if (uMaskType == 0) {
+        if (textureValue.a == 0.)
+            return textureValue;
+        else
+            return vec4(vec3(textureValue),uAlpha);
+    }
 
     vec4 clr;
     if (uMaskType == 1 || uMaskType == 3) {   // delay mask
@@ -76,7 +80,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         return clr;
 
     }
-    if (uMaskType == 2) {
+    if (uMaskType == 2) {       // green mask
         vec4 t1 = wrappedTexture2D( iChannel0,  uv);
 
         if (uBlackMask == 1)
@@ -147,11 +151,11 @@ vec4 getRGBAForIter(int iter, float fiter) {
         else
             alpha = 1.;
     }
-    if (int((uColorVideoMode+1.)/2.) == 1)
+    if (int((uColorVideoMode+1.)/2.) == 3)
         return vec4(hsv2rgb(vec3(fiter)), alpha);
     if (int((uColorVideoMode+1.)/2.) == 2)
         return vec4(hsv2rgb(vec3(fiter, 1., 1.)), alpha);
-    if (int((uColorVideoMode+1.)/2.) == 3) {
+    if (int((uColorVideoMode+1.)/2.) == 1) {
         alpha = sqrt(fiter);
         if (mod(uColorVideoMode, 2.0) == 0.) {
             float bfiter = alpha * (.75 + fiter/4.0);

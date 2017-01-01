@@ -20,6 +20,7 @@ function cannedRun() {
             this.skyMaterialName = skyMaterialName;
         if (this.skyMaterialName == "normal") {
             addSkyDomeToScene(_scene, new THREE.MeshNormalMaterial({ side: THREE.DoubleSide}));
+            return;
         }
         if (this.skyMaterialName == "shiny") {
             addSkyDomeToScene(_scene, new THREE.MeshPhongMaterial({ 
@@ -28,18 +29,21 @@ function cannedRun() {
                 emissive: 0x51252,
                 shininess: 100,
             }));
+            return;
         }
         if (this.skyMaterialName == "black") {
             addSkyDomeToScene(_scene, new THREE.MeshBasicMaterial({ 
                 side: THREE.DoubleSide,
                 color: 0x000000,
             }));
+            return;
         }
         if (this.skyMaterialName == "white") {
             addSkyDomeToScene(_scene, new THREE.MeshBasicMaterial({ 
                 side: THREE.DoubleSide,
                 color: 0xffffff,
             }));
+            return;
         }
         if (this.skyMaterialName == "greyOutline") {
             var uniforms = {
@@ -65,6 +69,7 @@ function cannedRun() {
                 // wireframe: true
             } );            
             addSkyDomeToScene(_scene, skyMaterial);
+            return;
         }
         if (this.skyMaterialName == "fractalDome") {
             var uniforms = getCleanSetOfUniforms();
@@ -72,6 +77,7 @@ function cannedRun() {
             var newMaterial = getBigAssShaderMaterial(undefined, uniforms);
             var mesh = addSkyDomeToScene(_scene, newMaterial);
             mesh.scale.set(-1,-1,1);
+            return;
         }
         if (this.skyMaterialName == "triangleDome") {
             var uniforms = getCleanSetOfUniforms();
@@ -79,15 +85,16 @@ function cannedRun() {
             var newMaterial = getBigAssShaderMaterial(undefined, uniforms);
             var mesh = addSkyDomeToScene(_scene, newMaterial);
             mesh.scale.set(-1,-1,1);
+            return;
         }
-
-
+        
         if (this.skyMaterialName == "hdr1") {
             (new THREE.TextureLoader()).load("media/stillMask3.png", function ( texture ) {
                 var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
                 var mesh = addSkyDomeToScene(_scene, skyMaterial);
                 mesh.scale.set(-1,1,1);
             });
+            return;
         }
         else {
             (new THREE.TextureLoader()).load(this.skyMaterialName, function ( texture ) {
@@ -95,6 +102,7 @@ function cannedRun() {
                 var mesh = addSkyDomeToScene(_scene, skyMaterial);
                 mesh.scale.set(-1,1,1);
             });            
+            return;
         }
     }
     this.init = function() {
