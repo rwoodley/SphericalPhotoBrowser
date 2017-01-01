@@ -10,6 +10,7 @@ function getCleanSetOfUniforms() {
         textureScale: { type: 'f', value: 1. },
         tesselate: { type: 'f', value: 0. },
         uAlpha: { type: 'f', value: 1. },
+        uColorVideoMode: { type: 'f', value: 0. },
         enableTracking: { type: 'i', value: 0 },
         textureX: { type: 'f', value: 0. },
         textureY: { type: 'f', value: 0. },
@@ -257,6 +258,7 @@ function transformUtils(camera,
         appendSingleIcon(container, 'cameraControlIcon', 'tesselate.png', 'Tesselate', that.tesselate);
         appendSingleIcon(container, 'cameraControlIcon', 'crosshairs.png', 'Track', that.textureTrack);
         appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 'Change Alpha', that.changeAlpha);
+        appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 'Toggle Color/Video (only works for some math transforms)', that.toggleColorVideo);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -329,6 +331,10 @@ function transformUtils(camera,
         if (that.uniforms.uAlpha.value == 0.)
             that.uniforms.uAlpha.value = 1.0;
         console.log("alpha = "  + that.uniforms.uAlpha.value);
+    }
+    this.toggleColorVideo = function() {
+        that.uniforms.uColorVideoMode.value++;
+        that.uniforms.uColorVideoMode.value = that.uniforms.uColorVideoMode.value%7;
     }
     this.tesselate = function() { that.uniforms.tesselate.value = that.uniforms.tesselate.value == 0 ? 1 : 0; }
     this.complexEffect1 = function() { 
@@ -555,6 +561,7 @@ function transformUtils(camera,
         that.uniforms.drosteType.value = 0;
         that.uniforms.tesselate.value = 0;
         that.uniforms.uAlpha.value = 1.0;
+        that.uniforms.uColorVideoMode.value = 0.0;
     }
     this.updateVariousNumbersForCamera = function() {
         // Camera coordinates are in three.js space where Y is up.

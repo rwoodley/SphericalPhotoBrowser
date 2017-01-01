@@ -236,29 +236,10 @@ xform xformForIndex(xform[6] xforms, int i) {
     return xforms[5];
 }
 struct schottkyResult {
-    int level;
-    float distance;
-    float radius;
-    xform inverseXform;
+    int iter;
     vec2 inverseZ;
     vec2 glitchZ;   // just a pretty effect i got by doing something wrong.
 };
-schottkyResult getSchottkyResult(int n, xform[6] xforms, vec2 z, circle c) {
-    schottkyResult res;
-    res.level = n;
-    vec2 invZ = z;
-    vec2 glitchZ = z;
-    for (int i = 0; i < 6; i++) {
-        if (i <= n) {
-            xform T = xformForIndex(xforms, i);
-            glitchZ = applyMobiusTransformation(invZ, T);
-            invZ = applyInverseMobiusTransformation(invZ, T);
-        }
-    }
-    res.inverseZ = invZ;
-    res.glitchZ = glitchZ;
-    return res;
-}
 circle applyTransformsToCircle(circle c, xform[6] xforms, int n) {
     circle res = c;
     for (int i = 6; i >= 0; i--) {
@@ -266,71 +247,6 @@ circle applyTransformsToCircle(circle c, xform[6] xforms, int n) {
             res = mobiusOnCircle(xformForIndex(xforms, i), res);
     }
     return res;
-}
-schottkyResult applySchottkyLoopOld(in vec2 z) {
-    defineInitialCircles();
-    vec4 clr;
-    xform xforms[6];
-    int level = -1;
-    for (int i = 0; i < 4; i++) {
-        circle c = getInitialCircle(i);     // 0 = a, 1 = A, 2 = b, 3 = B
-        if (insideCircle(c, z)) {
-            xform T = getTransform(i);   // which xform got us inside this circle?
-            level++;
-            xforms[0] = T;
-            int inverseTransformIndex_i = inverseTransformIndex(i);
-            for (int j = 0; j < 4; j++) {
-                if (j == inverseTransformIndex_i) continue;
-                circle c2 = applyTransformsToCircle(getInitialCircle(j), xforms, level);
-                if (insideCircle(c2, z)) {
-                    xform T1 = getTransform(j);
-                    level++;
-                    xforms[1] = T1;
-                    int inverseTransformIndex_j = inverseTransformIndex(j);
-                    for (int k = 0; k < 4; k++) {
-                        if (k == inverseTransformIndex_j) continue;
-                        circle c4 = applyTransformsToCircle(getInitialCircle(k), xforms, level);
-                        if (insideCircle(c4, z)) {
-                            xform T2 = getTransform(k);
-                            level++;
-                            xforms[2] = T2;
-                            int inverseTransformIndex_k = inverseTransformIndex(k);
-                            for (int l = 0; l < 4; l++) {
-                                if (l == inverseTransformIndex_k) continue;
-                                circle c6 = applyTransformsToCircle(getInitialCircle(l), xforms, level);
-                                if (insideCircle(c6, z)) {
-
-
-                                    xform T3 = getTransform(l);
-                                    level++;
-                                    xforms[3] = T3;
-                                    int inverseTransformIndex_l = inverseTransformIndex(l);
-                                    for (int m = 0; m < 4; m++) {
-                                        if (m == inverseTransformIndex_l) continue;
-                                        circle c8 = applyTransformsToCircle(getInitialCircle(m), xforms, level);
-                                        if (insideCircle(c8, z)) {
-                                            return getSchottkyResult(3, xforms, z, c8);
-                                        }
-                                    }
-
-
-                                    return getSchottkyResult(2, xforms, z, c6);
-                                }
-                            }
-                            return getSchottkyResult(2, xforms, z, c4);
-                        }
-                    }
-                    return getSchottkyResult(1, xforms, z, c2);
-                }
-            }
-            return getSchottkyResult(0, xforms, z, c);
-        }
-    }
-    // if we get here Z is in the fundamental domain.
-    schottkyResult rrr;
-    rrr.level = -1;  // -1
-    rrr.inverseZ = z;
-    return rrr;
 }
 schottkyResult applySchottkyLoop(in vec2 z) {
     defineInitialCircles();
@@ -349,7 +265,7 @@ schottkyResult applySchottkyLoop(in vec2 z) {
         }
         if (!cont) {
             schottkyResult res;
-            res.level = iter;
+            res.iter = iter;
             res.inverseZ = z;
             res.glitchZ = y;
             return res;
@@ -357,23 +273,30 @@ schottkyResult applySchottkyLoop(in vec2 z) {
     }
     // if we get here Z is in the fundamental domain.
     schottkyResult rrr;
-    rrr.level = -1;  // -1
+    rrr.iter = -1;  // -1
     rrr.inverseZ = z;
     return rrr;
 }
-int applyFractal(in vec2 z0) {
+schottkyResult applyFractal(in vec2 z0) {
     vec2 z = z0;
     // see https://en.wikipedia.org/wiki/Julia_set for other C values
     vec2 c = vec2(-.7269,.1889);
-    for (int iter = 0; iter < 100; iter++) {
+    schottkyResult res;
+    const int MAX_ITER = 100;
+    for (int iter = 0; iter < MAX_ITER; iter++) {
         z = cx_product(z,z) + c;
         vec3 zInCartesian = complexToCartesian(z);
-        if (length(cx_divide(z, z0)) > 3000.)
-            return iter;
+        if (length(cx_divide(z, z0)) > 3000.) {
+            res.iter = iter;
+            res.inverseZ = z;
+            return res;
+        }
     }
-    return -1;
+    res.inverseZ = z;
+    res.iter = -1;
+    return res;
 }
-vec2 applyHyperbolicTesselation(in vec2 z0) {
+schottkyResult applyHyperbolicTesselation(in vec2 z0) {
     // see https://en.wikipedia.org/wiki/Modular_group#Tessellation_of_the_hyperbolic_plane
     vec2 z = z0;
     xform xf1 = xformCtor(zero,-one,one,zero);
@@ -381,9 +304,14 @@ vec2 applyHyperbolicTesselation(in vec2 z0) {
     xform xf3 = xformCtor(one, -one, zero, one);
     if (z.y <=0.)
         z.y = z.y * -1.;
-    for (int iter = 0; iter < 100; iter++) {
-        if (length(z) > 1. && abs(z.x) < .5 && z.y > 0.)
-            return z;
+    schottkyResult res;
+    const int MAX_ITER = 100;
+    for (int iter = 0; iter < MAX_ITER; iter++) {
+        if (length(z) > 1. && abs(z.x) < .5 && z.y > 0.) {
+            res.inverseZ = z;
+            res.iter = iter;
+            return res;
+        }
 
         if (length(z) < 1.)
             z = applyInverseMobiusTransformation(z, xf1);
@@ -392,7 +320,9 @@ vec2 applyHyperbolicTesselation(in vec2 z0) {
         else
             z = applyInverseMobiusTransformation(z, xf2);
     }
-    return z;
+    res.inverseZ = z;
+    res.iter = MAX_ITER;
+    return res;
 }
 `;
 return x;

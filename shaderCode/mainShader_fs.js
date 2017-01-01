@@ -132,6 +132,37 @@ vec3 hsv2rgb(vec3 c)
     vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
+vec4 getRGBAForIter(int iter, float fiter) {
+    // there are 6 color modes.
+    // Mode: 1 - Full specturm
+    // Mode: 2 - Full spectrum, but transparent (alpha == 0) every other iter 
+    // Mode: 3 - Red spectrum
+    // Mode: 4 - Red spectrum, but transparent (alpha == 0) every other iter 
+    // Mode: 5 - alpha gradient on blue channel.
+    // Mode: 6 - alpha gradient on some other channel.
+    float alpha = 1.;
+    if (mod(uColorVideoMode, 2.0) == 0.) {
+        if (mod(float(iter), 2.0) == 0.)
+            alpha = 0.;
+        else
+            alpha = 1.;
+    }
+    if (int((uColorVideoMode+1.)/2.) == 1)
+        return vec4(hsv2rgb(vec3(fiter)), alpha);
+    if (int((uColorVideoMode+1.)/2.) == 2)
+        return vec4(hsv2rgb(vec3(fiter, 1., 1.)), alpha);
+    if (int((uColorVideoMode+1.)/2.) == 3) {
+        alpha = sqrt(fiter);
+        if (mod(uColorVideoMode, 2.0) == 0.) {
+            float bfiter = alpha * (.75 + fiter/4.0);
+            return vec4(vec3(fiter, fiter, bfiter), alpha);
+        }
+        else {
+            return vec4(vec3(0., 0., fiter), alpha);
+        }
+    }
+    return vec4(1.,0.,0.,1.);
+}
 void main() {
         float theta;
         float phi;
@@ -168,15 +199,23 @@ void main() {
         a.y = my_mod(a.y, 1.);
     }
 
-    //schottkyResult r = applySchottkyLoop(a);
-    // vec3 temp = hsv2rgb(vec3(0.02 * float(r.level),1.0,1.0));
-    // float alpha = mod(float(r.level),2.0);
-    // gl_FragColor = vec4(temp, alpha);
-    // return;
+    // ========================
+    // Apply tesselation effects: Schottky, Apollonian, Fractal, Hyperbolic Triangles.
+    // ========================
+
     if (schottkyEffectOnOff > 0) {
-        schottkyResult r = applySchottkyLoop(a);
-        //if (r.level > -1)
-        a = r.inverseZ;
+        schottkyResult tesselationResult = applySchottkyLoop(a);
+
+        // for math functions, either sample from texture or use a color map.
+        if (uColorVideoMode > 0.) {
+            int iter = tesselationResult.iter;
+            float fiter = 0.1 * float(iter);
+            gl_FragColor = getRGBAForIter(iter,fiter);
+            return;
+        }
+        else
+            a = tesselationResult.inverseZ;
+
     }
     if (hyperbolicTilingEffectOnOff > 0) {
         // fractal is in the bottom half plane. Rotate so it is over-head.
@@ -184,12 +223,16 @@ void main() {
         vec2 b1 = applyRotation(b, 0.5*3.1415926);
         a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
 
-
-        a = applyHyperbolicTesselation(a);
-        // float fiter = 0.1 * float(iter);
-        // vec3 temp = hsv2rgb(vec3(fiter));
-        // gl_FragColor = vec4(temp, 1.0);
-        // return;
+        schottkyResult tesselationResult = applyHyperbolicTesselation(a);
+        // for math functions, either sample from texture or use a color map.
+        if (uColorVideoMode > 0.) {
+            int iter = tesselationResult.iter;
+            float fiter = 0.1 * float(iter);
+            gl_FragColor = getRGBAForIter(iter,fiter);
+            return;
+        }
+        else
+            a = vec2(tesselationResult.inverseZ);
     }
     if (fractalEffectOnOff > 0) {
         // fractal is in the bottom half plane. Rotate so it is over-head.
@@ -197,18 +240,19 @@ void main() {
         vec2 b1 = applyRotation(b, 2.718);
         a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
 
-        int iter = applyFractal(a);
-        float fiter = 0.01 * float(iter);
-        float bfiter = .75 + fiter/4.0;
-        float alpha = sqrt(fiter);
-        if (fractalEffectOnOff == 1)
-            gl_FragColor = vec4(vec3(fiter,fiter, bfiter), alpha);
+        schottkyResult tesselationResult = applyFractal(a);
+        // for math functions, either sample from texture or use a color map.
+        if (uColorVideoMode > 0.) {
+            float fiter = 0.01 * float(tesselationResult.iter);
+            gl_FragColor = getRGBAForIter(tesselationResult.iter,fiter);
+            return;
+        }
         else
-            gl_FragColor = vec4(vec3(bfiter,fiter, fiter), alpha);
-        return;
+            a = tesselationResult.inverseZ;
     }
-
-
+    // ========================
+    // Now apply Mobius Transforms and Complex transforms.
+    // ========================
     vec2 result = a;
     vec2 e1 = vec2(e1x,e1y);
     vec2 e2 = vec2(e2x,e2y);
@@ -259,7 +303,7 @@ void main() {
         result = cx_exp(result);
     }
 
-    // // // // now c back to sphere.
+    // now c back to sphere.
     float denom = 1.0 + result.x*result.x + result.y *result.y;
     x = 2.0 * result.x/denom;
     y = 2.0 * result.y/denom;
