@@ -122,7 +122,7 @@ void defineInitialCircles3() {   // indra's necklace page 165, 170
     initialCircles.B.center = vec2(-x/y,0.);
     initialCircles.B.radius = 1./y;
 }
-void defineInitialCircles4() {   // indra's necklace page 201
+void defineInitialCircles4() {   // indra's necklace page 201. apollonian gasket.
 
     group_a = xformCtor(vec2(1.,0.), vec2(0.,0.), vec2(0.,-2.), vec2(1.,0.));
     group_b = xformCtor(vec2(1.,-1.), vec2(1.,0.), vec2(1.,0.), vec2(1.,1.));
@@ -363,7 +363,6 @@ schottkyResult applySchottkyLoop(in vec2 z) {
 }
 int applyFractal(in vec2 z0) {
     vec2 z = z0;
-    vec3 z0InCartesian = complexToCartesian(z0);
     // see https://en.wikipedia.org/wiki/Julia_set for other C values
     vec2 c = vec2(-.7269,.1889);
     for (int iter = 0; iter < 100; iter++) {
@@ -373,6 +372,27 @@ int applyFractal(in vec2 z0) {
             return iter;
     }
     return -1;
+}
+vec2 applyHyperbolicTesselation(in vec2 z0) {
+    // see https://en.wikipedia.org/wiki/Modular_group#Tessellation_of_the_hyperbolic_plane
+    vec2 z = z0;
+    xform xf1 = xformCtor(zero,-one,one,zero);
+    xform xf2 = xformCtor(one, one, zero, one);
+    xform xf3 = xformCtor(one, -one, zero, one);
+    if (z.y <=0.)
+        z.y = z.y * -1.;
+    for (int iter = 0; iter < 100; iter++) {
+        if (length(z) > 1. && abs(z.x) < .5 && z.y > 0.)
+            return z;
+
+        if (length(z) < 1.)
+            z = applyInverseMobiusTransformation(z, xf1);
+        else if (z.x < -.5)
+            z = applyInverseMobiusTransformation(z, xf3);
+        else
+            z = applyInverseMobiusTransformation(z, xf2);
+    }
+    return z;
 }
 `;
 return x;

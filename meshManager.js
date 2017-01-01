@@ -100,6 +100,18 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
+        if (that.geoIndex == "steiner") {
+            var geo = 
+            new THREE.ParametricGeometry( 
+                steinerFunc, 
+                40, 40 );
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            mesh.rotateX(Math.PI/2);
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+            });
+        }
         if (that.geoIndex == "klein") {
             var geo = 
             new THREE.ParametricGeometry( 

@@ -205,7 +205,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
                 console.log("Changing Camera up!");
                 that.camera.up.set(0,1,1);
             }
-            //that.camera.rotateZ(that.rotateZAmount+that.camera.rotation.z);
+            that.camera.rotateZ(that.rotateZAmount+that.camera.rotation.z);
             // that.camera.rotateY(that.rotateZAmount);
             // that.camera.rotateX(that.rotateZAmount);
         }
@@ -320,6 +320,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.rotateXAmount += 0.002;
     }  
     this.cameraStop = function() {
+        that.rotateZAmount = 0.0;
         that.rotateYAmount = 0.;
         that.rotateXAmount = 0.;
     }  

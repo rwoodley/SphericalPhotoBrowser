@@ -181,20 +181,31 @@ void main() {
     if (fractalEffectOnOff > 0) {
         // fractal is in the bottom half plane. Rotate so it is over-head.
         vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
+        vec2 b1 = applyRotation(b, 0.5*3.1415926);
+        a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
+
+
+        a = applyHyperbolicTesselation(a);
+        // float fiter = 0.1 * float(iter);
+        // vec3 temp = hsv2rgb(vec3(fiter));
+        // gl_FragColor = vec4(temp, 1.0);
+        // return;
+    }
+    if (fractalEffectOnOff == -99) {
+        // fractal is in the bottom half plane. Rotate so it is over-head.
+        vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
         vec2 b1 = applyRotation(b, 2.718);
         a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
 
         int iter = applyFractal(a);
         float fiter = 0.01 * float(iter);
         float bfiter = .75 + fiter/4.0;
-//        vec3 temp = hsv2rgb(vec3(fiter));
         float alpha = sqrt(fiter);
         if (fractalEffectOnOff == 1)
             gl_FragColor = vec4(vec3(fiter,fiter, bfiter), alpha);
         else
             gl_FragColor = vec4(vec3(bfiter,fiter, fiter), alpha);
         return;
-
     }
 
 

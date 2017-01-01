@@ -291,7 +291,7 @@ function transformUtils(camera,
         // }
         if (that.viewState == 3) {
             that.cameraVectorLength = 15;
-            that.mediaUtils.toggleView("psphere");
+            that.mediaUtils.toggleView("steiner");
         }
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {

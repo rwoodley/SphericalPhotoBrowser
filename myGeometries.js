@@ -24,7 +24,17 @@ var psphere = function (u, v) {
     x = (1./Math.cosh(u))*Math.cos(v);
     y = (1./Math.cosh(u))*Math.sin(v);
     z = u - Math.tanh(u);
-        return new THREE.Vector3(x*2, y*2, z*2);
+        return new THREE.Vector3(x*10, y*10, z*10);
+}
+var steinerFunc = function(u,v) {
+    // see http://xahlee.info/surface/steiner/steiner.html
+    u *= Math.PI;
+    v *= 2 * Math.PI;
+    var x,y,z;
+    x = Math.cos(u) * Math.cos(v) * Math.sin(v);
+    y = Math.sin(u) * Math.cos(v) * Math.sin(v);
+    z = Math.cos(u) * Math.sin(u) * Math.cos(v) * Math.cos(v);
+    return new THREE.Vector3(x,y,z);
 }
 var helix = new THREE.Curve();
 helix.getPoint = function(t) {
