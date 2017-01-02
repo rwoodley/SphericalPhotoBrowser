@@ -1,8 +1,12 @@
 // handles canned runs.
+// This is sort of counter-intuitive.
+// init() is called before mediaUtils or transformUtils is created. 
+// Once they are created, the query the cannedRun for settings in setup().
+// This is done because in this order because cannedRun controls the outer sky dome too
+// which must be set up before the inner sky dome is created, so that transparency works.
 function cannedRun() {
     var that = this;
     this.skyDomeMesh = undefined;
-    this.transformUtils = undefined;    // will be setup in setup().
     this.videoReloadDelayInSeconds = 1;
     function addSkyDomeToScene(scene, skyMaterial) {
         var skyGeometry = new THREE.SphereGeometry(100,32,32);
@@ -167,6 +171,7 @@ function cannedRun() {
         this.uniforms.hyperbolicTilingEffectOnOff.value = 0;
         this.uniforms.schottkyEffectOnOff.value = 0;
         this.uniforms.textureScale.value = 1.;
+        this.videoReloadDelayInSeconds = 30;
 
         // overrides:
         if (mode == 'uv') {
@@ -182,7 +187,6 @@ function cannedRun() {
             this.uniforms.textureScale.value = 2.25;
             this.showMirrorBall = true;
             this.skyMaterialName = "greyOutline";
-            this.videoReloadDelayInSeconds = 30;
         }
         if (mode == 'torusDance') {
             this.textureName = 'dance200';
@@ -191,6 +195,16 @@ function cannedRun() {
             this.skyMaterialName = "hdr1";
             this.uniforms.textureUAdjustment.value = 0.44;
             this.videoReloadDelayInSeconds = 1;
+        }
+        if (mode == 'torusTracker') {
+            this.textureName = 'tubes';
+            this.geometry = "torus";
+            this.cameraPosition = [-13.2,-0.3,2.0];
+            this.skyMaterialName = "white";
+            this.videoReloadDelayInSeconds = 1;
+            // that.uniforms.uAlpha.value = .65;
+            that.uniforms.enableTracking.value = 1; 
+            this.rotateYAmount = 0.;
         }
         if (mode == 'doubleFractal') {
             this.textureName = 'uv';
@@ -253,6 +267,9 @@ function cannedRun() {
         uniforms.e1y.value = that.uniforms.e1y.value;
         uniforms.e2x.value = that.uniforms.e2x.value;
         uniforms.e2y.value = that.uniforms.e2y.value;
+        uniforms.uAlpha.value = that.uniforms.uAlpha.value;
+        uniforms.enableTracking.value = that.uniforms.enableTracking.value; 
+
     }    
     this.setup = function(mediaUtils, transformUtils) {
         if (!that.uniforms.createMode) {     // canned mode

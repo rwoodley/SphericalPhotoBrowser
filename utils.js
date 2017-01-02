@@ -33,7 +33,7 @@ function rotateCameraY(camera, radians) {
     if (_radians > Math.PI*2) _radians = _radians%(Math.PI*2);
     while (_radians < 0) _radians += Math.PI*2;
 
-    console.log( _radians);
+    // console.log( _radians);
 
     var radius = Math.sqrt(x*x + z*z);
     camera.position.x = radius * Math.cos(_radians);

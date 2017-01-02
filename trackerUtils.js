@@ -3,7 +3,7 @@ function trackerUtils() {
     this.coords = [];
     this.coordsIndex = 0;
     this.previousCoord = undefined;
-    $.get( "tubes/blueShorts.json", function( data ) {
+    $.get( "tubes/woman1WhiteShirt.json", function( data ) {
         that.coords = data;
         that.previousCoord = that.coords[0];
         that.coordIndex = 0;

@@ -510,6 +510,9 @@ function transformUtils(camera,
             else
                 videoCurrentTime = that.capturer.getTiming().performancetime;
             if (that.uniforms.enableTracking.value == 1) {
+                if (that.trackerUtils == undefined) 
+                    that.trackerUtils = new trackerUtils(); // happens w canned mode sometimes.
+                    
                 var coords = that.trackerUtils.getXY(videoCurrentTime);
                 that.uniforms.textureUAdjustment.value = coords[0];
                 that.uniforms.textureVAdjustment.value = 1.5-coords[1];
