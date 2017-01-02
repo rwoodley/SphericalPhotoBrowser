@@ -142,6 +142,7 @@ function cannedRun() {
         //this.skyMaterialName = "greyOutline";
         //this.skyMaterialName = "media/eso_dark.jpg";
         this.textureUAdjustment = 0;
+        this.iRotationAmount = 0;
         this.showMirrorBall = false;
         if (mode == null) {
             this.createMode = true;
@@ -151,28 +152,34 @@ function cannedRun() {
         }
         // default for canned runs, override as needed below
         this.createMode = false;
+
         this.cameraPosition = [9.4,0.4,6.];     // just outside inner sphere
-        this.rotateYAmount = 0.0005;
+        this.initialUpDownRotation = 0;
+        // Initial Y rotation is determined entirely by cameraPosition. 
+        this.rotateYAmount = 0.0005;    // additional rotation on each call to animate().
         this.textureType = 'video';
-        this.complexEffect3OnOff = 0;
-        this.fractalEffectOnOff = 0;
-        this.uColorVideoMode = 0;
-        this.hyperbolicTilingEffectOnOff = 0;
-        this.schottkyEffect = 0;
-        this.textureScale = 1.;
+
+        this.uniforms = getCleanSetOfUniforms();
+
+        this.uniforms.complexEffect3OnOff.value = 0;
+        this.uniforms.fractalEffectOnOff.value = 0;
+        this.uniforms.uColorVideoMode.value = 0;
+        this.uniforms.hyperbolicTilingEffectOnOff.value = 0;
+        this.uniforms.schottkyEffectOnOff.value = 0;
+        this.uniforms.textureScale.value = 1.;
 
         // overrides:
         if (mode == 'uv') {
             this.textureName = 'uv.jpg';
             this.textureType = 'still';
-            this.complexEffect3OnOff = 1;
-            this.textureScale = 3.5; 
+            this.uniforms.complexEffect3OnOff.value = 1;
+            this.uniforms.textureScale.value = 3.5; 
         }
         if (mode == 'couple2') {
             this.textureName = 'coupleCropped';
             this.cameraPosition = [-8.4,3.6,10.1];
-            this.complexEffect3OnOff = 1;
-            this.textureScale = 2.25;
+            this.uniforms.complexEffect3OnOff.value = 1;
+            this.uniforms.textureScale.value = 2.25;
             this.showMirrorBall = true;
             this.skyMaterialName = "greyOutline";
             this.videoReloadDelayInSeconds = 30;
@@ -182,14 +189,14 @@ function cannedRun() {
             this.geometry = "torus";
             this.cameraPosition = [-7.8,4.8,-2.7];
             this.skyMaterialName = "hdr1";
-            this.textureUAdjustment = 0.44;
+            this.uniforms.textureUAdjustment.value = 0.44;
             this.videoReloadDelayInSeconds = 1;
         }
         if (mode == 'doubleFractal') {
             this.textureName = 'uv';
             this.cameraPosition = [-8.4,3.6,10.1];
-            this.fractalEffectOnOff = 1;
-            this.uColorVideoMode = 2;
+            this.uniforms.fractalEffectOnOff.value = 1;
+            this.uniforms.uColorVideoMode.value = 2;
             this.showMirrorBall = true;
             this.skyMaterialName = "fractalDome";
         }
@@ -198,10 +205,30 @@ function cannedRun() {
             this.geometry = "sphere";
             this.cameraPosition = [-7.8,4.8,-2.7];
             this.skyMaterialName = "hdr1";
-            this.hyperbolicTilingEffectOnOff = 1;
-            this.textureUAdjustment = 0.485;
+            this.uniforms.hyperbolicTilingEffectOnOff.value = 1;
+            this.uniforms.textureUAdjustment.value = 0.485;
             this.videoReloadDelayInSeconds = 1;
         }
+        if (mode == 'squares') {
+            this.textureName = 'typewriter';
+            this.geometry = "sphere";
+            this.cameraPosition = [0,-10.7,0];
+            this.skyMaterialName = "hdr1";
+            this.uniforms.schottkyEffectOnOff.value = 1;
+            this.uniforms.textureUAdjustment.value = 0;
+
+            this.videoReloadDelayInSeconds.value = 1;
+
+            this.uniforms.mobiusEffectsOnOff.value = 1
+            this.uniforms.iRotationAmount.value = 10.*Math.PI/2.;
+            this.uniforms.e1x.value = -1;
+            this.uniforms.e1y.value = 0;
+            this.uniforms.e2x.value = 1;
+            this.uniforms.e2y.value = 0;
+
+            this.rotateYAmount = 0.;
+            this.initialUpDownRotation = - Math.PI;
+       }
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
         mediaUtils.camera.position.set(
@@ -209,19 +236,26 @@ function cannedRun() {
             this.cameraPosition[1],
             this.cameraPosition[2]);
         mediaUtils.rotateYAmount -= this.rotateYAmount;
+        rotateCameraUpDown(mediaUtils.camera, this.initialUpDownRotation);
     }
 
     this._initTransformUtils = function(uniforms) {
-        uniforms.complexEffect3OnOff.value = that.complexEffect3OnOff;
-        uniforms.schottkyEffectOnOff.value = that.schottkyEffect;
-        uniforms.fractalEffectOnOff.value = that.fractalEffectOnOff;
-        uniforms.uColorVideoMode.value = that.uColorVideoMode;
-        uniforms.hyperbolicTilingEffectOnOff.value = that.hyperbolicTilingEffectOnOff;
-        uniforms.textureScale.value *= that.textureScale; 
-        uniforms.textureUAdjustment.value = this.textureUAdjustment;
+        uniforms.complexEffect3OnOff.value = that.uniforms.complexEffect3OnOff.value;
+        uniforms.schottkyEffectOnOff.value = that.uniforms.schottkyEffectOnOff.value;
+        uniforms.fractalEffectOnOff.value = that.uniforms.fractalEffectOnOff.value;
+        uniforms.uColorVideoMode.value = that.uniforms.uColorVideoMode.value;
+        uniforms.hyperbolicTilingEffectOnOff.value = that.uniforms.hyperbolicTilingEffectOnOff.value;
+        uniforms.textureScale.value *= that.uniforms.textureScale.value; 
+        uniforms.textureUAdjustment.value = that.uniforms.textureUAdjustment.value;
+        uniforms.mobiusEffectsOnOff.value = that.uniforms.mobiusEffectsOnOff.value;
+        uniforms.iRotationAmount.value = that.uniforms.iRotationAmount.value;
+        uniforms.e1x.value = that.uniforms.e1x.value;
+        uniforms.e1y.value = that.uniforms.e1y.value;
+        uniforms.e2x.value = that.uniforms.e2x.value;
+        uniforms.e2y.value = that.uniforms.e2y.value;
     }    
     this.setup = function(mediaUtils, transformUtils) {
-        if (!that.createMode) {     // canned mode
+        if (!that.uniforms.createMode) {     // canned mode
             mediaUtils.toggleControlPanel();
             this._initMediaUtils(mediaUtils);
             this._initTransformUtils(transformUtils.uniforms);
@@ -238,7 +272,7 @@ function cannedRun() {
                         console.log("Video is done, reloading.")
                         location.reload(true);
                     }, 
-                    this.videoReloadDelayInSeconds*1000);
+                    that.videoReloadDelayInSeconds*1000);
                 }
             }
         }
