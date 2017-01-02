@@ -23,7 +23,7 @@ void main() {
     //vec4 t2 = wrappedTexture2D( iChannelStillMask1,  uv, 1.0, .1, 0.);        
     vec4 t2 = wrappedTexture2D( iChannelStillMask1,  uv, 1.0, 0.2, 0.);        
     vec4 clr = abs(t1-t2);
-    float threshold = .05;
+    float threshold = .15;
     if
         (
         (clr.x < threshold ) && 

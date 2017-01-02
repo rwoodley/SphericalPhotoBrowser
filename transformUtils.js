@@ -138,7 +138,7 @@ function transformUtils(camera,
                 that.capturer = undefined;
             }
         }
-        if (extraKey == 0) {
+        if (extraKey == 0 || extraKey == undefined) {
             if (e.keyCode == 39)    // right arrow
                 that.uniforms.textureUAdjustment.value += .0025;
             if (e.keyCode == 37)    // left arrow

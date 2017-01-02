@@ -87,7 +87,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         for (var i = 0; i < myVideos.length; i++)
             textureListHTML += "<span id='textureSelector_xxx' class='showhide vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
 
-        var myEffects = ['fractalDome', 'greyOutline', 'normal','shiny','black','white'];
+        var myEffects = ['fractalDome', 'greyOutline', 'studioOutline', 'normal','shiny','black','white'];
         for (var i = 0; i < myEffects.length; i++)
             textureListHTML += "<span id='effectSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
         
@@ -239,6 +239,9 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.setMipMapOptions(texture);
         return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
     }
+    this.onVideoEnded = function() {
+        console.log("The video ended. I have nothing to do so I'm doing nothing. Over-ride this to do something.")
+    }
     this.setMipMapOptions = function(texture) {
         // since none of our textures are powers of 2, we need the
         // following settings.
@@ -251,6 +254,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.video  = document.getElementById('video');
         that.videoSource = document.createElement('source');
         that.video.appendChild(that.videoSource);
+        that.video.addEventListener('ended', function() { that.onVideoEnded() } );
     }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');

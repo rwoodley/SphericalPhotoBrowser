@@ -293,9 +293,6 @@ void main() {
             //gl_FragColor = vec4(c.x/(PI/4.),0.,0.,1.);
             //return;
         }
-        if (complexEffect5OnOff == 1) {
-            c = bobMobius(c);
-        }
         result = inverseTransformForFixedPoints(c, e1, e2);
     }
     vec2 realNumber = vec2(complexEffect1OnOff, 0.);
@@ -305,6 +302,9 @@ void main() {
     }
     if (complexEffect4OnOff == 1) {
         result = cx_exp(result);
+    }
+    if (complexEffect5OnOff == 1) {
+        result = bobMobius(result);
     }
 
     // now c back to sphere.

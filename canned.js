@@ -3,6 +3,7 @@ function cannedRun() {
     var that = this;
     this.skyDomeMesh = undefined;
     this.transformUtils = undefined;    // will be setup in setup().
+    this.videoReloadDelayInSeconds = 1;
     function addSkyDomeToScene(scene, skyMaterial) {
         var skyGeometry = new THREE.SphereGeometry(100,32,32);
         var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
@@ -56,6 +57,32 @@ function cannedRun() {
                 uniforms.iChannelStillMask1.value =  texture; 
             });
             var pathToSubtractionTexture = 'media/stillMask3.png';
+            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+                _mediaUtils.setMipMapOptions(texture);
+                uniforms.iChannelStillMask2.value =  texture; 
+            });
+            var skyMaterial = new THREE.ShaderMaterial( {
+                uniforms: uniforms,
+                vertexShader: SHADERCODE.mainShader_vs(),
+                fragmentShader: SHADERCODE.outerShader_fs(),
+                side: THREE.DoubleSide,
+                transparent: true,
+                // wireframe: true
+            } );            
+            addSkyDomeToScene(_scene, skyMaterial);
+            return;
+        }
+        if (this.skyMaterialName == "studioOutline") {
+            var uniforms = {
+                iChannelStillMask1:  { type: 't', value: 0 },
+                iChannelStillMask2:  { type: 't', value: 0 },
+            };
+            var pathToSubtractionTexture = 'media/studioImage1.jpg';
+            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+                _mediaUtils.setMipMapOptions(texture);
+                uniforms.iChannelStillMask1.value =  texture; 
+            });
+            var pathToSubtractionTexture = 'media/studioImage2.jpg';
             (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
                 _mediaUtils.setMipMapOptions(texture);
                 uniforms.iChannelStillMask2.value =  texture; 
@@ -129,6 +156,7 @@ function cannedRun() {
         this.textureType = 'video';
         this.complexEffect3OnOff = 0;
         this.fractalEffectOnOff = 0;
+        this.uColorVideoMode = 0;
         this.hyperbolicTilingEffectOnOff = 0;
         this.schottkyEffect = 0;
         this.textureScale = 1.;
@@ -140,12 +168,6 @@ function cannedRun() {
             this.complexEffect3OnOff = 1;
             this.textureScale = 3.5; 
         }
-        if (mode == 'couple') {
-            this.textureName = 'couple';
-            this.complexEffect3OnOff = 1;
-            this.textureScale = 3.5;
-            this.skyMaterialName = "greyOutline";
-        }
         if (mode == 'couple2') {
             this.textureName = 'coupleCropped';
             this.cameraPosition = [-8.4,3.6,10.1];
@@ -153,6 +175,7 @@ function cannedRun() {
             this.textureScale = 2.25;
             this.showMirrorBall = true;
             this.skyMaterialName = "greyOutline";
+            this.videoReloadDelayInSeconds = 30;
         }
         if (mode == 'torusDance') {
             this.textureName = 'dance200';
@@ -160,20 +183,24 @@ function cannedRun() {
             this.cameraPosition = [-7.8,4.8,-2.7];
             this.skyMaterialName = "hdr1";
             this.textureUAdjustment = 0.44;
-        }
-        if (mode == 'benchmark') {
-            this.textureName = 'couple';
-            this.complexEffect3OnOff = 1;
-            this.textureScale = 3.5;
-            this.schottkyEffect = 1;
-            this.skyMaterialName = "greyOutline";
+            this.videoReloadDelayInSeconds = 1;
         }
         if (mode == 'doubleFractal') {
             this.textureName = 'uv';
             this.cameraPosition = [-8.4,3.6,10.1];
             this.fractalEffectOnOff = 1;
+            this.uColorVideoMode = 2;
             this.showMirrorBall = true;
             this.skyMaterialName = "fractalDome";
+        }
+        if (mode == 'triangles') {
+            this.textureName = 'typewriter';
+            this.geometry = "sphere";
+            this.cameraPosition = [-7.8,4.8,-2.7];
+            this.skyMaterialName = "hdr1";
+            this.hyperbolicTilingEffectOnOff = 1;
+            this.textureUAdjustment = 0.485;
+            this.videoReloadDelayInSeconds = 1;
         }
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
@@ -188,12 +215,13 @@ function cannedRun() {
         uniforms.complexEffect3OnOff.value = that.complexEffect3OnOff;
         uniforms.schottkyEffectOnOff.value = that.schottkyEffect;
         uniforms.fractalEffectOnOff.value = that.fractalEffectOnOff;
+        uniforms.uColorVideoMode.value = that.uColorVideoMode;
         uniforms.hyperbolicTilingEffectOnOff.value = that.hyperbolicTilingEffectOnOff;
         uniforms.textureScale.value *= that.textureScale; 
         uniforms.textureUAdjustment.value = this.textureUAdjustment;
     }    
     this.setup = function(mediaUtils, transformUtils) {
-        if (!that.createMode) {
+        if (!that.createMode) {     // canned mode
             mediaUtils.toggleControlPanel();
             this._initMediaUtils(mediaUtils);
             this._initTransformUtils(transformUtils.uniforms);
@@ -202,11 +230,21 @@ function cannedRun() {
             // the inner dome uses textureName.
             if (this.textureType == 'still')
                 mediaUtils.updateSkyDomeForFileName(this.textureName);
-            else
+            else {
                 mediaUtils.updateVideoForFileName(this.textureName);
+                mediaUtils.onVideoEnded = function() {
+                    console.log("here..........");
+                    window.setTimeout(function() {
+                        console.log("Video is done, reloading.")
+                        location.reload(true);
+                    }, 
+                    this.videoReloadDelayInSeconds*1000);
+                }
+            }
         }
-        else
+        else {
             mediaUtils.updateSkyDomeForFileName(that.textureName);   
+        }
     }
     // ----
     this.init();
