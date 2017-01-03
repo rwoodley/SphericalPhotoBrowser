@@ -76,32 +76,6 @@ function cannedRun() {
             addSkyDomeToScene(_scene, skyMaterial);
             return;
         }
-        if (this.skyMaterialName == "studioOutline") {
-            var uniforms = {
-                iChannelStillMask1:  { type: 't', value: 0 },
-                iChannelStillMask2:  { type: 't', value: 0 },
-            };
-            var pathToSubtractionTexture = 'media/studioImage1.jpg';
-            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-                _mediaUtils.setMipMapOptions(texture);
-                uniforms.iChannelStillMask1.value =  texture; 
-            });
-            var pathToSubtractionTexture = 'media/studioImage2.jpg';
-            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-                _mediaUtils.setMipMapOptions(texture);
-                uniforms.iChannelStillMask2.value =  texture; 
-            });
-            var skyMaterial = new THREE.ShaderMaterial( {
-                uniforms: uniforms,
-                vertexShader: SHADERCODE.mainShader_vs(),
-                fragmentShader: SHADERCODE.outerShader_fs(),
-                side: THREE.DoubleSide,
-                transparent: true,
-                // wireframe: true
-            } );            
-            addSkyDomeToScene(_scene, skyMaterial);
-            return;
-        }
         if (this.skyMaterialName == "fractalDome") {
             var uniforms = getCleanSetOfUniforms();
             uniforms.fractalEffectOnOff.value = 2;
@@ -165,6 +139,7 @@ function cannedRun() {
 
         this.uniforms = getCleanSetOfUniforms();
 
+        this.uniforms.complexEffect1OnOff.value = 1;
         this.uniforms.complexEffect3OnOff.value = 0;
         this.uniforms.fractalEffectOnOff.value = 0;
         this.uniforms.uColorVideoMode.value = 0;
@@ -187,6 +162,14 @@ function cannedRun() {
             this.uniforms.textureScale.value = 2.25;
             this.showMirrorBall = true;
             this.skyMaterialName = "greyOutline";
+        }
+        if (mode == 'manyDancersLoop') {
+            this.textureName = 'loop';
+            this.geometry = "torus";
+            this.cameraPosition = [3.8,0.1,-1.4];
+            this.uniforms.complexEffect1OnOff.value = 4;
+            this.skyMaterialName = "shiny";
+            this.videoReloadDelayInSeconds = 1;
         }
         if (mode == 'torusDance') {
             this.textureName = 'dance200';
@@ -254,6 +237,7 @@ function cannedRun() {
     }
 
     this._initTransformUtils = function(uniforms) {
+        uniforms.complexEffect1OnOff.value = that.uniforms.complexEffect1OnOff.value;
         uniforms.complexEffect3OnOff.value = that.uniforms.complexEffect3OnOff.value;
         uniforms.schottkyEffectOnOff.value = that.uniforms.schottkyEffectOnOff.value;
         uniforms.fractalEffectOnOff.value = that.uniforms.fractalEffectOnOff.value;
@@ -272,7 +256,7 @@ function cannedRun() {
 
     }    
     this.setup = function(mediaUtils, transformUtils) {
-        if (!that.uniforms.createMode) {     // canned mode
+        if (!that.createMode) {     // canned mode
             mediaUtils.toggleControlPanel();
             this._initMediaUtils(mediaUtils);
             this._initTransformUtils(transformUtils.uniforms);
