@@ -171,6 +171,14 @@ function cannedRun() {
             this.skyMaterialName = "shiny";
             this.videoReloadDelayInSeconds = 1;
         }
+        if (mode == 'manyDancersLoop2') {
+            this.textureName = 'loop';
+            this.geometry = "torus";
+            this.cameraPosition = [0.0,5.0,0.0];
+            this.uniforms.complexEffect1OnOff.value = 4;
+            this.skyMaterialName = "shiny";
+            this.videoReloadDelayInSeconds = -1;
+        }
         if (mode == 'torusDance') {
             this.textureName = 'dance200';
             this.geometry = "torus";
@@ -267,13 +275,15 @@ function cannedRun() {
                 mediaUtils.updateSkyDomeForFileName(this.textureName);
             else {
                 mediaUtils.updateVideoForFileName(this.textureName);
-                mediaUtils.onVideoEnded = function() {
-                    console.log("here..........");
-                    window.setTimeout(function() {
-                        console.log("Video is done, reloading.")
-                        location.reload(true);
-                    }, 
-                    that.videoReloadDelayInSeconds*1000);
+                if (that.videoReloadDelayInSeconds > -1) {
+                    mediaUtils.onVideoEnded = function() {
+                        console.log("here..........");
+                        window.setTimeout(function() {
+                            console.log("Video is done, reloading.")
+                            location.reload(true);
+                        }, 
+                        that.videoReloadDelayInSeconds*1000);
+                    }
                 }
             }
         }

@@ -88,6 +88,15 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
+        if (that.geoIndex == "fatTorus") {
+            var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/1.5, segment, segment );
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            mesh.rotateX(Math.PI/2);
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+            });
+        }
         if (that.geoIndex == "psphere") {
             var geo = 
             new THREE.ParametricGeometry( 

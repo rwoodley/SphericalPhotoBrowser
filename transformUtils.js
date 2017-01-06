@@ -112,10 +112,10 @@ function transformUtils(camera,
             that.useGreenMask();
             // that.uniforms.uBlackMask.value = that.uniforms.uBlackMask.value == 1 ? 0 : 1;
         }
-        // TODO: This screen capture should probably go in mediaUtils at some point.
-        if (e.keyCode == 82) {  // r - start/stop recording
+
+        if (e.keyCode == 81 && extraKey == 16) {  // shift-Q - start/stop recording
             if (!that.recording) {
-                that.mediaUtils.video_restart();
+                //that.mediaUtils.video_restart();
                 console.log("Start recording");
                 that.recording = true;
                 that.capturer = new CCapture({
@@ -512,7 +512,7 @@ function transformUtils(camera,
             if (that.uniforms.enableTracking.value == 1) {
                 if (that.trackerUtils == undefined) 
                     that.trackerUtils = new trackerUtils(); // happens w canned mode sometimes.
-                    
+
                 var coords = that.trackerUtils.getXY(videoCurrentTime);
                 that.uniforms.textureUAdjustment.value = coords[0];
                 that.uniforms.textureVAdjustment.value = 1.5-coords[1];

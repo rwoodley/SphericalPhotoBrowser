@@ -10,11 +10,12 @@ User might want to:
 **/ 
 function mediaUtils(canned, scene, camera, stills, videos, 
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
-       rightClickHandler) {
+       rightClickHandler, addEffects) {
 	var that = this;
     this.canned = canned;
 	this.stills = stills;
 	this.videos = videos;
+    this.addEffects = addEffects;
 	this.mediaListContainerId = mediaListContainerId;
 	this.cameraControlsContainerId = cameraControlsContainerId;
 	this.videoControlsContainerId = videoControlsContainerId;
@@ -87,10 +88,11 @@ function mediaUtils(canned, scene, camera, stills, videos,
         for (var i = 0; i < myVideos.length; i++)
             textureListHTML += "<span id='textureSelector_xxx' class='showhide vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
 
-        var myEffects = ['fractalDome', 'greyOutline', 'studioOutline', 'normal','shiny','black','white'];
-        for (var i = 0; i < myEffects.length; i++)
-            textureListHTML += "<span id='effectSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
-        
+        if (that.addEffects) {
+            var myEffects = ['fractalDome', 'greyOutline', 'studioOutline', 'normal','shiny','black','white'];
+            for (var i = 0; i < myEffects.length; i++)
+                textureListHTML += "<span id='effectSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
+        }
         document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 
         $('.tselector').click(that.updateSkyDome);
@@ -211,6 +213,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         }
 
 		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
+          if (videoCurrentTime == undefined) videoCurrentTime = that.video.currentTime;
 		  if (that.videoTexture) that.videoTexture.needsUpdate = true; 
           var timeRemaining = (that.video.duration - videoCurrentTime).toFixed(0);
           document.getElementById('videoClock').innerHTML = videoCurrentTime.toFixed(0) + '<br/>' + timeRemaining;
