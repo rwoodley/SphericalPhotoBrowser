@@ -163,10 +163,21 @@ function cannedRun() {
             this.showMirrorBall = true;
             this.skyMaterialName = "greyOutline";
         }
+        if (mode == 'portrait') {
+            this.textureName = 'hung.jpg';
+            this.textureType = 'still';
+            this.cameraPosition = [6.6,2.4,0];
+            this.uniforms.complexEffect3OnOff.value = 1;
+            this.uniforms.textureScale.value = 1.5;
+            this.geometry = "torus";
+            this.skyMaterialName = "fractalDome";
+            this.rotateYAmount = 0.;
+            this.uniforms.textureUAdjustment.value = 0.27;
+        }
         if (mode == 'manyDancersLoop') {
             this.textureName = 'loop';
             this.geometry = "torus";
-            this.cameraPosition = [3.8,0.1,-1.4];
+            this.cameraPosition = [3.8,0.1,-1.4];;
             this.uniforms.complexEffect1OnOff.value = 4;
             this.skyMaterialName = "shiny";
             this.videoReloadDelayInSeconds = 1;
