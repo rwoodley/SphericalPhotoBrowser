@@ -27,7 +27,9 @@
         <script src="shaderCode/outerShader_fs.js"></script>
         <script src="shaderCode/mainShader_vs.js"></script>
 
+        <script src="reimannShaderEditor.js"></script>
         <script src="meshManager.js"></script>
+        <script src="meshInventory.js"></script>
         <script src="canned.js"></script>
         <script src="mediaUtils.js"></script>
         <script src="transformUtils.js"></script>
@@ -82,7 +84,7 @@ function init() {
     document.getElementById( 'container' ).innerHTML = "";
     _container.appendChild( _renderer.domElement );
 
-    _canned = new cannedRun();
+    _canned = new cannedRun(_scene);
 
     var skyMaterialOld = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
 

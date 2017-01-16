@@ -23,7 +23,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
 
 	this.camera = camera;
 	this.scene = scene;
-    this.meshManager = new meshManager(scene);
+    this.meshInventory = new meshInventory(scene);
 
 	this.video = document.getElementById("video");
 	this.videoTexture = undefined; 
@@ -68,7 +68,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
     };
 
     this.initMediaUtils = function() {
-        that.toggleView(this.canned.geometry);         // $$$
+        that.toggleView(this.canned.getConfigByName('default')['geometry']);         // $$$
 	    that.initVideo();
 	    that.toggleControlPanel();
 	    that.setupMediaIcons();
@@ -221,24 +221,24 @@ function mediaUtils(canned, scene, camera, stills, videos,
 	}
     this.updateSkyDome = function(event) {
         var pid = event.target.id.replace('textureSelector_','');
-        that.updateSkyDomeForFileName(pid);
+        that.updateSkyDomeForFileName("default", pid);
     }
-    this.updateSkyDomeForFileName = function(fileName) {
-        document.title = fileName;
+    this.updateSkyDomeForFileName = function(meshName, filename) {
+        document.title = filename;
         that.videoDisplayed = false;
         that.toggleVideoControls();
         that.video.pause();
-        that.showToast("Loading '" + fileName + "'.", 2000);
-        var pathToTexture = 'media/' + fileName;
+        that.showToast("Loading '" + filename + "'.", 2000);
+        var pathToTexture = 'media/' + filename;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
-            that.meshManager.setTexture(texture, that.setMaterialForTexture);
+            that.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
         });
     }
-    this.toggleView = function(desiredGeoIndex) {
-        that.meshManager.newMesh(desiredGeoIndex);
+    this.toggleView = function(desiredGeoName) {
+        that.meshInventory.newMesh("default", desiredGeoName);
     }
     // over-ride this to provide your own material,e.g. shader material:
-    this.setMaterialForTexture = function(texture) {
+    this.buildMaterialForTexture = function(texture) {
         that.setMipMapOptions(texture);
         return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
     }
@@ -261,11 +261,11 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');
-        that.updateVideoForFileName(pid);
+        that.updateVideoForFileName('default', pid);
     }
     this.postProcessingAfterVideoLoad = function(pid) {
     }
-    this.updateVideoForFileName = function(pid) {
+    this.updateVideoForFileName = function(meshName, pid) {
         that.videoFileName = pid;
         console.log('in video: ' + pid);
         document.title = pid;
@@ -278,7 +278,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.video.pause();     
         that.video.play();
 
-        that.meshManager.setTexture(that.videoTexture, that.setMaterialForTexture);
+        that.meshInventory.setTexture(meshName, that.videoTexture, that.buildMaterialForTexture);
         that.videoDisplayed = true;
         that.toggleVideoControls();        
         that.postProcessingAfterVideoLoad(pid);

@@ -6,12 +6,14 @@
 // because one has BackSide and one has FrontSide set. So you need 2 separate materials.
 // You can't simply clone the material (not sure why, maybe because they are shader
 // material?), so you need to generate it as needed, hence the use of lambdas for materials.
+// each instance of meshManager handles only one managedMesh which may in fact be 2
+// instances of a three.js mesh.
 function managedMesh(mesh, updateMaterialCallback) {
     var that = this;
     this.mesh = mesh;
     this.updateMaterialCallback = updateMaterialCallback;
 }
-function meshManager(scene) {
+function meshManager(scene) {   // TODO: rename to multiMesh or multiGeoMesh
     // ALWAYS ALLOW FOR MULTIPLE MESHES!
     var that = this;
     this.scene = scene;
@@ -33,9 +35,9 @@ function meshManager(scene) {
         newMaterialCallback(mesh, mesh.material);
         return mmesh;
     }
-    this.setTexture = function(texture, materialGeneratorFromTexture) {
+    this.setTexture = function(texture, materialGeneratorFromTexture, configName) {
         that.setMaterial(function() {
-            return materialGeneratorFromTexture(texture);
+            return materialGeneratorFromTexture(texture, configName);
         });
     }
     this.setMaterial = function(materialGenerator) {
@@ -46,12 +48,12 @@ function meshManager(scene) {
         }
         that.materialGenerator = materialGenerator;    // and one to keep around...
     }
-    this.newMesh = function(desiredGeoIndex) {
-        that.geoIndex = desiredGeoIndex;
+    this.newMesh = function(desiredGeoName) {
+        that.geoName = desiredGeoName;
         var segment = 256.;
         var sphereRadius = 10;
         that.removeManagedMeshes();
-        if (that.geoIndex == "sphere") {
+        if (that.geoName == "sphere") {
             // see https://github.com/mrdoob/three.js/issues/2476
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
             var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
@@ -70,7 +72,7 @@ function meshManager(scene) {
             mesh.position.set(0,0,0);
             mesh2.position.set(0,0,0);
         }
-        if (that.geoIndex == "plane") {
+        if (that.geoName == "plane") {
             var geo = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateY(Math.PI/2);
@@ -79,7 +81,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == "torus") {
+        if (that.geoName == "torus") {
             var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
@@ -88,7 +90,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == "fatTorus") {
+        if (that.geoName == "fatTorus") {
             var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/1.5, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
@@ -97,7 +99,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == "psphere") {
+        if (that.geoName == "psphere") {
             var geo = 
             new THREE.ParametricGeometry( 
                 psphere, 
@@ -109,7 +111,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == "steiner") {
+        if (that.geoName == "steiner") {
             var geo = 
             new THREE.ParametricGeometry( 
                 steinerFunc, 
@@ -121,7 +123,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        if (that.geoIndex == "klein") {
+        if (that.geoName == "klein") {
             var geo = 
             new THREE.ParametricGeometry( 
                 klein, 
@@ -134,7 +136,7 @@ function meshManager(scene) {
                 msh.material = newMaterial;
             });
         }
-        console.log("geoIndex = " + that.geoIndex);
+        console.log("geoName = " + that.geoName);
 
     }
 }

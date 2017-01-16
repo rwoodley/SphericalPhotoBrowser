@@ -20,19 +20,48 @@ Ideas for future dance performances:
 - Steady lighting.
 - Have people emerge from a door and run around the camera to the other side of the room. looks good on torus.
 
+To Do for proposal
+------------------
+- add ability to add N meshes at various sizes and positions and textures. 
+So they can all have different geometries and complex transforms.
+- Add new texture based on camera looking at a scene. 
+- put animated figure in scene. create exhibition proposal.
 
+- mediaUtils handles camera and video controls as now.
+- transformUtils has a list of uniformsEditor. when the editor needs to run
+it swaps in the uniforms it needs to edit.
+- uniformsEditor handles uniforms.
+    we need multiple uniformsEditors for the animation loop.
+- for now transformUtils only works on default uniforms.
 
-Get a gallery of dance photos up. Edit out noise.
+- put back in capture code.
+        // if (that.capturer != undefined && that.mediaUtils.animationFrame%120 == 0)
+        if (that.capturer != undefined){
+            var recording_fps = 60;
+            timing = that.capturer.getTiming();
+            actual_fps = timing.performancetime - that.lasttiming.performancetime;
+            ratio = actual_fps / recording_fps;
+            // playbackRate is normalised
+            that.mediaUtils.video.playbackRate = ratio;
+            that.lasttiming = timing;
 
-----------
-make index.html work.
-----------
-arrow moves texture
-shift-arrow moves camera
-ctrl-arrow moves mobius
-ws - camera in/out
-
-
-person tracking.
-video repeat.
-Add dedicated Schottky button for Apollonian Gasket.
+            that.capturer.capture( that.canvas );
+        }
+- put back in video restart code:
+    this.mediaUtils.postProcessingAfterVideoRestart = function() {
+        if (that.currentUniforms.enableTracking.value == 1)
+            that.trackerUtils.reset();        
+    }
+    this.mediaUtils.postProcessingAfterVideoLoad = function(pid) {
+        // Load stills for this video if they exist.
+        var pathToSubtractionTexture = 'media/' + pid + 'Still1.png';
+        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            mediaUtils.setMipMapOptions(texture);
+            that.currentUniforms.iChannelStillMask1.value =  texture; 
+        });
+        var pathToSubtractionTexture = 'media/' + pid + 'Still2.png';
+        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            mediaUtils.setMipMapOptions(texture);
+            that.currentUniforms.iChannelStillMask2.value =  texture; 
+        });        
+    }
