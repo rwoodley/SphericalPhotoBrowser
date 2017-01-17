@@ -7,12 +7,16 @@ function meshInventory(scene) {
     this.setTexture = function(meshName, texture, materialGeneratorFromTexture) {
         // yes, the name of the mesh is the same name we use to look up
         // uniformst.
-        this.meshes[meshName]
-            .setTexture(texture, materialGeneratorFromTexture, meshName);
+        that.meshes[meshName]
+        .setTexture(texture, materialGeneratorFromTexture, meshName);
     }
-    this.newMesh = function(meshName, desiredGeoName) {
-        if (!that.meshes.hasOwnProperty(meshName))
-            that.meshes[meshName] = new meshManager(that.scene);
-        that.meshes[meshName].newMesh(desiredGeoName);
+    this.newMesh = function(meshName, desiredGeoName, position, scale) {
+        if (that.meshes.hasOwnProperty(meshName)) 
+            console.log('"' + meshName + '" mesh already exists, not recreating.')
+        else
+            that.meshes[meshName] = new meshManager(that.scene, position, scale, desiredGeoName);
+    }
+    this.changeGeometry = function(meshName, desiredGeoName) {
+        that.meshes[meshName].setGeometry(desiredGeoName);        
     }
 }

@@ -1,3 +1,21 @@
+showToast = function(message, ms) {
+    console.log("Showing " + message + " for " + ms) ;
+    var options = {
+        settings: {
+            duration: ms
+        }
+    };        
+    new iqwerty.toast.Toast(message, options);
+}
+function appendSingleIcon(containerEl, style, png, title, callback) {
+    var el;
+    el = document.createElement('span');
+    el.innerHTML = "<img src='icons/xxx' title=\"yyy\" class='showhide zzz'></img>"
+        .replace('xxx', png).replace('yyy', title).replace('zzz', style);
+    $(el).click(callback);
+    containerEl.appendChild(el);
+}
+
 function onWindowResize() {
 
     _camera.aspect = window.innerWidth / window.innerHeight;

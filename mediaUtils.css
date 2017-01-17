@@ -7,6 +7,18 @@
     display: inline-block;
     vertical-align: middle;
 }
+.mselector { 
+    font-size: 8pt;
+    border: 2px solid; 
+    border-color: #6495ED; margin: 5px; padding: 5px; 
+    color: #FFF; 
+    background-color: rgba(167,34,110,.9);
+    width: 60px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
 .tselector { 
     font-size: 8pt;
     border: 2px solid; 

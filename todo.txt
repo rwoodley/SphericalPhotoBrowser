@@ -65,3 +65,12 @@ it swaps in the uniforms it needs to edit.
             that.currentUniforms.iChannelStillMask2.value =  texture; 
         });        
     }
+
+TODO:
+- see above
+- add back in old modes
+- DEBUG:
+    - why aren't mobius rotations working?
+    - "Change geometries" aint working, at least with multiple meshes.
+- rename mesh manager.
+- get mirror ball working in new framework. get sky dome working in new framework.

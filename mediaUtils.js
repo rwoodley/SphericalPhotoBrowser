@@ -56,27 +56,23 @@ function mediaUtils(canned, scene, camera, stills, videos,
         }
     };
 
-    this.showToast = function(message, ms) {
-        console.log(message);
-        if (!that.canned.createMode) return;
-        var options = {
-            settings: {
-                duration: ms
-            }
-        };        
-        this.toast = new iqwerty.toast.Toast(message, options);
-    };
-
     this.initMediaUtils = function() {
-        that.toggleView(this.canned.getConfigByName('default')['geometry']);         // $$$
 	    that.initVideo();
-	    that.toggleControlPanel();
 	    that.setupMediaIcons();
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
         that.setInitialCameraPosition();
 	};
+    this.doneLoadingConfig = function() {
+        var meshListHTML = document.getElementById('meshContainerId').innerHTML;
+        for (var meshName in that.meshInventory.meshes) {
+            meshListHTML += "<span id='meshSelector_xxx' class='showhide mselector'>xxx</span>".replace(/xxx/g, meshName);
+        }
+        document.getElementById('meshContainerId').innerHTML = meshListHTML;
+        $('.mselector').click(that.changeMeshBeingEdited);
+	    that.toggleControlPanel();
+    }
     this.setInitialCameraPosition = function() {
         that.camera.position.x = -1; that.camera.position.y = 0.0; that.camera.position.z = 0;   
     };
@@ -221,21 +217,22 @@ function mediaUtils(canned, scene, camera, stills, videos,
 	}
     this.updateSkyDome = function(event) {
         var pid = event.target.id.replace('textureSelector_','');
-        that.updateSkyDomeForFileName("default", pid);
+        that.updateSkyDomeForFileName(that.activeMesh, pid, undefined);
     }
-    this.updateSkyDomeForFileName = function(meshName, filename) {
+    this.updateSkyDomeForFileName = function(meshName, filename, desiredGeoName, position, scale) {
         document.title = filename;
+        that.meshInventory.newMesh(meshName, desiredGeoName, position, scale);
         that.videoDisplayed = false;
         that.toggleVideoControls();
         that.video.pause();
-        that.showToast("Loading '" + filename + "'.", 2000);
+        showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
             that.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
         });
     }
     this.toggleView = function(desiredGeoName) {
-        that.meshInventory.newMesh("default", desiredGeoName);
+        that.meshInventory.changeGeometry(that.activeMesh, desiredGeoName);
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.buildMaterialForTexture = function(texture) {
@@ -261,7 +258,13 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');
-        that.updateVideoForFileName('default', pid);
+        that.updateVideoForFileName(that.activeMesh, pid);
+    }
+    this.changeMeshBeingEditedOverridable = function(meshName) {    }    
+    this.changeMeshBeingEdited = function(event) {
+    	var meshName = event.target.id.replace('meshSelector_','');
+        that.activeMesh = meshName;
+        that.changeMeshBeingEditedOverridable(meshName);
     }
     this.postProcessingAfterVideoLoad = function(pid) {
     }

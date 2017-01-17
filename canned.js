@@ -132,18 +132,30 @@ function cannedRun(scene) {
         this.rotateYAmount = 0.0005;    // additional rotation on each call to animate().
         this.videoReloadDelayInSeconds = 30;
 
-        // overrides:
         if (mode == 'uv') {
             var uniforms = TRANSFORM.reimannShaderList.createShader('default');
             this.cameraPosition = [1.,0.,0.];
-            uniforms.complexEffect3OnOff.value = 1;
-            uniforms.textureScale.value = 3.5; 
-            this.configs["default"] = {
+            uniforms.complexEffect3OnOff.value = 0;
+//            uniforms.textureScale.value = 3.5; 
+            this.configs['default'] = {
                 'uniforms': uniforms,
                 'textureType': 'still',
                 'textureName': 'uv.jpg',
                 'geometry': 'sphere',
-                'material': 'mobius'
+                'material': 'mobius',
+                'position': [0,0,0],
+                'scale': [1,1,-1],
+            }
+
+            var uniforms = TRANSFORM.reimannShaderList.createShader('other');
+            this.configs['other'] = {
+                'uniforms': uniforms,
+                'textureType': 'still',
+                'textureName': 'uv.jpg',
+                'geometry': 'torus',
+                'material': 'mobius',
+                'position': [12.0,0,0],
+                'scale': [1,1,-1],
             }
             this.configs['skyDome'] = {
                 'materialName': 'shiny',
@@ -156,11 +168,13 @@ function cannedRun(scene) {
             uniforms.complexEffect3OnOff.value = 1;
             uniforms.textureScale.value = 2.25;
             this.skyMaterialName = "greyOutline";
-            this.configs["default"] = {
+            this.configs['default'] = {
                 'uniforms': uniforms,
                 'textureType': 'video',
                 'textureName': 'coupleCropped',
-                'geometry': 'sphere'
+                'geometry': 'sphere',
+                'position': [0,0,0],
+                'scale': [1,1,-1],
             }
             this.configs['skyDome'] = {
                 'materialName': 'greyOutline',
@@ -178,48 +192,42 @@ function cannedRun(scene) {
     this.getConfigByName = function(name) {
         return this.configs[name];
     }
-    this.setup = function(mediaUtils, transformUtils) {
-        if (!that.createMode) {     // canned mode
-            mediaUtils.toggleControlPanel();
-            this._initMediaUtils(mediaUtils);                   // setup camera
-            
-            for (var meshName in this.configs) {
-                var meshSpecs = this.configs[meshName];
-                if (meshName == 'skyDome')
-                    this.createSkyDome(that.scene, meshSpecs['materialName']);
-                else if (meshName == 'default') {
-                    // when mediaUtils refers to a skyDome it means the inner dome.
-                    // in this file skyDome means the outer dome. it uses skyMaterial.
-                    // the inner dome uses textureName.
-                    if (meshSpecs['textureType'] == 'still')
-                        mediaUtils.updateSkyDomeForFileName(meshName, meshSpecs['textureName']);
-                    else {
-                        mediaUtils.updateVideoForFileName(meshName, meshSpecs['textureName']);
-                        if (that.videoReloadDelayInSeconds > -1) {
-                            mediaUtils.onVideoEnded = function() {
-                                console.log("here..........");
-                                window.setTimeout(function() {
-                                    console.log("Video is done, reloading.")
-                                    location.reload(true);
-                                }, 
-                                that.videoReloadDelayInSeconds*1000);
-                            }
+    this.setup = function (mediaUtils, transformUtils) {
+        mediaUtils.toggleControlPanel();
+        this._initMediaUtils(mediaUtils);                   // setup camera
+
+        for (var meshName in this.configs) {
+            var meshSpecs = this.configs[meshName];
+            if (meshName == 'skyDome')
+                this.createSkyDome(that.scene, meshSpecs['materialName']);
+            else {
+                // when mediaUtils refers to a skyDome it means the inner dome.
+                // in this file skyDome means the outer dome. it uses skyMaterial.
+                // the inner dome uses textureName.
+                if (meshSpecs['textureType'] == 'still')
+                    mediaUtils.updateSkyDomeForFileName(
+                        meshName,
+                        meshSpecs['textureName'], 
+                        meshSpecs['geometry'],
+                        meshSpecs['position'],
+                        meshSpecs['scale']
+                        );
+                else {
+                    mediaUtils.updateVideoForFileName(meshName, meshSpecs['textureName']);
+                    if (that.videoReloadDelayInSeconds > -1) {
+                        mediaUtils.onVideoEnded = function () {
+                            console.log("here..........");
+                            window.setTimeout(function () {
+                                console.log("Video is done, reloading.")
+                                location.reload(true);
+                            },
+                                that.videoReloadDelayInSeconds * 1000);
                         }
                     }
-
                 }
-                else {
-                    // other configs.
-                }
-
             }
-
-
         }
-        else {
-            var meshSpecs = this.configs['default'];
-            mediaUtils.updateSkyDomeForFileName('default', meshSpecs['textureName']);
-        }
+        mediaUtils.doneLoadingConfig();
     }
     // ----
     this.init();

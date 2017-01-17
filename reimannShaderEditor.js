@@ -162,7 +162,7 @@ this.reimannUniformsEditor = function(
 	this.initUniformsEditor = function() {
 		that.setupTransformControlIcons();
         that.setupComplexControlIcons();
-        //that.showToast('Hit space bar to show/hide icons.', 2000);
+        //showToast('Hit space bar to show/hide icons.', 2000);
 	}
     this.onkeydown = function(e, extraKey) {
         if (extraKey == 0 || extraKey == undefined) {
@@ -258,14 +258,6 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'F.png', 'Fractal', that.fractalEffect);
         appendSingleIcon(container, 'transformControlIcon', 'triangles.png', 'Hyperbolic Triangles', that.hyperbolicTilingEffect);
     }
-    function appendSingleIcon(containerEl, style, png, title, callback) {
-    	var el;
-    	el = document.createElement('span');
-    	el.innerHTML = "<img src='icons/xxx' title=\"yyy\" class='showhide zzz'></img>"
-    		.replace('xxx', png).replace('yyy', title).replace('zzz', style);
-    	$(el).click(callback);
-    	containerEl.appendChild(el);
-    }
     
     this.textureLeft = function() { that.currentUniforms.textureUAdjustment.value += .1; }
     this.textureRight = function() { that.currentUniforms.textureUAdjustment.value -= .1; }
@@ -297,11 +289,11 @@ this.reimannUniformsEditor = function(
     this.tesselate = function() { that.currentUniforms.tesselate.value = that.currentUniforms.tesselate.value == 0 ? 1 : 0; }
     this.complexEffect1 = function() { 
         that.currentUniforms.complexEffect1OnOff.value += 1;
-        that.showToast("n = " + that.currentUniforms.complexEffect1OnOff.value, 1000);
+        // showToast("n = " + that.currentUniforms.complexEffect1OnOff.value, 1000);
     }
     this.complexEffect2 = function() { 
         that.currentUniforms.complexEffect1OnOff.value -= 1;
-        that.showToast("n = " + that.currentUniforms.complexEffect1OnOff.value, 1000);
+        // showToast("n = " + that.currentUniforms.complexEffect1OnOff.value, 1000);
     }
     this.complexEffect3 = function() { 
         that.currentUniforms.complexEffect3OnOff.value = that.currentUniforms.complexEffect3OnOff.value == 0 ? 1 : 0;
@@ -334,15 +326,15 @@ this.reimannUniformsEditor = function(
     }
     this.useDelayMask = function() {
             that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 1 ? 0 : 1;
-            that.showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
+            showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.useGreenMask = function() {
             that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 2 ? 0 : 2;
-            that.showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
+            showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.useStillMask = function() {
             that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 3 ? 0 : 3;
-            that.showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
+            showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.blackMask = function() {
             that.currentUniforms.uBlackMask.value = 1;
@@ -407,10 +399,10 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.loxodromicX.value = x;
         that.currentUniforms.loxodromicY.value = y;
         console.log("loxo point = " + that.currentUniforms.loxodromicX.value + "," + that.currentUniforms.loxodromicY.value);
-        that.showToast("Zoom is (" +
-                that.currentUniforms.loxodromicX.value.toFixed(2) + "," +
-                that.currentUniforms.loxodromicY.value.toFixed(2) + "i)"
-            , 2000);
+        // showToast("loxo point is (" +
+        //         that.currentUniforms.loxodromicX.value.toFixed(2) + "," +
+        //         that.currentUniforms.loxodromicY.value.toFixed(2) + "i)"
+        //     , 2000);
     }
     this.zoomIn = function() { that.zoom(.8); }
     this.zoomOut = function() { that.zoom(1.25); }

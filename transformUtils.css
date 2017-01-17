@@ -47,6 +47,11 @@ body {
     bottom: 0%;
     width: 95%;
 }
+.meshPanel {
+    position: fixed;
+    bottom: 60%;
+    width: 95%;
+}
 .texturePanel {
     position: fixed;
     bottom: 40%;

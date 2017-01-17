@@ -13,10 +13,12 @@ function managedMesh(mesh, updateMaterialCallback) {
     this.mesh = mesh;
     this.updateMaterialCallback = updateMaterialCallback;
 }
-function meshManager(scene) {   // TODO: rename to multiMesh or multiGeoMesh
+function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename to multiMesh or multiGeoMesh
     // ALWAYS ALLOW FOR MULTIPLE MESHES!
     var that = this;
     this.scene = scene;
+    this.position = position;
+    this.scale = scale;
     that.materialGenerator = function () {
         return new THREE.MeshNormalMaterial();
     }
@@ -31,7 +33,8 @@ function meshManager(scene) {   // TODO: rename to multiMesh or multiGeoMesh
         var mmesh = new managedMesh(mesh, newMaterialCallback);
         that.managedMeshes.push(mmesh);
         that.scene.add(mesh);
-        //mesh.position.set(0,0,0);
+        mesh.position.set(that.position[0],that.position[1], that.position[2]);
+        mesh.scale.set(that.scale[0],that.scale[1], that.scale[2]);
         newMaterialCallback(mesh, mesh.material);
         return mmesh;
     }
@@ -48,7 +51,7 @@ function meshManager(scene) {   // TODO: rename to multiMesh or multiGeoMesh
         }
         that.materialGenerator = materialGenerator;    // and one to keep around...
     }
-    this.newMesh = function(desiredGeoName) {
+    this.setGeometry = function(desiredGeoName) {
         that.geoName = desiredGeoName;
         var segment = 256.;
         var sphereRadius = 10;
@@ -58,19 +61,15 @@ function meshManager(scene) {   // TODO: rename to multiMesh or multiGeoMesh
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
             var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
-            mesh.scale.set(1,1,-1);
             that._addMesh(mesh, function(msh, mat) {
                 mat.side = THREE.FrontSide;
                 msh.material = mat;
             });
             var mesh2 = new THREE.Mesh( geo, that.materialGenerator() );
-            mesh2.scale.set(1,1,-1);
             that._addMesh(mesh2, function(msh, mat) {
                 mat.side = THREE.BackSide;
                 msh.material = mat;
             });
-            mesh.position.set(0,0,0);
-            mesh2.position.set(0,0,0);
         }
         if (that.geoName == "plane") {
             var geo = new THREE.PlaneBufferGeometry( sphereRadius/8, sphereRadius/8, segment, segment );
@@ -137,6 +136,6 @@ function meshManager(scene) {   // TODO: rename to multiMesh or multiGeoMesh
             });
         }
         console.log("geoName = " + that.geoName);
-
     }
+    this.setGeometry(desiredGeoName);
 }

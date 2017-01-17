@@ -55,14 +55,9 @@ function transformUtils(camera,
         mediaUtils.setMipMapOptions(texture);
         return newMaterial; 
     }
-    this.showToast = function(message, ms) {
-        console.log("Showing " + message + " for " + ms) ;
-        var options = {
-            settings: {
-                duration: ms
-            }
-        };        
-        new iqwerty.toast.Toast(message, options);
+    mediaUtils.changeMeshBeingEditedOverridable = function(meshName) {
+        rawUniforms = TRANSFORM.reimannShaderList.getShaderUniforms(meshName);
+        that.reimannShaderEditor.setUniforms(rawUniforms);
     }
     this.viewState = 0;
     this.toggleView = function() {
@@ -106,8 +101,8 @@ function transformUtils(camera,
 
         that.mediaUtils.animate(that.cameraVectorLength, videoCurrentTime);
     }
-    rawUniforms =
-        TRANSFORM.reimannShaderList.createShader('default');
+
+    rawUniforms = TRANSFORM.reimannShaderList.getShaderUniforms('default');
 
     this.reimannShaderEditor = new reimannUniformsEditor(
         this.camera,
@@ -117,4 +112,6 @@ function transformUtils(camera,
     this.reimannShaderEditor.setUniforms(rawUniforms);
     TRANSFORM.reimannShaderList.editor = this.reimannShaderEditor;
     TRANSFORM.reimannShaderList.mediaUtils = this.mediaUtils;
+
+
 }
