@@ -52,37 +52,12 @@ function transformUtils(camera,
     mediaUtils.buildMaterialForTexture = function(texture, configName) {
         var newMaterial = getReimannShaderMaterial(texture, 
         TRANSFORM.reimannShaderList.getShaderUniforms(configName));
-        mediaUtils.setMipMapOptions(texture);
+        setMipMapOptions(texture);
         return newMaterial; 
     }
     mediaUtils.changeMeshBeingEditedOverridable = function(meshName) {
         rawUniforms = TRANSFORM.reimannShaderList.getShaderUniforms(meshName);
         that.reimannShaderEditor.setUniforms(rawUniforms);
-    }
-    this.viewState = 0;
-    this.toggleView = function() {
-        that.viewState++;
-        that.viewState = that.viewState % 4;
-        if (that.viewState == 0) {
-            that.cameraVectorLength = 1;
-            that.mediaUtils.toggleView("sphere");
-        }
-        if (that.viewState == 1) {
-            that.cameraVectorLength = 1;
-            that.mediaUtils.toggleView("torus");
-        }
-        if (that.viewState == 2) {
-            that.cameraVectorLength = -1;
-            that.mediaUtils.toggleView("plane");
-        }
-        // if (that.viewState == 3) {
-        //     that.cameraVectorLength = 15;
-        //     that.mediaUtils.toggleView("sphere");
-        // }
-        if (that.viewState == 3) {
-            that.cameraVectorLength = 15;
-            that.mediaUtils.toggleView("steiner");
-        }
     }
     this.animate = function() {
 
@@ -105,7 +80,7 @@ function transformUtils(camera,
     rawUniforms = TRANSFORM.reimannShaderList.getShaderUniforms('default');
 
     this.reimannShaderEditor = new reimannUniformsEditor(
-        this.camera,
+        this.camera, this.mediaUtils,
         transformControlsContainerId, complexControlsContainerId, 
         transformControls2ContainerId, textureControlsContainerId
     );

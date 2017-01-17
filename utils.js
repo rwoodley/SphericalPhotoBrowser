@@ -24,6 +24,15 @@ function onWindowResize() {
     _renderer.setSize( window.innerWidth, window.innerHeight );
 
 }
+setMipMapOptions = function(texture) {
+    // since none of our textures are powers of 2, we need the
+    // following settings.
+    // more: https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
+    texture.minFilter = THREE.LinearFilter;   // eliminates pixellation.
+    texture.magFilter = THREE.LinearFilter;   // ditto
+    texture.generateMipmaps = false;
+}
+
 function doFloor(scene) {
         //var floorMaterial = new THREE.MeshLambertMaterial( { color: _floorColor, side:THREE.DoubleSide } );
         var floorMaterial = new THREE.MeshPhongMaterial( { color: 0x77ff00, side:THREE.DoubleSide } );

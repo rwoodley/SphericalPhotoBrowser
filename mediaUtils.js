@@ -236,19 +236,11 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.buildMaterialForTexture = function(texture) {
-        that.setMipMapOptions(texture);
+        setMipMapOptions(texture);
         return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
     }
     this.onVideoEnded = function() {
         console.log("The video ended. I have nothing to do so I'm doing nothing. Over-ride this to do something.")
-    }
-    this.setMipMapOptions = function(texture) {
-        // since none of our textures are powers of 2, we need the
-        // following settings.
-        // more: https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
-        texture.minFilter = THREE.LinearFilter;   // eliminates pixellation.
-        texture.magFilter = THREE.LinearFilter;   // ditto
-        texture.generateMipmaps = false;
     }
     this.initVideo = function() {
         that.video  = document.getElementById('video');

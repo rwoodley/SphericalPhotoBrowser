@@ -61,12 +61,12 @@ function cannedRun(scene) {
             };
             var pathToSubtractionTexture = 'media/stillMask2.png';
             (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-                _mediaUtils.setMipMapOptions(texture);
+                setMipMapOptions(texture);
                 uniforms.iChannelStillMask1.value =  texture; 
             });
             var pathToSubtractionTexture = 'media/stillMask3.png';
             (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-                _mediaUtils.setMipMapOptions(texture);
+                setMipMapOptions(texture);
                 uniforms.iChannelStillMask2.value =  texture; 
             });
             var skyMaterial = new THREE.ShaderMaterial( {

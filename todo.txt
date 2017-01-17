@@ -56,12 +56,12 @@ it swaps in the uniforms it needs to edit.
         // Load stills for this video if they exist.
         var pathToSubtractionTexture = 'media/' + pid + 'Still1.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            mediaUtils.setMipMapOptions(texture);
+            setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask1.value =  texture; 
         });
         var pathToSubtractionTexture = 'media/' + pid + 'Still2.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            mediaUtils.setMipMapOptions(texture);
+            setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask2.value =  texture; 
         });        
     }

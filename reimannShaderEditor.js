@@ -8,7 +8,7 @@ reimannShaderListObject = function() {
     this.editor = undefined;
     this.mediaUtils = undefined;
     this.createShader = function(name) {
-        var uniforms = new reimannShaderUniforms(that.mediaUtils);
+        var uniforms = new reimannShaderUniforms();
         this.uniformsList[name] = uniforms;
 
         return uniforms.currentUniforms;
@@ -28,9 +28,8 @@ TRANSFORM = {}
 TRANSFORM.reimannShaderList = new reimannShaderListObject();
 // Functions specific to doing mobius transforms on videos or stills.
 // this must be paired with the appropriate shaders of course.
-reimannShaderUniforms = function(mediaUtils) {
+reimannShaderUniforms = function() {
     var that = this;
-    that.mediaUtils = mediaUtils;
     that.firstTime = true;
     this.currentUniforms = {
         iRotationAmount:    { type: 'f', value: 0.0 },
@@ -72,27 +71,27 @@ reimannShaderUniforms = function(mediaUtils) {
         iChannelStillMask2:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
     };
-    this.setDefaults = function(mediaUtils) {
+    this.setDefaults = function() {
         // Initialize the masks to something so everything comes up.
         // These will be changed later as needed.
         var pathToSubtractionTexture = 'media/placeholderStill.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            mediaUtils.setMipMapOptions(texture);
+            setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask1.value =  texture; 
         });
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            mediaUtils.setMipMapOptions(texture);
+            setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask2.value =  texture; 
         });
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            mediaUtils.setMipMapOptions(texture);
+            setMipMapOptions(texture);
             that.currentUniforms.iChannelDelayMask.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
         });
         
     }
     this.animate = function(animationFrame, videoDisplayed, videoCurrentTime) {
         if (firstTime) {
-            setDefaults(that.mediaUtils);
+            setDefaults();
         }
         that.firstTime = false;
         that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .1*that.rotateDirection;
@@ -142,7 +141,7 @@ function getReimannShaderMaterial(texture, uniforms) {
 // It sets up icons on construction.
 // You can change the uniform being edited. 
 this.reimannUniformsEditor = function(
-    camera,
+    camera, mediaUtils,
     transformControlsContainerId, complexControlsContainerId, 
     transformControls2ContainerId, textureControlsContainerId
 ) {
@@ -153,7 +152,7 @@ this.reimannUniformsEditor = function(
     this.transformControls2ContainerId = transformControls2ContainerId;
     this.textureControlsContainerId = textureControlsContainerId;
     this.rotateDirection = 0;
-
+    this.mediaUtils = mediaUtils;
     this.cameraLookAtComplexX = 0;
     this.cameraLookAtComplexY = 0;
     this.point1Defined = false;
@@ -451,6 +450,31 @@ this.reimannUniformsEditor = function(
             $('.statusText').show();
 		}
 
+    }
+    this.viewState = 0;
+    this.toggleView = function() {
+        that.viewState++;
+        that.viewState = that.viewState % 4;
+        if (that.viewState == 0) {
+            that.cameraVectorLength = 1;
+            that.mediaUtils.toggleView("sphere");
+        }
+        if (that.viewState == 1) {
+            that.cameraVectorLength = 1;
+            that.mediaUtils.toggleView("torus");
+        }
+        if (that.viewState == 2) {
+            that.cameraVectorLength = -1;
+            that.mediaUtils.toggleView("plane");
+        }
+        // if (that.viewState == 3) {
+        //     that.cameraVectorLength = 15;
+        //     that.mediaUtils.toggleView("sphere");
+        // }
+        if (that.viewState == 3) {
+            that.cameraVectorLength = 15;
+            that.mediaUtils.toggleView("steiner");
+        }
     }
     this.reset = function() {
     	that.rotateDirection = 0;
