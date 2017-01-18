@@ -134,7 +134,7 @@ function cannedRun(scene) {
 
         if (mode == 'uv') {
             var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-            this.cameraPosition = [1.,0.,0.];
+            this.cameraPosition = [1.,40.,0.];
             uniforms.complexEffect3OnOff.value = 0;
 //            uniforms.textureScale.value = 3.5; 
             this.configs['default'] = {
@@ -154,7 +154,7 @@ function cannedRun(scene) {
                 'textureName': 'uv.jpg',
                 'geometry': 'torus',
                 'material': 'mobius',
-                'position': [12.0,0,0],
+                'position': [24.0,0,0],
                 'scale': [1,1,-1],
             }
             this.configs['skyDome'] = {

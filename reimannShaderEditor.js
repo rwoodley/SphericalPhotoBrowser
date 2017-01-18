@@ -1,141 +1,3 @@
-// TRANSFORM.reimannShaderList 
-//      - holds all reimannShaderUniforms.
-//      - each call to animate, loops over all uniforms invoking animate.
-// The editor works on one set of uniforms at a time. Currently the 'default'.
-reimannShaderListObject = function() {
-    var that = this;
-    this.uniformsList = {}
-    this.editor = undefined;
-    this.mediaUtils = undefined;
-    this.createShader = function(name) {
-        var uniforms = new reimannShaderUniforms();
-        this.uniformsList[name] = uniforms;
-
-        return uniforms.currentUniforms;
-    }
-    this.animate = function(animationFrame, videoDisplayed, videoCurrentTime) {
-        that.editor.updateVariousNumbersForCamera();
-        for (var i in that.reimannShaderUniformsList) {
-            var reimannShaderUniforms = that.uniformsList[i];
-            reimannShaderUniforms.animate(animationFrame, videoDisplayed, videoCurrentTime);
-        }
-    }
-    this.getShaderUniforms = function(name) {
-        return this.uniformsList[name].currentUniforms;
-    }
-}
-TRANSFORM = {}
-TRANSFORM.reimannShaderList = new reimannShaderListObject();
-// Functions specific to doing mobius transforms on videos or stills.
-// this must be paired with the appropriate shaders of course.
-reimannShaderUniforms = function() {
-    var that = this;
-    that.firstTime = true;
-    this.currentUniforms = {
-        iRotationAmount:    { type: 'f', value: 0.0 },
-        startTime:    { type: 'f', value: 0.0 },
-        iGlobalTime:    { type: 'f', value: 0.0 },
-        mobiusEffectsOnOff: { type: 'i', value: 0 },
-        textureScale: { type: 'f', value: 1. },
-        tesselate: { type: 'f', value: 0. },
-        uAlpha: { type: 'f', value: 1. },
-        uColorVideoMode: { type: 'f', value: 1. },  // need value = 1 for outer texture.
-        enableTracking: { type: 'i', value: 0 },
-        textureX: { type: 'f', value: 0. },
-        textureY: { type: 'f', value: 0. },
-        textureUAdjustment: { type: 'f', value: 0 },
-        textureVAdjustment: { type: 'f', value: 0 },
-        complexEffect1OnOff: { type: 'i', value: 1 },
-        complexEffect3OnOff: { type: 'i', value: 0 },
-        complexEffect4OnOff: { type: 'i', value: 0 },
-        complexEffect5OnOff: { type: 'i', value: 0 },
-        schottkyEffectOnOff: { type: 'i', value: 0 },
-        fractalEffectOnOff: { type: 'i', value: 0 },
-        hyperbolicTilingEffectOnOff: { type: 'i', value: 0},
-        showFixedPoints: { type: 'i', value: 1 },
-        uBlackMask: { type: 'i', value: 0 },
-        uNadirMask: { type: 'i', value: 0 },
-        uMaskType: { type: 'i', value: 0 },
-        uTextureNumber: { type: 'i', value: 0 },
-        e1x: { type: 'f', value: 0. },
-        e1y: { type: 'f', value: 0. },
-        e2x: { type: 'f', value: 0. }, 
-        e2y: { type: 'f', value: 0. },
-        loxodromicX: {type: 'f', value: 1. },
-        loxodromicY: {type: 'f', value: 0. },
-        drosteType: {type: 'i', value: 0 },
-        drosteSpiral: {type: 'i', value: 0 },
-        drosteZoom: {type: 'i', value: 0},
-        iChannel0:  { type: 't', value: 0 },
-        iChannelStillMask1:  { type: 't', value: 0 },
-        iChannelStillMask2:  { type: 't', value: 0 },
-        iChannelDelayMask:  { type: 't', value: 0 },
-    };
-    this.setDefaults = function() {
-        // Initialize the masks to something so everything comes up.
-        // These will be changed later as needed.
-        var pathToSubtractionTexture = 'media/placeholderStill.png';
-        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            setMipMapOptions(texture);
-            that.currentUniforms.iChannelStillMask1.value =  texture; 
-        });
-        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            setMipMapOptions(texture);
-            that.currentUniforms.iChannelStillMask2.value =  texture; 
-        });
-        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            setMipMapOptions(texture);
-            that.currentUniforms.iChannelDelayMask.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
-        });
-        
-    }
-    this.animate = function(animationFrame, videoDisplayed, videoCurrentTime) {
-        if (firstTime) {
-            setDefaults();
-        }
-        that.firstTime = false;
-        that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .1*that.rotateDirection;
-        that.currentUniforms.iGlobalTime.value = that.currentUniforms.iGlobalTime.value  + 1;
-
-        var videoCurrentTime = 0;
-        if (videoDisplayed) {
-            if (that.currentUniforms.enableTracking.value == 1) {
-                if (that.trackerUtils == undefined) 
-                    that.trackerUtils = new trackerUtils(); // happens w canned mode sometimes.
-
-                var coords = that.trackerUtils.getXY(videoCurrentTime);
-                that.currentUniforms.textureUAdjustment.value = coords[0];
-                that.currentUniforms.textureVAdjustment.value = 1.5-coords[1];
-            }
-        }
-        if (animationFrame%120 == 0) {
-            that.currentUniforms.iChannelDelayMask.value.image = that.currentUniforms.iChannel0.value.image;
-            that.currentUniforms.iChannelDelayMask.value.needsUpdate = true;
-        }
-    }
-};
-function getReimannShaderMaterial(texture, uniforms) {
-    if (texture != undefined)
-        uniforms.iChannel0 =  { type: 't', value: texture }; 
-    var fragmentShaderCode = 
-        ""
-        + SHADERCODE.uniformsAndGlobals()
-        + SHADERCODE.mathUtils()
-        + SHADERCODE.mobiusTransformUtils()
-        + SHADERCODE.drosteUtils()
-        + SHADERCODE.schottkyUtils()
-        + SHADERCODE.mainShader_fs()
-    ;
-    var newMaterial = new THREE.ShaderMaterial( {
-        uniforms: uniforms,
-        vertexShader: SHADERCODE.mainShader_vs(),
-        fragmentShader: fragmentShaderCode,
-        side: THREE.DoubleSide,
-        transparent: true,
-        // wireframe: true
-    } );
-    return newMaterial;                    
-}
 
 // This handles all user editing of uniforms. 
 // It sets up icons on construction.
@@ -151,12 +13,7 @@ this.reimannUniformsEditor = function(
     this.complexControlsContainerId = complexControlsContainerId;
     this.transformControls2ContainerId = transformControls2ContainerId;
     this.textureControlsContainerId = textureControlsContainerId;
-    this.rotateDirection = 0;
     this.mediaUtils = mediaUtils;
-    this.cameraLookAtComplexX = 0;
-    this.cameraLookAtComplexY = 0;
-    this.point1Defined = false;
-    this.point2Defined = false;
 
 	this.initUniformsEditor = function() {
 		that.setupTransformControlIcons();
@@ -319,7 +176,7 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.hyperbolicTilingEffectOnOff.value = that.currentUniforms.hyperbolicTilingEffectOnOff.value == 0 ? 1 : 0;
     }
     this.setFixedPointsIfUndefined = function() {
-    	if (!that.point1Defined && !that.point2Defined) {
+    	if (!that.detailsObject.point1Defined && !that.detailsObject.point2Defined) {
     		that.setFixedPoint(1);
     	}
     }
@@ -348,13 +205,13 @@ this.reimannUniformsEditor = function(
     this.setFixedPoint2 = function() {that.setFixedPoint(2); }
     this.setFixedPoint = function(pointNumber, cameraLookAtComplexX, cameraLookAtComplexY) {
     	that.currentUniforms.mobiusEffectsOnOff.value = 1;
-    	var x = that.cameraLookAtComplexX;
-    	var y = that.cameraLookAtComplexY;
+    	var x = that.detailsObject.cameraLookAtComplexX;
+    	var y = that.detailsObject.cameraLookAtComplexY;
     	if (pointNumber == 1) {
         	that.currentUniforms.e1x.value = x;
         	that.currentUniforms.e1y.value = y;
-        	that.point1Defined = true;
-        	if (!that.point2Defined) {
+        	that.detailsObject.point1Defined = true;
+        	if (!that.detailsObject.point2Defined) {
             	var ant = that.antipode(x,y);
             	that.currentUniforms.e2x.value = ant.x;
             	that.currentUniforms.e2y.value = ant.y;	            		
@@ -363,8 +220,8 @@ this.reimannUniformsEditor = function(
         else {
         	that.currentUniforms.e2x.value = x;
         	that.currentUniforms.e2y.value = y;	            	
-        	that.point2Defined = true;
-        	if (!that.point1Defined) {
+        	that.detailsObject.point2Defined = true;
+        	if (!that.detailsObject.point1Defined) {
             	var ant = that.antipode(x,y);
             	that.currentUniforms.e1x.value = ant.x;
             	that.currentUniforms.e1y.value = ant.y;	            		
@@ -375,7 +232,7 @@ this.reimannUniformsEditor = function(
         console.log("loxo point = " + that.currentUniforms.loxodromicX.value + "," + that.currentUniforms.loxodromicY.value);
     }
     this.setLoxoPointFromClick = function() {
-        that.setLoxoPoint(that.cameraLookAtComplexX, that.cameraLookAtComplexY);
+        that.setLoxoPoint(that.detailsObject.cameraLookAtComplexX, that.detailsObject.cameraLookAtComplexY);
     }
     this.roundDroste = function() {
         that.setFixedPointsIfUndefined();
@@ -431,14 +288,14 @@ this.reimannUniformsEditor = function(
     this.rotate = function(direction) {
 		that.setFixedPointsIfUndefined();
     	if (direction == 0) {
-    		that.rotateDirection = 0;
+    		that.detailsObject.rotateDirection = 0;
     	}
     	else {
-        	that.rotateDirection += direction;
+        	that.detailsObject.rotateDirection += direction;
     	}
     }
     this.rotationOff = function() {
-		that.rotateDirection = 0;
+		that.detailsObject.rotateDirection = 0;
     	that.currentUniforms.iRotationAmount.value = 0;
     }
     this.toggleDebugInfo = function() {
@@ -477,11 +334,11 @@ this.reimannUniformsEditor = function(
         }
     }
     this.reset = function() {
-    	that.rotateDirection = 0;
+    	that.detailsObject.rotateDirection = 0;
     	that.currentUniforms.iRotationAmount.value = 0;
     	that.currentUniforms.iGlobalTime.value = 0;
-    	that.point1Defined = false;
-    	that.point2Defined = false;
+    	that.detailsObject.point1Defined = false;
+    	that.detailsObject.point2Defined = false;
     	that.currentUniforms.mobiusEffectsOnOff.value = 0;
         that.currentUniforms.textureScale.value = 1;
         // that.currentUniforms.enableTracking.value = 0;
@@ -521,8 +378,8 @@ this.reimannUniformsEditor = function(
         // it is sitting 1 unit away from the origin, looking thru the origin at the
         // opposite side of the sphere.
         var negz = -z;
-    	that.cameraLookAtComplexX = - x / (1.0 - negz);
-    	that.cameraLookAtComplexY = - y / (1.0 - negz);
+    	that.detailsObject.cameraLookAtComplexX = - x / (1.0 - negz);
+    	that.detailsObject.cameraLookAtComplexY = - y / (1.0 - negz);
 
     	try {
             _textElement = document.getElementById('cameraText');
@@ -540,8 +397,8 @@ this.reimannUniformsEditor = function(
 				+ unitVector.length().toFixed(1) + "</nobr>" ;   
 
             document.getElementById('complexPointText').innerHTML = "Looking at " + 
-            	that.cameraLookAtComplexX.toFixed(2) + " + " + 
-            	that.cameraLookAtComplexY.toFixed(2) + "i";
+            	that.detailsObject.cameraLookAtComplexX.toFixed(2) + " + " + 
+            	that.detailsObject.cameraLookAtComplexY.toFixed(2) + "i";
 
             document.getElementById('windowSizeText').innerHTML = "Window (wxh): " + 
             	window.innerWidth + " , " + window.innerHeight;
@@ -556,7 +413,12 @@ this.reimannUniformsEditor = function(
     }
 
     this.initUniformsEditor();  // set up GUI controls.
-    this.setUniforms = function(rawUniforms) { 
-        that.currentUniforms = rawUniforms; 
+    this.setShaderDetails = function(detailsObject) { 
+        that.detailsObject = detailsObject;
+        that.currentUniforms = detailsObject.currentUniforms; 
+        // that.detailsObject.cameraLookAtComplexX = 0;
+        // that.detailsObject.cameraLookAtComplexY = 0;
+        // that.detailsObject.point1Defined = false;
+        // that.detailsObject.point2Defined = false;
     }
 }

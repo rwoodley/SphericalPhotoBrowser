@@ -51,13 +51,13 @@ function transformUtils(camera,
     // this is where we hook in all of our transformation code that is in the shaders.
     mediaUtils.buildMaterialForTexture = function(texture, configName) {
         var newMaterial = getReimannShaderMaterial(texture, 
-        TRANSFORM.reimannShaderList.getShaderUniforms(configName));
+        TRANSFORM.reimannShaderList.getShaderDetailsObject(configName).currentUniforms);
         setMipMapOptions(texture);
         return newMaterial; 
     }
     mediaUtils.changeMeshBeingEditedOverridable = function(meshName) {
-        rawUniforms = TRANSFORM.reimannShaderList.getShaderUniforms(meshName);
-        that.reimannShaderEditor.setUniforms(rawUniforms);
+        details = TRANSFORM.reimannShaderList.getShaderDetailsObject(meshName);
+        that.reimannShaderEditor.setShaderDetails(details);
     }
     this.animate = function() {
 
@@ -77,14 +77,14 @@ function transformUtils(camera,
         that.mediaUtils.animate(that.cameraVectorLength, videoCurrentTime);
     }
 
-    rawUniforms = TRANSFORM.reimannShaderList.getShaderUniforms('default');
+    detailsObject = TRANSFORM.reimannShaderList.getShaderDetailsObject('default');
 
     this.reimannShaderEditor = new reimannUniformsEditor(
         this.camera, this.mediaUtils,
         transformControlsContainerId, complexControlsContainerId, 
         transformControls2ContainerId, textureControlsContainerId
     );
-    this.reimannShaderEditor.setUniforms(rawUniforms);
+    this.reimannShaderEditor.setShaderDetails(detailsObject);
     TRANSFORM.reimannShaderList.editor = this.reimannShaderEditor;
     TRANSFORM.reimannShaderList.mediaUtils = this.mediaUtils;
 
