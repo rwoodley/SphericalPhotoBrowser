@@ -38,9 +38,9 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
         newMaterialCallback(mesh, mesh.material);
         return mmesh;
     }
-    this.setTexture = function(texture, materialGeneratorFromTexture, configName) {
+    this.setTexture = function(texture, materialGeneratorFromTexture, meshName) {
         that.setMaterial(function() {
-            return materialGeneratorFromTexture(texture, configName);
+            return materialGeneratorFromTexture(texture, meshName);
         });
     }
     this.setMaterial = function(materialGenerator) {

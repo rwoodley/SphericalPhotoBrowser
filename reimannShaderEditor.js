@@ -140,6 +140,7 @@ this.reimannUniformsEditor = function(
     }
     this.toggleColorVideo = function() {
         that.currentUniforms.uColorVideoMode.value++;
+        console.log(that.currentUniforms.uColorVideoMode.value);
         that.currentUniforms.uColorVideoMode.value = that.currentUniforms.uColorVideoMode.value%7;
     }
     this.tesselate = function() { that.currentUniforms.tesselate.value = that.currentUniforms.tesselate.value == 0 ? 1 : 0; }

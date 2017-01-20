@@ -49,9 +49,12 @@ function transformUtils(camera,
 
     // this is where we over-ride the default in mediaUtils.
     // this is where we hook in all of our transformation code that is in the shaders.
-    mediaUtils.buildMaterialForTexture = function(texture, configName) {
-        var newMaterial = getReimannShaderMaterial(texture, 
-        TRANSFORM.reimannShaderList.getShaderDetailsObject(configName).currentUniforms);
+    mediaUtils.buildMaterialForTexture = function(texture, meshName) {
+        // yes, the name of the mesh is the same name we use to look up uniforms.
+        var newMaterial = getReimannShaderMaterial(
+            texture, 
+            TRANSFORM.reimannShaderList.getShaderDetailsObject(meshName).currentUniforms
+            );
         setMipMapOptions(texture);
         return newMaterial; 
     }

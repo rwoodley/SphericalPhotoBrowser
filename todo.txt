@@ -67,10 +67,11 @@ it swaps in the uniforms it needs to edit.
     }
 
 TODO:
+- get skyDome working... use basicMesh in meshInventory.js
 - see above
-- add back in old modes
-- DEBUG:
-    - why aren't mobius rotations working?
-    - "Change geometries" aint working, at least with multiple meshes.
+- add back in old modes 
 - rename mesh manager.
 - get mirror ball working in new framework. get sky dome working in new framework.
+- enable Paul's partial ball.
+- allow same video on multiple spheres. different videos on multiple spheres.
+- allow left-click on effects.

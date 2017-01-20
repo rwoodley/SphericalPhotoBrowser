@@ -217,9 +217,9 @@ function mediaUtils(canned, scene, camera, stills, videos,
 	}
     this.updateSkyDome = function(event) {
         var pid = event.target.id.replace('textureSelector_','');
-        that.updateSkyDomeForFileName(that.activeMesh, pid, undefined);
+        that.updateReimannDomeForFileName(that.activeMesh, pid, undefined);
     }
-    this.updateSkyDomeForFileName = function(meshName, filename, desiredGeoName, position, scale) {
+    this.updateReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale) {
         document.title = filename;
         that.meshInventory.newMesh(meshName, desiredGeoName, position, scale);
         that.videoDisplayed = false;
@@ -235,7 +235,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.meshInventory.changeGeometry(that.activeMesh, desiredGeoName);
     }
     // over-ride this to provide your own material,e.g. shader material:
-    this.buildMaterialForTexture = function(texture) {
+    this.buildMaterialForTexture = function(texture, meshName) {
         setMipMapOptions(texture);
         return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
     }
@@ -250,7 +250,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');
-        that.updateVideoForFileName(that.activeMesh, pid);
+        that.updateReimannDomeForVideoName(that.activeMesh, pid);
     }
     this.changeMeshBeingEditedOverridable = function(meshName) {    }    
     this.changeMeshBeingEdited = function(event) {
@@ -260,12 +260,13 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
     this.postProcessingAfterVideoLoad = function(pid) {
     }
-    this.updateVideoForFileName = function(meshName, pid) {
+    this.updateReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale) {
         that.videoFileName = pid;
         console.log('in video: ' + pid);
         document.title = pid;
-        var pathToTexture = 'media/' + pid + '.mp4';
+        that.meshInventory.newMesh(meshName, desiredGeoName, position, scale);
 
+        var pathToTexture = 'media/' + pid + '.mp4';
         that.videoSource.setAttribute('src', pathToTexture);
         that.video.load();
 

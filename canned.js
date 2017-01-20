@@ -142,7 +142,6 @@ function cannedRun(scene) {
                 'textureType': 'still',
                 'textureName': 'uv.jpg',
                 'geometry': 'sphere',
-                'material': 'mobius',
                 'position': [0,0,0],
                 'scale': [1,1,-1],
             }
@@ -150,15 +149,19 @@ function cannedRun(scene) {
             var uniforms = TRANSFORM.reimannShaderList.createShader('other');
             this.configs['other'] = {
                 'uniforms': uniforms,
-                'textureType': 'still',
+                'textureType': 'basic',
                 'textureName': 'uv.jpg',
                 'geometry': 'torus',
-                'material': 'mobius',
                 'position': [24.0,0,0],
                 'scale': [1,1,-1],
             }
             this.configs['skyDome'] = {
-                'materialName': 'shiny',
+                'textureName': 'hdr1.jpg',
+                'textureType': 'still',
+                'geometry': 'sphere',
+                'material': 'texture',
+                'position': [50,50,50],
+                'scale': [1,1,1],
             }
         }
         if (mode == 'couple2') {
@@ -180,6 +183,55 @@ function cannedRun(scene) {
                 'materialName': 'greyOutline',
             }
         }
+        if (mode == 'triangles') {
+            this.cameraPosition = [-7.8,4.8,-2.7];
+            var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+            uniforms.complexEffect3OnOff.value = 0;
+            uniforms.hyperbolicTilingEffectOnOff.value = 1;
+            uniforms.textureUAdjustment.value = 0.485;
+            uniforms.uColorVideoMode.value = 0;
+            this.configs['default'] = {
+                'uniforms': uniforms,
+                'textureType': 'video',
+                'textureName': 'typewriter',
+                'geometry': 'sphere',
+                'position': [0,0,0],
+                'scale': [1,1,-1],
+            }
+            this.configs['skyDome'] = {
+                'materialName': 'shiny',
+            }
+        }
+        if (mode == 'squares') {
+            this.cameraPosition = [0,10.7,0];
+            var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+            uniforms.schottkyEffectOnOff.value = 1;
+            uniforms.textureUAdjustment.value = 0;
+            uniforms.uColorVideoMode.value = 0;
+            this.videoReloadDelayInSeconds.value = 1;
+            uniforms.mobiusEffectsOnOff.value = 1
+            uniforms.iRotationAmount.value = 10.*Math.PI/2.;
+            uniforms.e1x.value = -1;
+            uniforms.e1y.value = 0;
+            uniforms.e2x.value = 1;
+            uniforms.e2y.value = 0;
+
+            this.rotateYAmount = 0.;
+            this.initialUpDownRotation = -Math.PI;
+
+            this.configs['default'] = {
+                'uniforms': uniforms,
+                'textureType': 'video',
+                'textureName': 'typewriter',
+                'geometry': 'sphere',
+                'position': [0,0,0],
+                'scale': [1,1,1],
+            }
+            this.configs['skyDome'] = {
+                'materialName': 'hdr1',
+            }
+            
+        }
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
         mediaUtils.camera.position.set(
@@ -198,31 +250,36 @@ function cannedRun(scene) {
 
         for (var meshName in this.configs) {
             var meshSpecs = this.configs[meshName];
-            if (meshName == 'skyDome')
-                this.createSkyDome(that.scene, meshSpecs['materialName']);
+            // when mediaUtils refers to a skyDome it means the inner dome.
+            // in this file skyDome means the outer dome. it uses skyMaterial.
+            // the inner dome uses textureName.
+            if (meshSpecs['textureType'] == 'still')
+                mediaUtils.updateReimannDomeForFileName(
+                    meshName,
+                    meshSpecs['textureName'], 
+                    meshSpecs['geometry'],
+                    meshSpecs['position'],
+                    meshSpecs['scale']
+                    );
+            else if (meshSpecs['textureType'] == 'basic') {
+                that.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'basic');
+            }
             else {
-                // when mediaUtils refers to a skyDome it means the inner dome.
-                // in this file skyDome means the outer dome. it uses skyMaterial.
-                // the inner dome uses textureName.
-                if (meshSpecs['textureType'] == 'still')
-                    mediaUtils.updateSkyDomeForFileName(
-                        meshName,
-                        meshSpecs['textureName'], 
-                        meshSpecs['geometry'],
-                        meshSpecs['position'],
-                        meshSpecs['scale']
-                        );
-                else {
-                    mediaUtils.updateVideoForFileName(meshName, meshSpecs['textureName']);
-                    if (that.videoReloadDelayInSeconds > -1) {
-                        mediaUtils.onVideoEnded = function () {
-                            console.log("here..........");
-                            window.setTimeout(function () {
-                                console.log("Video is done, reloading.")
-                                location.reload(true);
-                            },
-                                that.videoReloadDelayInSeconds * 1000);
-                        }
+                mediaUtils.updateReimannDomeForVideoName(
+                    meshName, 
+                    meshSpecs['textureName'],
+                    meshSpecs['geometry'],
+                    meshSpecs['position'],
+                    meshSpecs['scale']                        
+                    );
+                if (that.videoReloadDelayInSeconds > -1) {
+                    mediaUtils.onVideoEnded = function () {
+                        console.log("here..........");
+                        window.setTimeout(function () {
+                            console.log("Video is done, reloading.")
+                            location.reload(true);
+                        },
+                            that.videoReloadDelayInSeconds * 1000);
                     }
                 }
             }
