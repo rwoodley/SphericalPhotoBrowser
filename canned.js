@@ -5,7 +5,15 @@
 // This is done because in this order because cannedRun controls the outer sky dome too
 // which must be set up before the inner sky dome is created, so that transparency works.
 // So for a given mode, we setup some uniforms in init(), and store data about 'configs'.
-// 
+function getAnyMaterialMesh(meshName, meshSpecs) {
+    var mesh = TRANSFORM.meshInventory.newMesh(
+        meshName, 
+        meshSpecs['geometry'],
+        meshSpecs['position'],
+        meshSpecs['scale'],
+        'anyMaterial');
+    return mesh;
+}
 function cannedRun(scene) {
     var that = this;
     this.scene = scene;
@@ -73,12 +81,7 @@ function cannedRun(scene) {
                 });
             }
             else if (meshSpecs['textureType'] == 'anyMaterial') {
-                var mesh = TRANSFORM.meshInventory.newMesh(
-                    meshName, 
-                    meshSpecs['geometry'],
-                    meshSpecs['position'],
-                    meshSpecs['scale'],
-                    'anyMaterial');
+                mesh = getAnyMaterialMesh(meshName, meshSpecs);
                 var skyMaterial = new THREE.ShaderMaterial( {
                     uniforms: meshSpecs['uniforms'],
                     vertexShader: SHADERCODE.mainShader_vs(),
@@ -89,12 +92,7 @@ function cannedRun(scene) {
                 mesh.mesh.material = skyMaterial;
             }
             else if (meshSpecs['textureType'] == 'phong') {
-                var mesh = TRANSFORM.meshInventory.newMesh(
-                    meshName, 
-                    meshSpecs['geometry'],
-                    meshSpecs['position'],
-                    meshSpecs['scale'],
-                    'anyMaterial');
+                mesh = getAnyMaterialMesh(meshName, meshSpecs);
                 var skyMaterial =  new THREE.MeshPhongMaterial({ 
                     side: THREE.DoubleSide,
                     color: 0x255c78,
@@ -102,6 +100,25 @@ function cannedRun(scene) {
                     shininess: 100,
                 });
                 mesh.mesh.material = skyMaterial;
+            }
+            else if (meshSpecs['textureType'] == 'normal') {
+                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+                mesh.mesh.material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide});
+            }
+            else if (meshSpecs['textureType'] == 'mirror') {
+                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+
+                // mirror ball is handled with these 2 global variables. later, if we want more than one,
+                // i suppose we'll need to have a mirrorBallManager or something.
+                _mirrorSphere = mesh.mesh;
+                _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+                that.scene.add( _mirrorSphereCamera );
+                var mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
+                    { color: 0xccccff, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide, reflectivity: 0.6 } );
+
+                mesh.mesh.material = mirrorSphereMaterial;
+                _mirrorSphereCamera.position = mesh.mesh.position;
+
             }
             else {
                 mediaUtils.initializeReimannDomeForVideoName(

@@ -54,7 +54,9 @@ ga('send', 'pageview');
 <script>
 var _container, _stats, _canned;
 var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
-var _mirrorSphere, mirrorCubeCamera;
+
+var _mirrorSphere, _mirrorSphereCamera; // globals for managing a single mirror ball.
+
 var myMesh;
 // Global Singletons
 TRANSFORM = {}
@@ -131,22 +133,6 @@ function init() {
 
     _canned.setup(_mediaUtils, _transformUtils);     // if this is a canned run, configure.
 
-    // mirror sphere...
-    if (_canned.showMirrorBall) {
-        var sphereGeom =  new THREE.SphereGeometry( 8, 32, 32 ); // radius, segmentsWidth, segmentsHeight
-        _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
-        _scene.add( _mirrorSphereCamera );
-        var _mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
-            { color: 0xccccff, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide, reflectivity: 0.6 } );
-
-        // var cubeMaterial3 = new THREE.MeshLambertMaterial( { color: 0xff6600, envMap: reflectionCube, 
-        //     combine: THREE.MixOperation, reflectivity: 0.3 } );
-
-        _mirrorSphere = new THREE.Mesh( sphereGeom, _mirrorSphereMaterial );
-        _mirrorSphere.position.set(0,-8,0);
-        _mirrorSphereCamera.position = _mirrorSphere.position;
-        _scene.add(_mirrorSphere);
-    }
     animate();
 }
 
@@ -156,7 +142,7 @@ function animate() {
     _renderer.render( _scene, _camera );
     _transformUtils.animate();
 
-    if (_canned.showMirrorBall) {
+    if (_mirrorSphereCamera != undefined) {
         _mirrorSphere.visible = false;
         _mirrorSphereCamera.updateCubeMap( _renderer, _scene );
         _mirrorSphere.visible = true;
