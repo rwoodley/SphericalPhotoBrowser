@@ -55,6 +55,9 @@ var _container, _stats, _canned;
 var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
 var _mirrorSphere, mirrorCubeCamera;
 var myMesh;
+// Global Singletons
+TRANSFORM = {}
+TRANSFORM.reimannShaderList = new reimannShaderListObject();
 function init() {
     if ( ! Detector.webgl ) {
         Detector.addGetWebGLMessage();
@@ -67,6 +70,7 @@ function init() {
     _camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
 
     _scene = new THREE.Scene();
+    TRANSFORM.meshInventory = new meshInventory(_scene);
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
     directionalLight.position.set( 1, 1, 1 ).normalize();
     _scene.add( directionalLight );

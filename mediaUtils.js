@@ -23,7 +23,6 @@ function mediaUtils(canned, scene, camera, stills, videos,
 
 	this.camera = camera;
 	this.scene = scene;
-    this.meshInventory = new meshInventory(scene);
 
 	this.video = document.getElementById("video");
 	this.videoTexture = undefined; 
@@ -66,7 +65,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
 	};
     this.doneLoadingConfig = function() {
         var meshListHTML = document.getElementById('meshContainerId').innerHTML;
-        for (var meshName in that.meshInventory.meshes) {
+        for (var meshName in TRANSFORM.meshInventory.reimannMeshes) {
             meshListHTML += "<span id='meshSelector_xxx' class='showhide mselector'>xxx</span>".replace(/xxx/g, meshName);
         }
         document.getElementById('meshContainerId').innerHTML = meshListHTML;
@@ -221,18 +220,18 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
     this.updateReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale) {
         document.title = filename;
-        that.meshInventory.newMesh(meshName, desiredGeoName, position, scale);
+        TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann');
         that.videoDisplayed = false;
         that.toggleVideoControls();
         that.video.pause();
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
-            that.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
+            TRANSFORM.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
         });
     }
     this.toggleView = function(desiredGeoName) {
-        that.meshInventory.changeGeometry(that.activeMesh, desiredGeoName);
+        TRANSFORM.meshInventory.changeGeometry(that.activeMesh, desiredGeoName);
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.buildMaterialForTexture = function(texture, meshName) {
@@ -264,7 +263,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.videoFileName = pid;
         console.log('in video: ' + pid);
         document.title = pid;
-        that.meshInventory.newMesh(meshName, desiredGeoName, position, scale);
+        TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann');
 
         var pathToTexture = 'media/' + pid + '.mp4';
         that.videoSource.setAttribute('src', pathToTexture);
@@ -274,7 +273,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.video.pause();     
         that.video.play();
 
-        that.meshInventory.setTexture(meshName, that.videoTexture, that.buildMaterialForTexture);
+        TRANSFORM.meshInventory.setTexture(meshName, that.videoTexture, that.buildMaterialForTexture);
         that.videoDisplayed = true;
         that.toggleVideoControls();        
         that.postProcessingAfterVideoLoad(pid);

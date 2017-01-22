@@ -24,8 +24,6 @@ reimannShaderListObject = function() {
         return this.detailsObjectList[name];
     }
 }
-TRANSFORM = {}
-TRANSFORM.reimannShaderList = new reimannShaderListObject();
 
 // Functions specific to doing mobius transforms on videos or stills.
 // this must be paired with the appropriate shaders of course.

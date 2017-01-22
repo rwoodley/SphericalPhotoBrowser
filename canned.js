@@ -149,7 +149,7 @@ function cannedRun(scene) {
             var uniforms = TRANSFORM.reimannShaderList.createShader('other');
             this.configs['other'] = {
                 'uniforms': uniforms,
-                'textureType': 'basic',
+                'textureType': 'still',
                 'textureName': 'uv.jpg',
                 'geometry': 'torus',
                 'position': [24.0,0,0],
@@ -157,11 +157,11 @@ function cannedRun(scene) {
             }
             this.configs['skyDome'] = {
                 'textureName': 'hdr1.jpg',
-                'textureType': 'still',
+                'textureType': 'basic',
                 'geometry': 'sphere',
                 'material': 'texture',
-                'position': [50,50,50],
-                'scale': [1,1,1],
+                'position': [0,0,0],
+                'scale': [50,50,50],
             }
         }
         if (mode == 'couple2') {
@@ -262,7 +262,15 @@ function cannedRun(scene) {
                     meshSpecs['scale']
                     );
             else if (meshSpecs['textureType'] == 'basic') {
-                that.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'basic');
+                var mesh = TRANSFORM.meshInventory.newMesh(
+                    meshName, 
+                    meshSpecs['geometry'],
+                    meshSpecs['position'],
+                    meshSpecs['scale'],
+                    'basic');
+                (new THREE.TextureLoader()).load("media/" + meshSpecs['textureName'], function ( texture ) {
+                    mesh.setTexture(texture,null, null);
+                });
             }
             else {
                 mediaUtils.updateReimannDomeForVideoName(
