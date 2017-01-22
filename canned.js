@@ -9,9 +9,14 @@
 function cannedRun(scene) {
     var that = this;
     this.scene = scene;
-    this.configs = {};
+    this.generalSettings = {};
+    this.configs = function() {
+        this.cameraPosition = undefined;
+        this.videoReloadDelayInSeconds = undefined;
+        this.rotateYAmount = undefined;
+        this.initialUpDownRotation = undefined;
+    };
     this.skyDomeMesh = undefined;
-    this.videoReloadDelayInSeconds = 1;
     function addSkyDomeToScene(scene, skyMaterial) {
         var skyGeometry = new THREE.SphereGeometry(100,32,32);
         var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
@@ -127,119 +132,19 @@ function cannedRun(scene) {
             // default for canned runs, override as needed below
             this.createMode = false;
         }
-        this.initialUpDownRotation = 0;
+        this.generalSettings.initialUpDownRotation = 0;
         // Initial Y rotation is determined entirely by cameraPosition. 
-        this.rotateYAmount = 0.0005;    // additional rotation on each call to animate().
-        this.videoReloadDelayInSeconds = 30;
-
-        if (mode == 'uv') {
-            var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-            this.cameraPosition = [1.,40.,0.];
-            uniforms.complexEffect3OnOff.value = 0;
-//            uniforms.textureScale.value = 3.5; 
-            this.configs['default'] = {
-                'uniforms': uniforms,
-                'textureType': 'still',
-                'textureName': 'uv.jpg',
-                'geometry': 'sphere',
-                'position': [0,0,0],
-                'scale': [1,1,-1],
-            }
-
-            var uniforms = TRANSFORM.reimannShaderList.createShader('other');
-            this.configs['other'] = {
-                'uniforms': uniforms,
-                'textureType': 'still',
-                'textureName': 'uv.jpg',
-                'geometry': 'torus',
-                'position': [24.0,0,0],
-                'scale': [1,1,-1],
-            }
-            this.configs['skyDome'] = {
-                'textureName': 'hdr1.jpg',
-                'textureType': 'basic',
-                'geometry': 'sphere',
-                'material': 'texture',
-                'position': [0,0,0],
-                'scale': [50,50,50],
-            }
-        }
-        if (mode == 'couple2') {
-            this.cameraPosition = [-8.4,3.6,10.1];
-            this.showMirrorBall = false;    // for now. TODO
-            var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-            uniforms.complexEffect3OnOff.value = 1;
-            uniforms.textureScale.value = 2.25;
-            this.skyMaterialName = "greyOutline";
-            this.configs['default'] = {
-                'uniforms': uniforms,
-                'textureType': 'video',
-                'textureName': 'coupleCropped',
-                'geometry': 'sphere',
-                'position': [0,0,0],
-                'scale': [1,1,-1],
-            }
-            this.configs['skyDome'] = {
-                'materialName': 'greyOutline',
-            }
-        }
-        if (mode == 'triangles') {
-            this.cameraPosition = [-7.8,4.8,-2.7];
-            var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-            uniforms.complexEffect3OnOff.value = 0;
-            uniforms.hyperbolicTilingEffectOnOff.value = 1;
-            uniforms.textureUAdjustment.value = 0.485;
-            uniforms.uColorVideoMode.value = 0;
-            this.configs['default'] = {
-                'uniforms': uniforms,
-                'textureType': 'video',
-                'textureName': 'typewriter',
-                'geometry': 'sphere',
-                'position': [0,0,0],
-                'scale': [1,1,-1],
-            }
-            this.configs['skyDome'] = {
-                'materialName': 'shiny',
-            }
-        }
-        if (mode == 'squares') {
-            this.cameraPosition = [0,10.7,0];
-            var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-            uniforms.schottkyEffectOnOff.value = 1;
-            uniforms.textureUAdjustment.value = 0;
-            uniforms.uColorVideoMode.value = 0;
-            this.videoReloadDelayInSeconds.value = 1;
-            uniforms.mobiusEffectsOnOff.value = 1
-            uniforms.iRotationAmount.value = 10.*Math.PI/2.;
-            uniforms.e1x.value = -1;
-            uniforms.e1y.value = 0;
-            uniforms.e2x.value = 1;
-            uniforms.e2y.value = 0;
-
-            this.rotateYAmount = 0.;
-            this.initialUpDownRotation = -Math.PI;
-
-            this.configs['default'] = {
-                'uniforms': uniforms,
-                'textureType': 'video',
-                'textureName': 'typewriter',
-                'geometry': 'sphere',
-                'position': [0,0,0],
-                'scale': [1,1,1],
-            }
-            this.configs['skyDome'] = {
-                'materialName': 'hdr1',
-            }
-            
-        }
+        this.generalSettings.rotateYAmount = 0.0005;    // additional rotation on each call to animate().
+        this.generalSettings.videoReloadDelayInSeconds = 30;
+        this.configs = getCannedConfigs(mode, that.generalSettings)
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
         mediaUtils.camera.position.set(
-            this.cameraPosition[0],
-            this.cameraPosition[1],
-            this.cameraPosition[2]);
-        mediaUtils.rotateYAmount -= this.rotateYAmount;
-        rotateCameraUpDown(mediaUtils.camera, this.initialUpDownRotation);
+            this.generalSettings.cameraPosition[0],
+            this.generalSettings.cameraPosition[1],
+            this.generalSettings.cameraPosition[2]);
+        mediaUtils.rotateYAmount -= this.generalSettings.rotateYAmount;
+        rotateCameraUpDown(mediaUtils.camera, this.generalSettings.initialUpDownRotation);
     }
     this.getConfigByName = function(name) {
         return this.configs[name];
@@ -272,6 +177,15 @@ function cannedRun(scene) {
                     mesh.setTexture(texture,null, null);
                 });
             }
+            else if (meshSpecs['textureType'] == 'outer') {
+                var mesh = TRANSFORM.meshInventory.newMesh(
+                    meshName, 
+                    meshSpecs['geometry'],
+                    meshSpecs['position'],
+                    meshSpecs['scale'],
+                    'outer');
+                mesh.setTexture(meshSpecs['uniforms']);
+            }
             else {
                 mediaUtils.updateReimannDomeForVideoName(
                     meshName, 
@@ -280,14 +194,14 @@ function cannedRun(scene) {
                     meshSpecs['position'],
                     meshSpecs['scale']                        
                     );
-                if (that.videoReloadDelayInSeconds > -1) {
+                if (that.generalSettings.videoReloadDelayInSeconds > -1) {
                     mediaUtils.onVideoEnded = function () {
                         console.log("here..........");
                         window.setTimeout(function () {
                             console.log("Video is done, reloading.")
                             location.reload(true);
                         },
-                            that.videoReloadDelayInSeconds * 1000);
+                            that.generalSettings.videoReloadDelayInSeconds * 1000);
                     }
                 }
             }

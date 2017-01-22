@@ -20,6 +20,9 @@ function meshInventory(scene) {
             else if (textureType == 'basic') {
                 that.meshes[meshName] = new basicMesh(scene, position, scale, desiredGeoName);
             }
+            else if (textureType == 'outer') {
+                that.meshes[meshName] = new outerMesh(scene, position, scale, desiredGeoName);
+            }
         }
         return that.meshes[meshName];
     }
@@ -45,6 +48,33 @@ function basicMesh(scene, position, scale, desiredGeoName) {
         setMipMapOptions(texture);
         that.material.map = texture;
         that.material.needsUpdate = true;
+    }
+    return this;
+}
+function outerMesh(scene, position, scale, desiredGeoName) {
+    // Uses the 'outer' shader which is a mask of sorts.
+    var that = this;
+    this.scene = scene;
+    this.position = position;
+    this.scale = scale;
+    var segment = 256.;
+    var sphereRadius = 10;
+    that.material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });            
+    var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
+    this.mesh = new THREE.Mesh( geo, that.material );
+    that.mesh.scale.set(that.scale[0],that.scale[1], that.scale[2]);
+    that.scene.add(this.mesh);
+    this.mesh.position.set(that.position[0],that.position[1], that.position[2]);
+    this.setTexture = function(uniforms) {
+        var skyMaterial = new THREE.ShaderMaterial( {
+            uniforms: uniforms,
+            vertexShader: SHADERCODE.mainShader_vs(),
+            fragmentShader: SHADERCODE.outerShader_fs(),
+            side: THREE.DoubleSide,
+            transparent: true,
+            // wireframe: true
+        } );
+        that.mesh.material = skyMaterial;
     }
     return this;
 }
