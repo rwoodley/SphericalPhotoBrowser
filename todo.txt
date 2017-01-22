@@ -67,8 +67,7 @@ it swaps in the uniforms it needs to edit.
     }
 
 TODO:
-- get skyDome working... use basicMesh in meshInventory.js
-- see above
+- get tracking and recording working.
 - add back in old modes 
 - rename mesh manager.
 - get mirror ball working in new framework. get sky dome working in new framework.

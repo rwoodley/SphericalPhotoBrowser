@@ -20,8 +20,8 @@ function meshInventory(scene) {
             else if (textureType == 'basic') {
                 that.meshes[meshName] = new basicMesh(scene, position, scale, desiredGeoName);
             }
-            else if (textureType == 'outer') {
-                that.meshes[meshName] = new outerMesh(scene, position, scale, desiredGeoName);
+            else if (textureType == 'anyMaterial') {
+                that.meshes[meshName] = new noMaterialMesh(scene, position, scale, desiredGeoName);
             }
         }
         return that.meshes[meshName];
@@ -51,8 +51,8 @@ function basicMesh(scene, position, scale, desiredGeoName) {
     }
     return this;
 }
-function outerMesh(scene, position, scale, desiredGeoName) {
-    // Uses the 'outer' shader which is a mask of sorts.
+function noMaterialMesh(scene, position, scale, desiredGeoName) {
+    // You specify whichever material you want on your own. This just does the basic setup.
     var that = this;
     this.scene = scene;
     this.position = position;

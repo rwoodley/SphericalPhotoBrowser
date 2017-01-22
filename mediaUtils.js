@@ -216,11 +216,16 @@ function mediaUtils(canned, scene, camera, stills, videos,
 	}
     this.updateSkyDome = function(event) {
         var pid = event.target.id.replace('textureSelector_','');
-        that.updateReimannDomeForFileName(that.activeMesh, pid, undefined);
+        that.updateReimannDomeForFileName(that.activeMeshName, pid, undefined);
     }
-    this.updateReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale) {
+    this.initializeReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale) {
+        if (this.activeMeshName == undefined)
+            this.activeMeshName = meshName;
         document.title = filename;
         TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann');
+        this.updateReimannDomeForFileName(meshName, filename);
+    }
+    this.updateReimannDomeForFileName = function(meshName, filename) {
         that.videoDisplayed = false;
         that.toggleVideoControls();
         that.video.pause();
@@ -231,7 +236,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
         });
     }
     this.toggleView = function(desiredGeoName) {
-        TRANSFORM.meshInventory.changeGeometry(that.activeMesh, desiredGeoName);
+        TRANSFORM.meshInventory.changeGeometry(that.activeMeshName, desiredGeoName);
     }
     // over-ride this to provide your own material,e.g. shader material:
     this.buildMaterialForTexture = function(texture, meshName) {
@@ -249,23 +254,27 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');
-        that.updateReimannDomeForVideoName(that.activeMesh, pid);
+        that.updateReimannDomeForVideoName(that.activeMeshName, pid);
     }
     this.changeMeshBeingEditedOverridable = function(meshName) {    }    
     this.changeMeshBeingEdited = function(event) {
     	var meshName = event.target.id.replace('meshSelector_','');
-        that.activeMesh = meshName;
+        that.activeMeshName = meshName;
         that.changeMeshBeingEditedOverridable(meshName);
     }
     this.postProcessingAfterVideoLoad = function(pid) {
     }
-    this.updateReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale) {
+    this.initializeReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale) {
+        if (this.activeMeshName == undefined)
+            this.activeMeshName = meshName;
         that.videoFileName = pid;
-        console.log('in video: ' + pid);
         document.title = pid;
         TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann');
-
+        this.updateReimannDomeForVideoName(meshName, pid);
+    }
+    this.updateReimannDomeForVideoName = function(meshName, pid) {
         var pathToTexture = 'media/' + pid + '.mp4';
+        console.log('loading: ' + pathToTexture);
         that.videoSource.setAttribute('src', pathToTexture);
         that.video.load();
 

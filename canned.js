@@ -17,82 +17,6 @@ function cannedRun(scene) {
         this.initialUpDownRotation = undefined;
     };
     this.skyDomeMesh = undefined;
-    function addSkyDomeToScene(scene, skyMaterial) {
-        var skyGeometry = new THREE.SphereGeometry(100,32,32);
-        var skyMesh = new THREE.Mesh( skyGeometry, skyMaterial );
-        scene.add(skyMesh);
-        that.skyDomeMesh = skyMesh;
-        return skyMesh;
-    }
-    this.changeSkyDome = function(scene, skyMaterialName) {
-        if (that.skyDomeMesh != undefined)
-            scene.remove(that.skyDomeMesh);
-        this.createSkyDome(scene, skyMaterialName);
-    }
-    this.createSkyDome = function(scene, skyMaterialName) {
-        if (skyMaterialName != undefined)
-            this.skyMaterialName = skyMaterialName;
-        if (this.skyMaterialName == "normal") {
-            addSkyDomeToScene(that.scene, new THREE.MeshNormalMaterial({ side: THREE.DoubleSide}));
-            return;
-        }
-        if (this.skyMaterialName == "shiny") {
-            addSkyDomeToScene(that.scene, new THREE.MeshPhongMaterial({ 
-                side: THREE.DoubleSide,
-                color: 0x255c78,
-                emissive: 0x51252,
-                shininess: 100,
-            }));
-            return;
-        }
-        if (this.skyMaterialName == "black") {
-            addSkyDomeToScene(that.scene, new THREE.MeshBasicMaterial({ 
-                side: THREE.DoubleSide,
-                color: 0x000000,
-            }));
-            return;
-        }
-        if (this.skyMaterialName == "white") {
-            addSkyDomeToScene(that.scene, new THREE.MeshBasicMaterial({ 
-                side: THREE.DoubleSide,
-                color: 0xffffff,
-            }));
-            return;
-        }
-        if (this.skyMaterialName == "fractalDome") {
-            var uniforms = TRANSFORM.reimannShaderList.createShader("test");
-            uniforms.fractalEffectOnOff.value = 2;
-            var newMaterial = getReimannShaderMaterial(undefined, uniforms);
-            var mesh = addSkyDomeToScene(that.scene, newMaterial);
-            mesh.scale.set(-1,-1,1);
-            return;
-        }
-        if (this.skyMaterialName == "triangleDome") {
-            var uniforms = TRANSFORM.reimannShaderList.createShader("test");
-            uniforms.hyperbolicTilingEffectOnOff.value = 2;
-            var newMaterial = getReimannShaderMaterial(undefined, uniforms);
-            var mesh = addSkyDomeToScene(that.scene, newMaterial);
-            mesh.scale.set(-1,-1,1);
-            return;
-        }
-        
-        if (this.skyMaterialName == "hdr1") {
-            (new THREE.TextureLoader()).load("media/stillMask3.png", function ( texture ) {
-                var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
-                var mesh = addSkyDomeToScene(that.scene, skyMaterial);
-                mesh.scale.set(-1,1,1);
-            });
-            return;
-        }
-        else {
-            (new THREE.TextureLoader()).load(this.skyMaterialName, function ( texture ) {
-                var skyMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });
-                var mesh = addSkyDomeToScene(that.scene, skyMaterial);
-                mesh.scale.set(-1,1,1);
-            });            
-            return;
-        }
-    }
     this.init = function() {
         var mode = getParameter('mode', window.location.href);
 
@@ -120,9 +44,6 @@ function cannedRun(scene) {
         mediaUtils.rotateYAmount -= this.generalSettings.rotateYAmount;
         rotateCameraUpDown(mediaUtils.camera, this.generalSettings.initialUpDownRotation);
     }
-    this.getConfigByName = function(name) {
-        return this.configs[name];
-    }
     this.setup = function (mediaUtils, transformUtils) {
         mediaUtils.toggleControlPanel();
         this._initMediaUtils(mediaUtils);                   // setup camera
@@ -133,7 +54,7 @@ function cannedRun(scene) {
             // in this file skyDome means the outer dome. it uses skyMaterial.
             // the inner dome uses textureName.
             if (meshSpecs['textureType'] == 'still')
-                mediaUtils.updateReimannDomeForFileName(
+                mediaUtils.initializeReimannDomeForFileName(
                     meshName,
                     meshSpecs['textureName'], 
                     meshSpecs['geometry'],
@@ -151,13 +72,13 @@ function cannedRun(scene) {
                     mesh.setTexture(texture,null, null);
                 });
             }
-            else if (meshSpecs['textureType'] == 'outer') {
+            else if (meshSpecs['textureType'] == 'anyMaterial') {
                 var mesh = TRANSFORM.meshInventory.newMesh(
                     meshName, 
                     meshSpecs['geometry'],
                     meshSpecs['position'],
                     meshSpecs['scale'],
-                    'outer');
+                    'anyMaterial');
                 var skyMaterial = new THREE.ShaderMaterial( {
                     uniforms: meshSpecs['uniforms'],
                     vertexShader: SHADERCODE.mainShader_vs(),
@@ -173,7 +94,7 @@ function cannedRun(scene) {
                     meshSpecs['geometry'],
                     meshSpecs['position'],
                     meshSpecs['scale'],
-                    'outer');
+                    'anyMaterial');
                 var skyMaterial =  new THREE.MeshPhongMaterial({ 
                     side: THREE.DoubleSide,
                     color: 0x255c78,
@@ -183,7 +104,7 @@ function cannedRun(scene) {
                 mesh.mesh.material = skyMaterial;
             }
             else {
-                mediaUtils.updateReimannDomeForVideoName(
+                mediaUtils.initializeReimannDomeForVideoName(
                     meshName, 
                     meshSpecs['textureName'],
                     meshSpecs['geometry'],
