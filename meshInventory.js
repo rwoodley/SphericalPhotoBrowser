@@ -65,16 +65,6 @@ function outerMesh(scene, position, scale, desiredGeoName) {
     that.mesh.scale.set(that.scale[0],that.scale[1], that.scale[2]);
     that.scene.add(this.mesh);
     this.mesh.position.set(that.position[0],that.position[1], that.position[2]);
-    this.setTexture = function(uniforms) {
-        var skyMaterial = new THREE.ShaderMaterial( {
-            uniforms: uniforms,
-            vertexShader: SHADERCODE.mainShader_vs(),
-            fragmentShader: SHADERCODE.outerShader_fs(),
-            side: THREE.DoubleSide,
-            transparent: true,
-            // wireframe: true
-        } );
-        that.mesh.material = skyMaterial;
-    }
+    this.setTexture = undefined;
     return this;
 }

@@ -365,6 +365,7 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.uColorVideoMode.value = 1.0;      // need for outer texture.
     }
     this.updateVariousNumbersForCamera = function() {
+        if (that.detailsObject == undefined) return;
         // Camera coordinates are in three.js space where Y is up.
         // We want to deal with traditional math coordinates where Z is up
     	var unitVector = (new THREE.Vector3()).copy(that.camera.position).normalize();

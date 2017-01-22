@@ -9,8 +9,8 @@
 function cannedRun(scene) {
     var that = this;
     this.scene = scene;
-    this.generalSettings = {};
-    this.configs = function() {
+    this.configs = {};
+    this.generalSettings = function() {
         this.cameraPosition = undefined;
         this.videoReloadDelayInSeconds = undefined;
         this.rotateYAmount = undefined;
@@ -57,32 +57,6 @@ function cannedRun(scene) {
                 side: THREE.DoubleSide,
                 color: 0xffffff,
             }));
-            return;
-        }
-        if (this.skyMaterialName == "greyOutline") {
-            var uniforms = {
-                iChannelStillMask1:  { type: 't', value: 0 },
-                iChannelStillMask2:  { type: 't', value: 0 },
-            };
-            var pathToSubtractionTexture = 'media/stillMask2.png';
-            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-                setMipMapOptions(texture);
-                uniforms.iChannelStillMask1.value =  texture; 
-            });
-            var pathToSubtractionTexture = 'media/stillMask3.png';
-            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-                setMipMapOptions(texture);
-                uniforms.iChannelStillMask2.value =  texture; 
-            });
-            var skyMaterial = new THREE.ShaderMaterial( {
-                uniforms: uniforms,
-                vertexShader: SHADERCODE.mainShader_vs(),
-                fragmentShader: SHADERCODE.outerShader_fs(),
-                side: THREE.DoubleSide,
-                transparent: true,
-                // wireframe: true
-            } );            
-            addSkyDomeToScene(that.scene, skyMaterial);
             return;
         }
         if (this.skyMaterialName == "fractalDome") {
@@ -184,7 +158,29 @@ function cannedRun(scene) {
                     meshSpecs['position'],
                     meshSpecs['scale'],
                     'outer');
-                mesh.setTexture(meshSpecs['uniforms']);
+                var skyMaterial = new THREE.ShaderMaterial( {
+                    uniforms: meshSpecs['uniforms'],
+                    vertexShader: SHADERCODE.mainShader_vs(),
+                    fragmentShader: SHADERCODE.outerShader_fs(),
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                } );
+                mesh.mesh.material = skyMaterial;
+            }
+            else if (meshSpecs['textureType'] == 'phong') {
+                var mesh = TRANSFORM.meshInventory.newMesh(
+                    meshName, 
+                    meshSpecs['geometry'],
+                    meshSpecs['position'],
+                    meshSpecs['scale'],
+                    'outer');
+                var skyMaterial =  new THREE.MeshPhongMaterial({ 
+                    side: THREE.DoubleSide,
+                    color: 0x255c78,
+                    emissive: 0x51252,
+                    shininess: 100,
+                });
+                mesh.mesh.material = skyMaterial;
             }
             else {
                 mediaUtils.updateReimannDomeForVideoName(

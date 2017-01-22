@@ -87,7 +87,8 @@ function transformUtils(camera,
         transformControlsContainerId, complexControlsContainerId, 
         transformControls2ContainerId, textureControlsContainerId
     );
-    this.reimannShaderEditor.setShaderDetails(detailsObject);
+    if (detailsObject != undefined)
+        this.reimannShaderEditor.setShaderDetails(detailsObject);
     TRANSFORM.reimannShaderList.editor = this.reimannShaderEditor;
     TRANSFORM.reimannShaderList.mediaUtils = this.mediaUtils;
 

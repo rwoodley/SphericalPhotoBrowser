@@ -88,9 +88,6 @@ reimannShaderDetailsObject = function(name) {
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
             setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask2.value =  texture; 
-        });
-        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            setMipMapOptions(texture);
             that.currentUniforms.iChannelDelayMask.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
         });
         
