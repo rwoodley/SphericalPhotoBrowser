@@ -3,11 +3,20 @@ function trackerUtils() {
     this.coords = [];
     this.coordsIndex = 0;
     this.previousCoord = undefined;
-    $.get( "tubes/woman1WhiteShirt.json", function( data ) {
-        that.coords = data;
-        that.previousCoord = that.coords[0];
-        that.coordIndex = 0;
-    });
+    // $.get( "tubes/woman1WhiteShirt.json", function( data ) {
+    //     that.coords = data;
+    //     that.previousCoord = that.coords[0];
+    //     that.coordIndex = 0;
+    // });
+    var data = $.ajax({
+        type: "GET",
+        url: "tubes/woman1WhiteShirt.json",
+        async: false
+    }).responseText;
+    that.coords = JSON.parse(data);
+    that.previousCoord = that.coords[0];
+    that.coordIndex = 0;
+
     this.reset = function() {
         that.previousCoord = that.coords[0];
         that.coordIndex = 0;

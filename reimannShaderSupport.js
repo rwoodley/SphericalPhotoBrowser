@@ -100,7 +100,6 @@ reimannShaderDetailsObject = function(name) {
         that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .1*that.rotateDirection;
         that.currentUniforms.iGlobalTime.value = that.currentUniforms.iGlobalTime.value  + 1;
 
-        var videoCurrentTime = 0;
         if (videoDisplayed) {
             if (that.currentUniforms.enableTracking.value == 1) {
                 if (that.trackerUtils == undefined) 
