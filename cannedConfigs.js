@@ -28,9 +28,9 @@ function getCannedConfigs(mode, generalSettings) {
     configs = {};
     if (mode == 'uv') {     // this is what you get by default if no mode specifed.
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        generalSettings.cameraPosition = [-1,0,0.];
+        generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
         uniforms.complexEffect3OnOff.value = 0;
-        generalSettings.rotateYAmount = 0.;
+        generalSettings.rotateYAmount = 0.;             // no auto-rotate, will throw off tracking.
          configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',
