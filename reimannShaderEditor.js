@@ -98,8 +98,10 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'cameraControlIcon', 'fovWide.png', 'Scale Factor', that.textureLarger);
         appendSingleIcon(container, 'cameraControlIcon', 'tesselate.png', 'Tesselate', that.tesselate);
         appendSingleIcon(container, 'cameraControlIcon', 'crosshairs.png', 'Track', that.textureTrack);
+        appendSingleIcon(container, 'cameraControlIcon', 'three.png', 'Track', that.threePoint);
         appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 'Change Alpha', that.changeAlpha);
-        appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 'Toggle Color/Video (only works for some math transforms)', that.toggleColorVideo);
+        appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 
+            'Toggle Color/Video (only works for some math transforms)', that.toggleColorVideo);
     }
     this.setupComplexControlIcons = function() {
         var container = document.getElementById(that.complexControlsContainerId);
@@ -128,8 +130,13 @@ this.reimannUniformsEditor = function(
     this.textureLarger = function() { that.currentUniforms.textureScale.value /= 1.5; }
     this.textureTrack = function() { 
         that.currentUniforms.enableTracking.value = that.currentUniforms.enableTracking.value == 1 ? 0 : 1; 
-        if (that.currentUniforms.enableTracking.value == 1)
-            that.trackerUtils = new trackerUtils();
+        // if (that.currentUniforms.enableTracking.value == 1)
+        //     that.trackerUtils = new trackerUtils(_trackerUtilsFileName);
+    }
+    this.threePoint = function() { 
+        that.currentUniforms.uThreePointMappingOn.value = that.currentUniforms.uThreePointMappingOn.value == 1 ? 0 : 1; 
+        // if (that.currentUniforms.uThreePointMappingOn.value == 1)
+        //     that.threePointTracker = new threePointTracker();
     }
     this.changeAlpha = function() { 
         that.currentUniforms.uAlpha.value += .25;
@@ -345,6 +352,9 @@ this.reimannUniformsEditor = function(
         // that.currentUniforms.enableTracking.value = 0;
         if (that.currentUniforms.enableTracking.value == 1) {
             that.trackerUtils.reset();
+        }
+        if (that.currentUniforms.uThreePointMappingOn.value == 1) {
+            that.threePointTracker.reset();
         }
         that.currentUniforms.textureUAdjustment.value = 0; 
         that.currentUniforms.textureVAdjustment.value = 0; 

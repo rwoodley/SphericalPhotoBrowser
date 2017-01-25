@@ -64,6 +64,7 @@ function transformUtils(camera,
     }
     this.animate = function() {
 
+        var videoCurrentTime = 0;
         if (that.mediaUtils.videoDisplayed) {
             if (that.capturer == undefined)
                 videoCurrentTime = that.mediaUtils.video.currentTime;
@@ -74,8 +75,6 @@ function transformUtils(camera,
             that.mediaUtils.animationFrame,
             that.mediaUtils.videoDisplayed,
             videoCurrentTime);
-
-        var videoCurrentTime = 0;
 
         that.mediaUtils.animate(that.cameraVectorLength, videoCurrentTime);
     }

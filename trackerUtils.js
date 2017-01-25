@@ -1,16 +1,41 @@
-function trackerUtils() {
+// trackerUtils is to track a single person
+function threePointTracker() {
+    var that = this;
+    this.tracker = [];
+    this.tracker[0] = new trackerUtils("tubes/woman1WhiteShirt.json");
+    this.tracker[1] = new trackerUtils("tubes/blueShorts.json");
+    this.tracker[2] = new trackerUtils("tubes/redShirt.json");
+    this.startPoint = [];
+    this.startPoint[0] = this.tracker[0].getXYAsVector2(0);
+    this.startPoint[1] = this.tracker[1].getXYAsVector2(0);
+    this.startPoint[2] = this.tracker[2].getXYAsVector2(0);
+    this.getXY = function(currentTime, uniforms) {
+        uniforms.u3p1.value = that.startPoint[0];
+        uniforms.u3q1.value = that.startPoint[1];
+        uniforms.u3r1.value = that.startPoint[2];
+
+        uniforms.u3p2.value = 
+            that.tracker[0].getXYAsVector2(currentTime);
+        uniforms.u3q2.value = 
+            that.tracker[1].getXYAsVector2(currentTime);
+        uniforms.u3r2.value = 
+            that.tracker[2].getXYAsVector2(currentTime);
+    }
+    this.reset = function() {
+        this.tracker[0].reset();        
+        this.tracker[1].reset();        
+        this.tracker[2].reset();        
+    }
+}
+var _trackerUtilsFileName = "tubes/woman1WhiteShirt.json";
+function trackerUtils(filename) {
     var that = this;
     this.coords = [];
     this.coordsIndex = 0;
     this.previousCoord = undefined;
-    // $.get( "tubes/woman1WhiteShirt.json", function( data ) {
-    //     that.coords = data;
-    //     that.previousCoord = that.coords[0];
-    //     that.coordIndex = 0;
-    // });
     var data = $.ajax({
         type: "GET",
-        url: "tubes/woman1WhiteShirt.json",
+        url: filename,
         async: false
     }).responseText;
     that.coords = JSON.parse(data);
@@ -20,6 +45,10 @@ function trackerUtils() {
     this.reset = function() {
         that.previousCoord = that.coords[0];
         that.coordIndex = 0;
+    }
+    this.getXYAsVector2 = function(currentTime) {
+        var coords = this.getXY(currentTime);
+        return new THREE.Vector2(coords[0], coords[1]);
     }
     this.getXY = function(currentTime) {
         while ( that.coordIndex < that.coords.length-1) {

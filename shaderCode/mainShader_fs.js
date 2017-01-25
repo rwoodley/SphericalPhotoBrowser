@@ -167,14 +167,12 @@ vec4 getRGBAForIter(int iter, float fiter) {
     }
     return vec4(1.,0.,0.,1.);
 }
-void main() {
-        float theta;
-        float phi;
-        float x;
-        float y;
-        float z;
-
-    vec2 uv = vUv;
+vec2 uvToComplex(vec2 uv) {
+    float theta;
+    float phi;
+    float x;
+    float y;
+    float z;
     uv.x = clamp(uv.x,0.001,.999);
 
     // ---------
@@ -197,7 +195,46 @@ void main() {
     // the positive imaginary axis and the X axis correspond with
     //  the positive real axis. So flip y and x around in this next equation.
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
+    return a;
+}
+vec2 trackerToComplex(vec2 pt) {
+    // not sure why these corrections are needed, maybe because of scale()
+    return uvToComplex(vec2(mod(pt.x+.5,1.), 1.-pt.y));
+}
+vec2 complexToUV(vec2 result) {
+    // now c back to sphere.
+    float theta;
+    float phi;
+    float x;
+    float y;
+    float z;
+    float denom = 1.0 + result.x*result.x + result.y *result.y;
+    x = 2.0 * result.x/denom;
+    y = 2.0 * result.y/denom;
+    z = (result.x*result.x + result.y*result.y - 1.0)/denom;
 
+    // convert to polar
+    phi = atan2(y, x);
+    phi -= (PI/2.0);    // this correction lines up the UV texture nicely.
+    if (phi <= 0.0) {
+        phi = phi + PI*2.0; 
+    }
+    if (phi >= (2.0 * PI)) {    // allow 2PI since we gen uv over [0,1]
+        phi = phi - 2.0 * PI;
+    }
+    phi = 2. * PI - phi;        // flip the texture around.
+    theta = acos(z);
+
+    // now get uv in new chart.
+    float newv = 1.0 - theta/PI;
+    float newu = phi/(2.0 * PI);
+    vec2 newuv = vec2(newu, newv);
+    return newuv;
+}
+void main() {
+
+    vec2 uv = vUv;
+    vec2 a = uvToComplex(uv);
     if (tesselate == 1.) {
         a.x = my_mod(a.x, 1.);
         a.y = my_mod(a.y, 1.);
@@ -303,32 +340,29 @@ void main() {
     if (complexEffect4OnOff == 1) {
         result = cx_exp(result);
     }
-    if (complexEffect5OnOff == 1) {
-        result = bobMobius(result);
+    if (uThreePointMappingOn) {
+        result = threePointMapping(
+            result,
+            trackerToComplex(u3p1),
+            trackerToComplex(u3q1),
+            trackerToComplex(u3r1),
+            trackerToComplex(u3p2),
+            trackerToComplex(u3q2),
+            trackerToComplex(u3r2)
+            );
+        vec3 p2InCartesian = complexToCartesian(trackerToComplex(u3p2));
+        if (distance(aInCartesian, p2InCartesian) < .05) {
+            gl_FragColor = vec4(1.,0.,1.,1.);
+            return;
+        }
+        vec3 p1InCartesian = complexToCartesian(trackerToComplex(u3p1));
+        if (distance(aInCartesian, p1InCartesian) < .05) {
+            gl_FragColor = vec4(1.,1.,1.,1.);
+            return;
+        }
     }
 
-    // now c back to sphere.
-    float denom = 1.0 + result.x*result.x + result.y *result.y;
-    x = 2.0 * result.x/denom;
-    y = 2.0 * result.y/denom;
-    z = (result.x*result.x + result.y*result.y - 1.0)/denom;
-
-    // convert to polar
-    phi = atan2(y, x);
-    phi -= (PI/2.0);    // this correction lines up the UV texture nicely.
-    if (phi <= 0.0) {
-        phi = phi + PI*2.0; 
-    }
-    if (phi >= (2.0 * PI)) {    // allow 2PI since we gen uv over [0,1]
-        phi = phi - 2.0 * PI;
-    }
-    phi = 2. * PI - phi;        // flip the texture around.
-    theta = acos(z);
-
-    // now get uv in new chart.
-    float newv = 1.0 - theta/PI;
-    float newu = phi/(2.0 * PI);
-    vec2 newuv = vec2(newu, newv);
+    vec2 newuv = complexToUV(result);
     gl_FragColor = applyMask(newuv);
 }
 `;

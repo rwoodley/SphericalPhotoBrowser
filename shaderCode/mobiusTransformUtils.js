@@ -70,18 +70,6 @@ vec2 threePointMapping(vec2 z, vec2 q1, vec2 r1, vec2 s1, vec2 q2, vec2 r2, vec2
     vec2 w = applyInverseMobiusTransformation(temp, wXForm);
     return w;
 }
-vec2 bobMobius(in vec2 inz) {
-    // vec2 z = vec2(inz.y, inz.x);
-    // vec2 n = z-i;
-    // vec2 d = z+i;
-    // vec2 f = cx_divide(n,d);
-    // vec2 res = 1. * cx_exp(.25*f);
-    vec2 res = threePointMapping(inz,
-        vec2(3.,3.), vec2(-3.,-3.), one,
-        vec2(-1.,-4.), one, 2.*i
-        );
-    return res;
-}
 
 `;
 return x;

@@ -76,6 +76,13 @@ reimannShaderDetailsObject = function(name) {
         iChannelStillMask1:  { type: 't', value: 0 },
         iChannelStillMask2:  { type: 't', value: 0 },
         iChannelDelayMask:  { type: 't', value: 0 },
+        u3p1: { type: "v2", value: new THREE.Vector2(0,0) },
+        u3q1: { type: "v2", value: new THREE.Vector2(0,0) },
+        u3r1: { type: "v2", value: new THREE.Vector2(0,0) },
+        u3p2: { type: "v2", value: new THREE.Vector2(0,0) },
+        u3q2: { type: "v2", value: new THREE.Vector2(0,0) },
+        u3r2: { type: "v2", value: new THREE.Vector2(0,0) },
+        uThreePointMappingOn: { type: 'i', value: 0 }
     };
     this.setDefaults = function() {
         // Initialize the masks to something so everything comes up.
@@ -103,11 +110,16 @@ reimannShaderDetailsObject = function(name) {
         if (videoDisplayed) {
             if (that.currentUniforms.enableTracking.value == 1) {
                 if (that.trackerUtils == undefined) 
-                    that.trackerUtils = new trackerUtils(); // happens w canned mode sometimes.
+                    that.trackerUtils = new trackerUtils(_trackerUtilsFileName); // happens w canned mode sometimes.
 
                 var coords = that.trackerUtils.getXY(videoCurrentTime);
                 that.currentUniforms.textureUAdjustment.value = coords[0];
                 that.currentUniforms.textureVAdjustment.value = 1.5-coords[1];
+            }
+            if (that.currentUniforms.uThreePointMappingOn.value == 1) {
+                if (that.threePointTracker == undefined)
+                    that.threePointTracker = new threePointTracker();
+                that.threePointTracker.getXY(videoCurrentTime, that.currentUniforms);
             }
         }
         if (animationFrame%120 == 0) {

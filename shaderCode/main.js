@@ -50,6 +50,15 @@ var x = `
     uniform int  uMaskType;
     uniform int  uTextureNumber;
 
+    // === for 3 point mapping..
+    uniform bool uThreePointMappingOn;
+    uniform vec2 u3p1;
+    uniform vec2 u3q1;
+    uniform vec2 u3r1;
+    uniform vec2 u3p2;
+    uniform vec2 u3q2;
+    uniform vec2 u3r2;
+
     uniform bool showFixedPoints;
     vec2 one = vec2(1.0, 0.0);
     vec2 zero = vec2(0.0, 0.0);
