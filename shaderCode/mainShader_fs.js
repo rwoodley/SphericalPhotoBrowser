@@ -341,6 +341,7 @@ void main() {
         result = cx_exp(result);
     }
     if (uThreePointMappingOn) {
+        vec2 inresult = result;
         result = threePointMapping(
             result,
             trackerToComplex(u3p1),
@@ -350,13 +351,38 @@ void main() {
             trackerToComplex(u3q2),
             trackerToComplex(u3r2)
             );
-        vec3 p2InCartesian = complexToCartesian(trackerToComplex(u3p2));
-        if (distance(aInCartesian, p2InCartesian) < .05) {
+
+        // vec2 newp2 = threePointMapping(
+        //     trackerToComplex(u3p2),
+            
+        //     trackerToComplex(u3p2),
+        //     trackerToComplex(u3q2),
+        //     trackerToComplex(u3r2),
+        //     trackerToComplex(u3p1),
+        //     trackerToComplex(u3q1),
+        //     trackerToComplex(u3r1)
+        //     );
+
+        // vec2 newq2 = threePointMapping(
+        //     trackerToComplex(u3q2),
+
+        //     trackerToComplex(u3p1),
+        //     trackerToComplex(u3q1),
+        //     trackerToComplex(u3r1),
+        //     trackerToComplex(u3p2),
+        //     trackerToComplex(u3q2),
+        //     trackerToComplex(u3r2)
+        //     );
+
+        vec3 p1InCartesian = complexToCartesian(trackerToComplex(u3p1 ));
+        vec3 p2InCartesian = complexToCartesian(trackerToComplex(u3p2 ));
+        vec3 inresultInCartesian = complexToCartesian(inresult);
+        vec3 resultInCartesian = complexToCartesian(result);
+        if (distance(p2InCartesian, resultInCartesian) < .05) {
             gl_FragColor = vec4(1.,0.,1.,1.);
             return;
-        }
-        vec3 p1InCartesian = complexToCartesian(trackerToComplex(u3p1));
-        if (distance(aInCartesian, p1InCartesian) < .05) {
+        } 
+        if (distance(inresultInCartesian, p1InCartesian) < .10) {
             gl_FragColor = vec4(1.,1.,1.,1.);
             return;
         }

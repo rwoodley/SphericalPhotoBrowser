@@ -2,6 +2,9 @@
 function threePointTracker() {
     var that = this;
     this.tracker = [];
+    // this.tracker[0] = new trackerUtils("threesomeExtract/whiteShirt.json");
+    // this.tracker[1] = new trackerUtils("threesomeExtract/greyShirt.json");
+    // this.tracker[2] = new trackerUtils("threesomeExtract/blackShirt.json");
     this.tracker[0] = new trackerUtils("tubes/woman1WhiteShirt.json");
     this.tracker[1] = new trackerUtils("tubes/blueShorts.json");
     this.tracker[2] = new trackerUtils("tubes/redShirt.json");
