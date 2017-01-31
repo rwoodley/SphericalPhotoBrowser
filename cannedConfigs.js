@@ -51,6 +51,32 @@ function getCannedConfigs(mode, generalSettings) {
         // }
         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
+    if (mode == 'drosophila') {     // this is what you get by default if no mode specifed.
+        var uniforms = TRANSFORM.reimannShaderList.createShader('other');
+        configs['other'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'altesMuster.png',
+            'geometry': 'floor',
+            'position': [0.0,-50,0],
+            'scale': [100,100,-100],
+        }
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        generalSettings.cameraPosition = [-170,28,-14.];     // expected by trackerUtils.
+        uniforms.complexEffect3OnOff.value = 0;
+        generalSettings.rotateYAmount = 0.;             // no auto-rotate, will throw off tracking.
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'drosophila',
+            'geometry': 'catenoid',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+
+        configs['skyDome'] = phongSkyDome() ;
+    }
     if (mode == 'couple2') {
         generalSettings.cameraPosition = [-8.4,3.6,10.1];
         //generalSettings.videoReloadDelayInSeconds = -1;

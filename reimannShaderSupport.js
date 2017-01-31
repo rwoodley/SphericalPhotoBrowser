@@ -6,7 +6,6 @@ reimannShaderListObject = function() {
     var that = this;
     this.detailsObjectList = {}
     this.editor = undefined;
-    this.mediaUtils = undefined;
     this.createShader = function(name) {
         var uniforms = new reimannShaderDetailsObject(name);
         this.detailsObjectList[name] = uniforms;

@@ -130,13 +130,9 @@ this.reimannUniformsEditor = function(
     this.textureLarger = function() { that.currentUniforms.textureScale.value /= 1.5; }
     this.textureTrack = function() { 
         that.currentUniforms.enableTracking.value = that.currentUniforms.enableTracking.value == 1 ? 0 : 1; 
-        // if (that.currentUniforms.enableTracking.value == 1)
-        //     that.trackerUtils = new trackerUtils(_trackerUtilsFileName);
     }
     this.threePoint = function() { 
         that.currentUniforms.uThreePointMappingOn.value = that.currentUniforms.uThreePointMappingOn.value == 1 ? 0 : 1; 
-        // if (that.currentUniforms.uThreePointMappingOn.value == 1)
-        //     that.threePointTracker = new threePointTracker();
     }
     this.changeAlpha = function() { 
         that.currentUniforms.uAlpha.value += .25;
@@ -338,8 +334,15 @@ this.reimannUniformsEditor = function(
         // }
         if (that.viewState == 3) {
             that.cameraVectorLength = 15;
-            that.mediaUtils.toggleView("steiner");
+            that.mediaUtils.toggleView("catenoid");
         }
+    }
+    this.mediaUtils.postProcessingAfterVideoRestart = function() {
+        if (that.currentUniforms.uThreePointMappingOn.value == 1) {
+            that.detailsObject.threePointTracker.reset();
+        }
+        if (that.currentUniforms.enableTracking.value == 1)
+            that.detailsObject.trackerUtils.reset();        
     }
     this.reset = function() {
     	that.detailsObject.rotateDirection = 0;
@@ -351,10 +354,10 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.textureScale.value = 1;
         // that.currentUniforms.enableTracking.value = 0;
         if (that.currentUniforms.enableTracking.value == 1) {
-            that.trackerUtils.reset();
+            that.detailsObject.trackerUtils.reset();
         }
         if (that.currentUniforms.uThreePointMappingOn.value == 1) {
-            that.threePointTracker.reset();
+            that.detailsObject.threePointTracker.reset();
         }
         that.currentUniforms.textureUAdjustment.value = 0; 
         that.currentUniforms.textureVAdjustment.value = 0; 

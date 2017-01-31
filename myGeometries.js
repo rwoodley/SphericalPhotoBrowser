@@ -26,6 +26,15 @@ var psphere = function (u, v) {
     z = u - Math.tanh(u);
         return new THREE.Vector3(x*10, y*10, z*10);
 }
+var catenoidFunc = function(u,v) {
+    u=u*(2*Math.PI)-Math.PI;
+    v=v*10-5;
+    rr=3;
+    x=rr*Math.cosh(v/rr)*Math.cos(u);
+    y=rr*Math.cosh(v/rr)*Math.sin(u);
+    z=v;
+    return new THREE.Vector3(x*10, y*10, z*10);    
+}
 var steinerFunc = function(u,v) {
     // see http://xahlee.info/surface/steiner/steiner.html
     u *= Math.PI;

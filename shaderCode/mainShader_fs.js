@@ -1,19 +1,20 @@
 SHADERCODE.mainShader_fs = function() {
 var x = `  
-
-vec4 wrappedTexture2D(sampler2D texture, vec2 inUV) {
+vec2 getNewUVForWrappedTexture(vec2 inUV) {
     vec2 uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(inUV.y + textureVAdjustment, 1.));
     float scaleFactor = textureScale;
     float widthx = 1./scaleFactor;
     float minx = .5 - widthx/2.;
     float maxx = .5 + widthx/2.;
     if (uv.x < minx || uv.x > maxx || uv.y < minx || uv.y > maxx)
-        return vec4(0.0,0.0,0.0,0.0);
+        return vec2(0.,0.);
     else {
-        uv = vec2((uv.x-minx)/widthx, (uv.y-minx)/widthx);
-        return texture2D(texture, uv);    
-    }
-    
+        return vec2((uv.x-minx)/widthx, (uv.y-minx)/widthx);
+    } 
+}
+vec4 wrappedTexture2D(sampler2D texture, vec2 inUV) {
+    vec2 uv = getNewUVForWrappedTexture(inUV);
+    return texture2D(texture, uv);    
 }
 bool checkMaskPoint(vec2 uv) {
     vec4 t1 = wrappedTexture2D( iChannel0,  uv);
@@ -197,9 +198,22 @@ vec2 uvToComplex(vec2 uv) {
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
     return a;
 }
+vec2 getNewTrackerUVForWrappedTexture(vec2 inUV) {
+    // this is almost an identical copy of getNewUVForWrappedTexture except for signs in next line:
+    vec2 uv = vec2(mod(inUV.x - textureUAdjustment, 1.), mod(inUV.y - textureVAdjustment, 1.));
+    float widthx = 1.;
+    float minx = .5 - widthx/2.;
+    float maxx = .5 + widthx/2.;
+    if (uv.x < minx || uv.x > maxx || uv.y < minx || uv.y > maxx)
+        return vec2(0.,0.);
+    else {
+        return vec2((uv.x-minx)/widthx, (uv.y-minx)/widthx);
+    } 
+}
 vec2 trackerToComplex(vec2 pt) {
     // not sure why these corrections are needed, maybe because of scale()
-    return uvToComplex(vec2(mod(pt.x+.5,1.), 1.-pt.y));
+    vec2 uv = getNewTrackerUVForWrappedTexture(vec2(mod(pt.x+.5,1.), 1.-pt.y));
+    return uvToComplex(uv);
 }
 vec2 complexToUV(vec2 result) {
     // now c back to sphere.
@@ -340,6 +354,9 @@ void main() {
     if (complexEffect4OnOff == 1) {
         result = cx_exp(result);
     }
+    if (complexEffect5OnOff == 1) {
+        result = cx_log(result);
+    }
     if (uThreePointMappingOn) {
         vec2 inresult = result;
         result = threePointMapping(
@@ -349,7 +366,7 @@ void main() {
             trackerToComplex(u3r1),
             trackerToComplex(u3p2),
             trackerToComplex(u3q2),
-            trackerToComplex(u3r2)
+            trackerToComplex(u3r2 )
             );
 
         // vec2 newp2 = threePointMapping(
@@ -378,14 +395,14 @@ void main() {
         vec3 p2InCartesian = complexToCartesian(trackerToComplex(u3p2 ));
         vec3 inresultInCartesian = complexToCartesian(inresult);
         vec3 resultInCartesian = complexToCartesian(result);
-        if (distance(p2InCartesian, resultInCartesian) < .05) {
-            gl_FragColor = vec4(1.,0.,1.,1.);
-            return;
-        } 
-        if (distance(inresultInCartesian, p1InCartesian) < .10) {
-            gl_FragColor = vec4(1.,1.,1.,1.);
-            return;
-        }
+        // if (distance(p2InCartesian, resultInCartesian) < .05) {
+        //     gl_FragColor = vec4(1.,0.,1.,1.);
+        //     return;
+        // } 
+        // if (distance(inresultInCartesian, p1InCartesian) < .10) {
+        //     gl_FragColor = vec4(1.,1.,1.,1.);
+        //     return;
+        // }
     }
 
     vec2 newuv = complexToUV(result);
