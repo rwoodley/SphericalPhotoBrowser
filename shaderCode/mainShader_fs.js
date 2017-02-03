@@ -7,14 +7,18 @@ vec2 getNewUVForWrappedTexture(vec2 inUV) {
     float minx = .5 - widthx/2.;
     float maxx = .5 + widthx/2.;
     if (uv.x < minx || uv.x > maxx || uv.y < minx || uv.y > maxx)
-        return vec2(0.,0.);
+        return vec2(-1.,-1.);
     else {
         return vec2((uv.x-minx)/widthx, (uv.y-minx)/widthx);
     } 
 }
 vec4 wrappedTexture2D(sampler2D texture, vec2 inUV) {
     vec2 uv = getNewUVForWrappedTexture(inUV);
-    return texture2D(texture, uv);    
+    if (uv.x < 0.) 
+        return 
+            vec4(0.0,0.0,0.0,0.0);
+        else
+            return texture2D(texture, uv);    
 }
 bool checkMaskPoint(vec2 uv) {
     vec4 t1 = wrappedTexture2D( iChannel0,  uv);
