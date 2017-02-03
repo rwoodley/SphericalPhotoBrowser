@@ -337,13 +337,6 @@ this.reimannUniformsEditor = function(
             that.mediaUtils.toggleView("catenoid");
         }
     }
-    this.mediaUtils.postProcessingAfterVideoRestart = function() {
-        if (that.currentUniforms.uThreePointMappingOn.value == 1) {
-            that.detailsObject.threePointTracker.reset();
-        }
-        if (that.currentUniforms.enableTracking.value == 1)
-            that.detailsObject.trackerUtils.reset();        
-    }
     this.reset = function() {
     	that.detailsObject.rotateDirection = 0;
     	that.currentUniforms.iRotationAmount.value = 0;

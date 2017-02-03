@@ -218,11 +218,11 @@ function mediaUtils(canned, scene, camera, stills, videos,
         var pid = event.target.id.replace('textureSelector_','');
         that.updateReimannDomeForFileName(that.activeMeshName, pid, undefined);
     }
-    this.initializeReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale) {
+    this.initializeReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
         if (this.activeMeshName == undefined)
             this.activeMeshName = meshName;
         document.title = filename;
-        TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann');
+        TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann', rotationAxis, rotationAngle);
         this.updateReimannDomeForFileName(meshName, filename);
     }
     this.updateReimannDomeForFileName = function(meshName, filename) {
@@ -264,12 +264,12 @@ function mediaUtils(canned, scene, camera, stills, videos,
     }
     this.postProcessingAfterVideoLoad = function(pid) {
     }
-    this.initializeReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale) {
+    this.initializeReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
         if (this.activeMeshName == undefined)
             this.activeMeshName = meshName;
         that.videoFileName = pid;
         document.title = pid;
-        TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann');
+        TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann', rotationAxis, rotationAngle);
         this.updateReimannDomeForVideoName(meshName, pid);
     }
     this.updateReimannDomeForVideoName = function(meshName, pid) {

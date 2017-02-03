@@ -13,6 +13,53 @@ function managedMesh(mesh, updateMaterialCallback) {
     this.mesh = mesh;
     this.updateMaterialCallback = updateMaterialCallback;
 }
+function getGeometryForName(geoName) {
+    var sphereRadius = 10;
+    var segment = 256.;
+    if (geoName == "sphere") {
+        var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
+    }
+    if (geoName == "cylinder") {
+        var geo = new THREE.CylinderGeometry(sphereRadius,sphereRadius,segment,segment);
+    }
+    if (geoName == "plane") {
+        var geo = new THREE.PlaneBufferGeometry( sphereRadius/4, sphereRadius/4, segment, segment );
+    }
+    if (geoName == "floor") {
+        var geo = new THREE.PlaneBufferGeometry( sphereRadius/4, sphereRadius/4, segment, segment );
+    }
+    if (geoName == "torus") {
+        var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
+    }
+    if (geoName == "rotatedFatTorus") {
+        var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/1.5, segment, segment );
+    }
+    if (geoName == "psphere") {
+        var geo = 
+        new THREE.ParametricGeometry( 
+            psphere, 
+            40, 40 );
+    }
+    if (geoName == "steiner") {
+        var geo = 
+        new THREE.ParametricGeometry( 
+            steinerFunc, 
+            40, 40 );
+    }
+    if (geoName == "catenoid") {
+        var geo = 
+        new THREE.ParametricGeometry( 
+            catenoidFunc, 
+            100, 100 );
+    }
+    if (geoName == "klein") {
+        var geo = 
+        new THREE.ParametricGeometry( 
+            klein, 
+            40, 40 );
+    }
+    return geo;
+}
 function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename to multiMesh or multiGeoMesh
     // ALWAYS ALLOW FOR MULTIPLE MESHES!
     var that = this;
@@ -53,13 +100,11 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
     }
     this.setGeometry = function(desiredGeoName) {
         that.geoName = desiredGeoName;
-        var segment = 256.;
-        var sphereRadius = 10;
         that.removeManagedMeshes();
+        var geo = getGeometryForName(that.geoName);
         if (that.geoName == "sphere") {
             // see https://github.com/mrdoob/three.js/issues/2476
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
-            var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             that._addMesh(mesh, function(msh, mat) {
                 mat.side = THREE.FrontSide;
@@ -72,7 +117,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "plane") {
-            var geo = new THREE.PlaneBufferGeometry( sphereRadius/4, sphereRadius/4, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateY(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
@@ -81,7 +125,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "floor") {
-            var geo = new THREE.PlaneBufferGeometry( sphereRadius/4, sphereRadius/4, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
@@ -90,7 +133,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "torus") {
-            var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
@@ -99,7 +141,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "rotatedFatTorus") {
-            var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/1.5, segment, segment );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
 //            mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
@@ -108,10 +149,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "psphere") {
-            var geo = 
-            new THREE.ParametricGeometry( 
-                psphere, 
-                40, 40 );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
@@ -120,10 +157,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "steiner") {
-            var geo = 
-            new THREE.ParametricGeometry( 
-                steinerFunc, 
-                40, 40 );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
@@ -132,10 +165,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "catenoid") {
-            var geo = 
-            new THREE.ParametricGeometry( 
-                catenoidFunc, 
-                40, 40 );
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
@@ -144,11 +173,6 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "klein") {
-            var geo = 
-            new THREE.ParametricGeometry( 
-                klein, 
-                40, 40 );
-
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(-Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {

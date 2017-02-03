@@ -9,19 +9,19 @@ function meshInventory(scene) {
     this.setTexture = function(meshName, texture, materialGeneratorFromTexture) {
             that.meshes[meshName].setTexture(texture, materialGeneratorFromTexture, meshName);
     }
-    this.newMesh = function(meshName, desiredGeoName, position, scale, textureType) {
+    this.newMesh = function(meshName, desiredGeoName, position, scale, textureType, rotationAxis, rotationAngle) {
         if (that.meshes.hasOwnProperty(meshName)) 
             console.log('"' + meshName + '" mesh already exists, not recreating.')
         else {
             if (textureType == 'reimann') {
-                that.meshes[meshName] = new meshManager(that.scene, position, scale, desiredGeoName);
+                that.meshes[meshName] = new meshManager(that.scene, position, scale, desiredGeoName, rotationAxis, rotationAngle);
                 that.reimannMeshes[meshName] = that.meshes[meshName];
             }
             else if (textureType == 'basic') {
-                that.meshes[meshName] = new basicMesh(scene, position, scale, desiredGeoName);
+                that.meshes[meshName] = new basicMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle);
             }
             else if (textureType == 'anyMaterial') {
-                that.meshes[meshName] = new noMaterialMesh(scene, position, scale, desiredGeoName);
+                that.meshes[meshName] = new noMaterialMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle);
             }
         }
         return that.meshes[meshName];
@@ -30,7 +30,7 @@ function meshInventory(scene) {
         that.meshes[meshName].setGeometry(desiredGeoName);        
     }
 }
-function basicMesh(scene, position, scale, desiredGeoName) {
+function basicMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle) {
     // very basic. always a sphere, can't be moved or changed later.
     var that = this;
     this.scene = scene;
@@ -44,6 +44,11 @@ function basicMesh(scene, position, scale, desiredGeoName) {
     that.mesh.scale.set(that.scale[0],that.scale[1], that.scale[2]);
     that.scene.add(this.mesh);
     this.mesh.position.set(that.position[0],that.position[1], that.position[2]);
+    if (rotationAxis != undefined) {
+        var matrix = new THREE.Matrix4();
+        matrix.makeRotationAxis( rotationAxis.normalize(), rotationAngle ); 
+        this.mesh.rotation.setFromRotationMatrix( matrix );
+    }
     this.setTexture = function(texture, materialGeneratorFromTexture, meshName) {
         setMipMapOptions(texture);
         that.material.map = texture;
@@ -51,7 +56,7 @@ function basicMesh(scene, position, scale, desiredGeoName) {
     }
     return this;
 }
-function noMaterialMesh(scene, position, scale, desiredGeoName) {
+function noMaterialMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle) {
     // You specify whichever material you want on your own. This just does the basic setup.
     var that = this;
     this.scene = scene;
@@ -60,11 +65,17 @@ function noMaterialMesh(scene, position, scale, desiredGeoName) {
     var segment = 256.;
     var sphereRadius = 10;
     that.material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });            
-    var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
+    var geo = getGeometryForName(desiredGeoName);
+    // var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
     this.mesh = new THREE.Mesh( geo, that.material );
     that.mesh.scale.set(that.scale[0],that.scale[1], that.scale[2]);
     that.scene.add(this.mesh);
     this.mesh.position.set(that.position[0],that.position[1], that.position[2]);
+    if (rotationAxis != undefined) {
+        var matrix = new THREE.Matrix4();
+        matrix.makeRotationAxis( rotationAxis.normalize(), rotationAngle ); 
+        this.mesh.rotation.setFromRotationMatrix( matrix );
+    }
     this.setTexture = undefined;
     return this;
 }

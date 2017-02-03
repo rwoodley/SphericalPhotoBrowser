@@ -11,7 +11,10 @@ function getAnyMaterialMesh(meshName, meshSpecs) {
         meshSpecs['geometry'],
         meshSpecs['position'],
         meshSpecs['scale'],
-        'anyMaterial');
+        'anyMaterial',
+        meshSpecs['rotationAxis'],
+        meshSpecs['rotationAngle']
+        );
     return mesh;
 }
 function cannedRun(scene) {
@@ -23,6 +26,7 @@ function cannedRun(scene) {
         this.videoReloadDelayInSeconds = undefined;
         this.rotateYAmount = undefined;
         this.initialUpDownRotation = undefined;
+        this.fog = false;
     };
     this.skyDomeMesh = undefined;
     this.init = function() {
@@ -51,6 +55,9 @@ function cannedRun(scene) {
             this.generalSettings.cameraPosition[2]);
         mediaUtils.rotateYAmount -= this.generalSettings.rotateYAmount;
         rotateCameraUpDown(mediaUtils.camera, this.generalSettings.initialUpDownRotation);
+        if (this.generalSettings.fog) {
+            that.scene.fog = new THREE.Fog( 0xaaaaaa, 1, 1000);
+        }
     }
     this.setup = function (mediaUtils, transformUtils) {
         mediaUtils.toggleControlPanel();
@@ -67,7 +74,9 @@ function cannedRun(scene) {
                     meshSpecs['textureName'], 
                     meshSpecs['geometry'],
                     meshSpecs['position'],
-                    meshSpecs['scale']
+                    meshSpecs['scale'],
+                    meshSpecs['rotationAxis'],
+                    meshSpecs['rotationAngle']
                     );
             else if (meshSpecs['textureType'] == 'basic') {
                 var mesh = TRANSFORM.meshInventory.newMesh(
@@ -75,7 +84,10 @@ function cannedRun(scene) {
                     meshSpecs['geometry'],
                     meshSpecs['position'],
                     meshSpecs['scale'],
-                    'basic');
+                    'basic',
+                    meshSpecs['rotationAxis'],
+                    meshSpecs['rotationAngle']
+                    );
                 (new THREE.TextureLoader()).load("media/" + meshSpecs['textureName'], function ( texture ) {
                     mesh.setTexture(texture,null, null);
                 });
@@ -126,7 +138,9 @@ function cannedRun(scene) {
                     meshSpecs['textureName'],
                     meshSpecs['geometry'],
                     meshSpecs['position'],
-                    meshSpecs['scale']                        
+                    meshSpecs['scale'],
+                    meshSpecs['rotationAxis'],
+                    meshSpecs['rotationAngle']
                     );
                 if (that.generalSettings.videoReloadDelayInSeconds > -1) {
                     mediaUtils.onVideoEnded = function () {

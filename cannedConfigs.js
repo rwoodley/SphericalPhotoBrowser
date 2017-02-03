@@ -30,7 +30,7 @@ function getCannedConfigs(mode, generalSettings) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
         uniforms.complexEffect3OnOff.value = 0;
-        generalSettings.rotateYAmount = 0.;             // no auto-rotate, will throw off tracking.
+        generalSettings.rotateYAmount = 0.;
          configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',
@@ -52,6 +52,10 @@ function getCannedConfigs(mode, generalSettings) {
         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'drosophila') {     // this is what you get by default if no mode specifed.
+        generalSettings.cameraPosition = [122.,29,142.];     // expected by trackerUtils.
+        generalSettings.rotateYAmount = .002;             // no auto-rotate, will throw off tracking.
+        generalSettings.fog = true;
+
         var uniforms = TRANSFORM.reimannShaderList.createShader('other');
         configs['other'] = {
             'uniforms': uniforms,
@@ -59,21 +63,28 @@ function getCannedConfigs(mode, generalSettings) {
             'textureName': 'altesMuster.png',
             'geometry': 'floor',
             'position': [0.0,-50,0],
-            'scale': [100,100,-100],
+            'scale': [200,200,-200],
         }
 
-        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        generalSettings.cameraPosition = [-170,28,-14.];     // expected by trackerUtils.
-        uniforms.complexEffect3OnOff.value = 0;
-        generalSettings.rotateYAmount = 0.;             // no auto-rotate, will throw off tracking.
          configs['default'] = {
-            'uniforms': uniforms,
-            'textureType': 'video',
-            'textureName': 'drosophila',
+            'uniforms': uniforms,   // we don't really need these except the editor expects them and will try to set them
+                                    // so setting them here prevents errors. TODO: fix this.
+            'textureType': 'mirror',
+            // 'textureName': 'drosophila',
             'geometry': 'catenoid',
-            'position': [0,0,0],
-            'scale': [1,1,-1],
+            'position': [0,-25,0],
+            'scale': [1,1.,2.],
+            'rotationAxis': new THREE.Vector3( 1, 0, 0 ),
+            'rotationAngle': Math.PI/2 
         }
+
+        //  configs['cylinder'] = {
+        //     'textureType': 'mirror',
+        //     // 'textureName': 'drosophila',
+        //     'geometry': 'cylinder',
+        //     'position': [100,0,0],
+        //     'scale': [5,.25,5],
+        // }
 
         configs['skyDome'] = phongSkyDome() ;
     }
