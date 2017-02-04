@@ -247,6 +247,23 @@ function getCannedConfigs(mode, generalSettings) {
         };
         configs['skyDome'] = phongSkyDome();
     }
+    if (mode == 'dollyZoom') {
+        generalSettings.cameraPosition = [1,0,0];
+        generalSettings.videoReloadDelayInSeconds = 1;
+        generalSettings.rotateYAmount = 0.;
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.uThreePointMappingOn.value = 1;
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'drwSchool',
+            'geometry': 'plane',
+            'position': [0,0,0],
+            'scale': [1,1,1],
+        };
+        configs['skyDome'] = phongSkyDome();
+    }
     if (mode == 'fractal') {
         generalSettings.cameraPosition = [23.8, 0.1, -1.4];
         generalSettings.videoReloadDelayInSeconds = 1;
