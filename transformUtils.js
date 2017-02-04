@@ -74,7 +74,8 @@ function transformUtils(camera,
         TRANSFORM.reimannShaderList.animate(
             that.mediaUtils.animationFrame,
             that.mediaUtils.videoDisplayed,
-            videoCurrentTime);
+            videoCurrentTime,
+            that.mediaUtils.videoFileName);
 
         that.mediaUtils.animate(that.cameraVectorLength, videoCurrentTime);
     }
@@ -89,7 +90,7 @@ function transformUtils(camera,
     if (detailsObject != undefined)
         this.reimannShaderEditor.setShaderDetails(detailsObject);
     TRANSFORM.reimannShaderList.editor = this.reimannShaderEditor;
-    TRANSFORM.reimannShaderList.mediaUtils = this.mediaUtils;
+    //TRANSFORM.reimannShaderList.mediaUtils = this.mediaUtils;
 
 
 }

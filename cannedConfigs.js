@@ -53,7 +53,7 @@ function getCannedConfigs(mode, generalSettings) {
     }
     if (mode == 'drosophila') {     // this is what you get by default if no mode specifed.
         generalSettings.cameraPosition = [122.,29,142.];     // expected by trackerUtils.
-        generalSettings.rotateYAmount = .002;             // no auto-rotate, will throw off tracking.
+        generalSettings.rotateYAmount = .002;
         generalSettings.fog = true;
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('other');
@@ -209,6 +209,24 @@ function getCannedConfigs(mode, generalSettings) {
             'scale': [1,1,1],
         };
         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+    }
+    if (mode == 'torusTracker') {
+        generalSettings.cameraPosition = [-13.2,-0.3,2.0];
+        generalSettings.videoReloadDelayInSeconds = 1;
+        generalSettings.rotateYAmount = 0.;
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'tubes',
+            'geometry': 'torus',
+            'position': [0,0,0],
+            'scale': [1,1,1],
+        };
+        // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+        uniforms.enableTracking.value = 1; 
+        this.rotateYAmount = 0.;
     }
     if (mode == 'portrait') {
         generalSettings.cameraPosition = [6.6,2.4,0];

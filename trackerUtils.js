@@ -1,23 +1,14 @@
 // trackerUtils is to track a single person
-function threePointTracker() {
+function threePointTracker(videoFileName) {
     var that = this;
     this.tracker = [];
-    // this.tracker[0] = new trackerUtils("threesomeExtract/whiteShirt.json");
-    // this.tracker[1] = new trackerUtils("threesomeExtract/greyShirt.json");
-    // this.tracker[2] = new trackerUtils("threesomeExtract/blackShirt.json");
-    // this.tracker[0] = new trackerUtils("tubes/woman1WhiteShirt.json");
-    // this.tracker[1] = new trackerUtils("tubes/blueShorts.json");
-    // this.tracker[2] = new trackerUtils("tubes/redShirt.json");
-    this.tracker[0] = new trackerUtils("trackerData/drwSchool/bob.json");
-    this.tracker[1] = new trackerUtils("trackerData/drwSchool/iverson.json");
-    this.tracker[2] = new trackerUtils("trackerData/drwSchool/louis.json");
-     // this.tracker[0] = new trackerUtils("trackerData/MCA/1.json");
-    // this.tracker[1] = new trackerUtils("trackerData/MCA/2.json");
-    // this.tracker[2] = new trackerUtils("trackerData/MCA/3.json");
+    this.tracker[0] = new trackerUtils("trackerData/" + videoFileName + "/1.json");
+    this.tracker[1] = new trackerUtils("trackerData/" + videoFileName + "/2.json");
+    this.tracker[2] = new trackerUtils("trackerData/" + videoFileName + "/3.json");
     this.startPoint = [];
-    // this.startPoint[0] = this.tracker[0].getXYAsVector2(0);
-    // this.startPoint[1] = this.tracker[1].getXYAsVector2(0);
-    // this.startPoint[2] = this.tracker[2].getXYAsVector2(0);
+    this.startPoint[0] = this.tracker[0].getXYAsVector2(0);
+    this.startPoint[1] = this.tracker[1].getXYAsVector2(0);
+    this.startPoint[2] = this.tracker[2].getXYAsVector2(0);
     this.getXY = function(currentTime, uniforms) {
         uniforms.u3p1.value = that.startPoint[0];
         uniforms.u3q1.value = that.startPoint[1];

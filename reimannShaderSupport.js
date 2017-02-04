@@ -12,11 +12,11 @@ reimannShaderListObject = function() {
 
         return uniforms.currentUniforms;
     }
-    this.animate = function(animationFrame, videoDisplayed, videoCurrentTime) {
+    this.animate = function(animationFrame, videoDisplayed, videoCurrentTime, videoFileName) {
         that.editor.updateVariousNumbersForCamera();
         for (var i in that.detailsObjectList) {
             var reimannShaderDetailsObject = that.detailsObjectList[i];
-            reimannShaderDetailsObject.animate(animationFrame, videoDisplayed, videoCurrentTime);
+            reimannShaderDetailsObject.animate(animationFrame, videoDisplayed, videoCurrentTime, videoFileName);
         }
     }
     this.getShaderDetailsObject = function(name) {
@@ -98,7 +98,7 @@ reimannShaderDetailsObject = function(name) {
         });
         
     }
-    this.animate = function(animationFrame, videoDisplayed, videoCurrentTime) {
+    this.animate = function(animationFrame, videoDisplayed, videoCurrentTime, videoFileName) {
         if (that.firstTime) {
             that.setDefaults();
         }
@@ -117,7 +117,7 @@ reimannShaderDetailsObject = function(name) {
             }
             if (that.currentUniforms.uThreePointMappingOn.value == 1) {
                 if (that.threePointTracker == undefined)
-                    that.threePointTracker = new threePointTracker();
+                    that.threePointTracker = new threePointTracker(videoFileName);
                 that.threePointTracker.getXY(videoCurrentTime, that.currentUniforms);
             }
         }

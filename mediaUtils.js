@@ -221,7 +221,6 @@ function mediaUtils(canned, scene, camera, stills, videos,
     this.initializeReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
         if (this.activeMeshName == undefined)
             this.activeMeshName = meshName;
-        document.title = filename;
         TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann', rotationAxis, rotationAngle);
         this.updateReimannDomeForFileName(meshName, filename);
     }
@@ -267,14 +266,13 @@ function mediaUtils(canned, scene, camera, stills, videos,
     this.initializeReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
         if (this.activeMeshName == undefined)
             this.activeMeshName = meshName;
-        that.videoFileName = pid;
-        document.title = pid;
         TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann', rotationAxis, rotationAngle);
         this.updateReimannDomeForVideoName(meshName, pid);
     }
     this.updateReimannDomeForVideoName = function(meshName, pid) {
         var pathToTexture = 'media/' + pid + '.mp4';
         console.log('loading: ' + pathToTexture);
+        that.videoFileName = pid;
         that.videoSource.setAttribute('src', pathToTexture);
         that.video.load();
 
