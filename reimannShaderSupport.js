@@ -41,7 +41,8 @@ reimannShaderDetailsObject = function(name) {
         startTime:    { type: 'f', value: 0.0 },
         iGlobalTime:    { type: 'f', value: 0.0 },
         mobiusEffectsOnOff: { type: 'i', value: 0 },
-        textureScale: { type: 'f', value: 1. },
+        textureScaleX: { type: 'f', value: 1. },
+        textureScaleY: { type: 'f', value: 1. },
         tesselate: { type: 'f', value: 0. },
         uAlpha: { type: 'f', value: 1. },
         uColorVideoMode: { type: 'f', value: 1. },  // need value = 1 for outer texture.

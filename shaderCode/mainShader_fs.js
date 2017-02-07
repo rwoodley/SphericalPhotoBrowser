@@ -2,14 +2,19 @@ SHADERCODE.mainShader_fs = function() {
 var x = `  
 vec2 getNewUVForWrappedTexture(vec2 inUV) {
     vec2 uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(inUV.y + textureVAdjustment, 1.));
-    float scaleFactor = textureScale;
-    float widthx = 1./scaleFactor;
+    if (textureVAdjustment < 0.)    // hack to flip texture upside down.
+        uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(1.0 - inUV.y, 1.));
+
+    float widthx = 1./textureScaleX;
+    float widthy = 1./textureScaleY;
     float minx = .5 - widthx/2.;
     float maxx = .5 + widthx/2.;
-    if (uv.x < minx || uv.x > maxx || uv.y < minx || uv.y > maxx)
+    float miny = .5 - widthy/2.;
+    float maxy = .5 + widthy/2.;
+    if (uv.x < minx || uv.x > maxx || uv.y < miny || uv.y > maxy)
         return vec2(-1.,-1.);
     else {
-        return vec2((uv.x-minx)/widthx, (uv.y-minx)/widthx);
+        return vec2((uv.x-minx)/widthx, (uv.y-miny)/widthy);
     } 
 }
 vec4 wrappedTexture2D(sampler2D texture, vec2 inUV) {

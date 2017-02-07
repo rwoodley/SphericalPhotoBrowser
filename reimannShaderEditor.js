@@ -126,8 +126,13 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.textureVAdjustment.value = 0; 
     }
     this.textureSmaller = function() { 
-        that.currentUniforms.textureScale.value *= 1.5; }
-    this.textureLarger = function() { that.currentUniforms.textureScale.value /= 1.5; }
+        that.currentUniforms.textureScaleX.value *= 1.5; 
+        that.currentUniforms.textureScaleY.value *= 1.5; 
+    }
+    this.textureLarger = function() { 
+        that.currentUniforms.textureScaleX.value /= 1.5; 
+        that.currentUniforms.textureScaleY.value /= 1.5; 
+    }
     this.textureTrack = function() { 
         that.currentUniforms.enableTracking.value = that.currentUniforms.enableTracking.value == 1 ? 0 : 1; 
     }
@@ -344,7 +349,8 @@ this.reimannUniformsEditor = function(
     	that.detailsObject.point1Defined = false;
     	that.detailsObject.point2Defined = false;
     	that.currentUniforms.mobiusEffectsOnOff.value = 0;
-        that.currentUniforms.textureScale.value = 1;
+        that.currentUniforms.textureScaleX.value = 1;
+        that.currentUniforms.textureScaleY.value = 1;
         // that.currentUniforms.enableTracking.value = 0;
         if (that.currentUniforms.enableTracking.value == 1) {
             that.detailsObject.trackerUtils.reset();

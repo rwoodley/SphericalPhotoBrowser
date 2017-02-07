@@ -23,7 +23,8 @@ var x = `
     uniform float e2x;
     uniform float e2y;
     uniform int mobiusEffectsOnOff; 
-    uniform float textureScale;
+    uniform float textureScaleX;
+    uniform float textureScaleY;
     uniform float tesselate;
     uniform float uAlpha;
     uniform float uColorVideoMode;

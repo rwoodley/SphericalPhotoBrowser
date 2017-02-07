@@ -115,7 +115,8 @@ function getCannedConfigs(mode, generalSettings) {
         // this must go after sky dome so transparency works.
         var uniforms2 = TRANSFORM.reimannShaderList.createShader('default');
         uniforms2.complexEffect3OnOff.value = 1;
-        uniforms2.textureScale.value = 2.25;
+        uniforms2.textureScaleX.value = 2.25;
+        uniforms2.textureScaleY.value = 2.25;
         configs['default'] = {
             'uniforms': uniforms2,
             'textureType': 'video',
@@ -235,7 +236,8 @@ function getCannedConfigs(mode, generalSettings) {
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         uniforms.complexEffect3OnOff.value = 1;
-        uniforms.textureScale.value = 1.5;
+        uniforms.textureScaleX.value = 1.5;
+        uniforms.textureScaleY.value = 1.5;
         uniforms.textureUAdjustment.value = 0.27;
         configs['default'] = {
             'uniforms': uniforms,
@@ -262,6 +264,24 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,0,0],
             'scale': [1,1,1],
         };
+        configs['skyDome'] = phongSkyDome();
+    }
+    if (mode == 'flocking') {
+        generalSettings.cameraPosition = [0,-15 ,0];
+        generalSettings.videoReloadDelayInSeconds = 1;
+        generalSettings.rotateYAmount = 0.;
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.textureScaleY.value = .9;
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'flockingCropped',
+            'geometry': 'tsphere',
+            'position': [0,0,0],
+            'scale': [1,1,1],
+        };
+        uniforms.textureVAdjustment.value = -1;
         configs['skyDome'] = phongSkyDome();
     }
     if (mode == 'fractal') {

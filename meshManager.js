@@ -19,6 +19,9 @@ function getGeometryForName(geoName) {
     if (geoName == "sphere") {
         var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
     }
+    if (geoName == "tsphere") {
+        var geo = new THREE.SphereGeometry(sphereRadius,segment,segment, 0., 2.*Math.PI, 4.0, 2*Math.PI-4.0);
+    }
     if (geoName == "cylinder") {
         var geo = new THREE.CylinderGeometry(sphereRadius,sphereRadius,segment,segment);
     }
@@ -102,7 +105,7 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
         that.geoName = desiredGeoName;
         that.removeManagedMeshes();
         var geo = getGeometryForName(that.geoName);
-        if (that.geoName == "sphere") {
+        if (that.geoName == "sphere" ) {
             // see https://github.com/mrdoob/three.js/issues/2476
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
@@ -135,6 +138,14 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
         if (that.geoName == "torus") {
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+            });
+        }
+        if (that.geoName == "tsphere") {
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            // mesh.rotateX(Math.PI/2. );
             that._addMesh( mesh, function(msh, newMaterial) {
                 newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;
