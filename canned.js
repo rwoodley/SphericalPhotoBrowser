@@ -143,7 +143,7 @@ function cannedRun(scene) {
                     meshSpecs['rotationAngle']
                     );
                 if (that.generalSettings.videoReloadDelayInSeconds > -1) {
-                    mediaUtils.onVideoEnded = function () {
+                    mediaUtils.videoManager.onVideoEnded = function () {
                         console.log("here..........");
                         window.setTimeout(function () {
                             console.log("Video is done, reloading.")

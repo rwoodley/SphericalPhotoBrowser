@@ -272,7 +272,7 @@ function getCannedConfigs(mode, generalSettings) {
         generalSettings.rotateYAmount = 0.;
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        uniforms.textureScaleY.value = .9;
+        uniforms.textureScaleY.value = .7 ;
         configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'video',
@@ -282,6 +282,36 @@ function getCannedConfigs(mode, generalSettings) {
             'scale': [1,1,1],
         };
         uniforms.textureVAdjustment.value = -1;
+        configs['skyDome'] = phongSkyDome();
+    }
+    if (mode == 'domes') {
+        generalSettings.cameraPosition = [0,-25 ,50];
+        generalSettings.videoReloadDelayInSeconds = 1;
+        generalSettings.rotateYAmount = 0.;
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.textureScaleY.value = .7;
+        uniforms.textureVAdjustment.value = -1;
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'flockingCropped',
+            'geometry': 'tsphere',
+            'position': [0,0,0],
+            'scale': [1,1,1],
+        };
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
+        uniforms.textureScaleY.value = .7;
+        uniforms.textureVAdjustment.value = -1;
+        configs['default2'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'flockingCropped',
+            'geometry': 'tsphere',
+            'position': [30,0,0],
+            'scale': [1,1,1],
+        };
         configs['skyDome'] = phongSkyDome();
     }
     if (mode == 'fractal') {

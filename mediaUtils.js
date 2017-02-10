@@ -8,13 +8,11 @@ User might want to:
 - add their own icons
 
 **/ 
-function mediaUtils(canned, scene, camera, stills, videos, 
+function mediaUtils(canned, scene, camera,  
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
        rightClickHandler, addEffects) {
 	var that = this;
     this.canned = canned;
-	this.stills = stills;
-	this.videos = videos;
     this.addEffects = addEffects;
 	this.mediaListContainerId = mediaListContainerId;
 	this.cameraControlsContainerId = cameraControlsContainerId;
@@ -24,10 +22,6 @@ function mediaUtils(canned, scene, camera, stills, videos,
 	this.camera = camera;
 	this.scene = scene;
 
-	this.video = document.getElementById("video");
-	this.videoTexture = undefined; 
-	this.videoSource = "";
-    this.videoDisplayed = false;
     this.rotateZAmount = 0;
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
@@ -56,7 +50,7 @@ function mediaUtils(canned, scene, camera, stills, videos,
     };
 
     this.initMediaUtils = function() {
-	    that.initVideo();
+	    that.videoManager = new videoManager();
 	    that.setupMediaIcons();
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
@@ -96,11 +90,11 @@ function mediaUtils(canned, scene, camera, stills, videos,
     };
     this.setupVideoControlIcons = function() {
     	var container = document.getElementById(that.videoControlsContainerId);
-    	appendSingleIcon(container, 'videoControlIcon', 'rewind', 'Video Back', that.video_rewind);
-    	appendSingleIcon(container, 'videoControlIcon', 'play', 'Video Play', that.video_play);
-    	appendSingleIcon(container, 'videoControlIcon', 'stop', 'Video Stop', that.video_stop);
-    	appendSingleIcon(container, 'videoControlIcon', 'ff', 'Video Forward', that.video_ff);
-    	appendSingleIcon(container, 'videoControlIcon', 'replay', 'Video Restart', that.video_restart);
+    	appendSingleIcon(container, 'videoControlIcon', 'rewind', 'Video Back', that.videoManager.video_rewind);
+    	appendSingleIcon(container, 'videoControlIcon', 'play', 'Video Play', that.videoManager.video_play);
+    	appendSingleIcon(container, 'videoControlIcon', 'stop', 'Video Stop', that.videoManager.video_stop);
+    	appendSingleIcon(container, 'videoControlIcon', 'ff', 'Video Forward', that.videoManager.video_ff);
+    	appendSingleIcon(container, 'videoControlIcon', 'replay', 'Video Restart', that.videoManager.video_restart);
 
     	el = document.createElement('span');
         el.id = 'videoClock';
@@ -173,11 +167,11 @@ function mediaUtils(canned, scene, camera, stills, videos,
 		}
 	}
 	this.toggleVideoControls = function() {
-		if (that.videoDisplayed)
+		if (that.videoManager.videoDisplayed)
 			$('#' + that.videoControlsContainerId).show();
 		else {
 			$('#' + that.videoControlsContainerId).hide();
-			that.video_stop();
+			that.videoManager.video_stop();
 		}
 	}
     this.animationFrame = 0;
@@ -206,13 +200,9 @@ function mediaUtils(canned, scene, camera, stills, videos,
             // that.camera.rotateY(that.rotateZAmount);
             // that.camera.rotateX(that.rotateZAmount);
         }
-
-		if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
-          if (videoCurrentTime == undefined) videoCurrentTime = that.video.currentTime;
-		  if (that.videoTexture) that.videoTexture.needsUpdate = true; 
-          var timeRemaining = (that.video.duration - videoCurrentTime).toFixed(0);
-          document.getElementById('videoClock').innerHTML = videoCurrentTime.toFixed(0) + '<br/>' + timeRemaining;
-		}
+        var statusString = that.videoManager.animate();
+        if (statusString != undefined)
+            document.getElementById('videoClock').innerHTML = statusString;
 	}
     this.updateSkyDome = function(event) {
         var pid = event.target.id.replace('textureSelector_','');
@@ -225,9 +215,8 @@ function mediaUtils(canned, scene, camera, stills, videos,
         this.updateReimannDomeForFileName(meshName, filename);
     }
     this.updateReimannDomeForFileName = function(meshName, filename) {
-        that.videoDisplayed = false;
+        that.videoManager.unloadVideo();
         that.toggleVideoControls();
-        that.video.pause();
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
@@ -242,15 +231,6 @@ function mediaUtils(canned, scene, camera, stills, videos,
         setMipMapOptions(texture);
         return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
     }
-    this.onVideoEnded = function() {
-        console.log("The video ended. I have nothing to do so I'm doing nothing. Over-ride this to do something.")
-    }
-    this.initVideo = function() {
-        that.video  = document.getElementById('video');
-        that.videoSource = document.createElement('source');
-        that.video.appendChild(that.videoSource);
-        that.video.addEventListener('ended', function() { that.onVideoEnded() } );
-    }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');
         that.updateReimannDomeForVideoName(that.activeMeshName, pid);
@@ -261,8 +241,6 @@ function mediaUtils(canned, scene, camera, stills, videos,
         that.activeMeshName = meshName;
         that.changeMeshBeingEditedOverridable(meshName);
     }
-    this.postProcessingAfterVideoLoad = function(pid) {
-    }
     this.initializeReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
         if (this.activeMeshName == undefined)
             this.activeMeshName = meshName;
@@ -270,52 +248,16 @@ function mediaUtils(canned, scene, camera, stills, videos,
         this.updateReimannDomeForVideoName(meshName, pid);
     }
     this.updateReimannDomeForVideoName = function(meshName, pid) {
-        var pathToTexture = 'media/' + pid + '.mp4';
-        console.log('loading: ' + pathToTexture);
-        that.videoFileName = pid;
-        that.videoSource.setAttribute('src', pathToTexture);
-        that.video.load();
-
-        that.videoTexture = new THREE.Texture(that.video);
-        that.video.pause();     
-        that.video.play();
-
-        TRANSFORM.meshInventory.setTexture(meshName, that.videoTexture, that.buildMaterialForTexture);
-        that.videoDisplayed = true;
+        that.videoManager.registerTextureConsumer(
+            meshName, 
+            function(videoTexture) {
+                TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
+                    that.buildMaterialForTexture);
+            }
+        );
+        that.videoManager.newVideo(pid);
         that.toggleVideoControls();        
-        that.postProcessingAfterVideoLoad(pid);
 	}
-    this.video_play = function() {
-        // all this messing around to avoid a chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=593273
-        console.log("1 Is video paused? " + that.video.paused);
-        that.video.pause();             
-        setTimeout(function () {      
-            that.video.pause();             
-            console.log("2 Is video paused? " + that.video.paused);
-		that.video.play();
-            console.log("3 Is video paused? " + that.video.paused);
-        }, 150);
-    }
-    this.video_stop = function() {
-		that.video.pause();    	
-    }
-    this.postProcessingAfterVideoRestart = function() {}
-    this.video_restart = function() {
-        that.video.pause();
-        that.video.currentTime = 0;
-        // that.updateVideoForFileName(that.videoFileName);
-		that.video_play();
-        that.postProcessingAfterVideoRestart();
-    }
-    this.video_skip = function(value) {
-        that.video.currentTime += value;
-    }
-    this.video_rewind = function() {
-    	that.video_skip(-10);
-    }
-    this.video_ff = function() {
-    	that.video_skip(10);
-    }
     this.cameraLeft = function() {
         that.rotateYAmount -= 0.0005;
     }  
