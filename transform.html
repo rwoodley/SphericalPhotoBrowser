@@ -7,6 +7,7 @@
 		<script src="r73/three.js"></script>
         <script src="r73/OrbitControls.js"></script>
 		<script src="r73/Detector.js"></script>
+		<script src="r73/Mirror.js"></script>
 		<script src="r73/ParametricGeometries.js"></script>
  		<script src="r73/stats.min.js"></script>
 		<script src="lib/jquery-3.1.0.min.js"></script>
@@ -130,7 +131,7 @@ function init() {
         "textureControlsContainerId",
         _mediaUtils);
 
-    _canned.setup(_mediaUtils, _transformUtils);     // if this is a canned run, configure.
+    _canned.setup(_mediaUtils, _transformUtils, _renderer);     // if this is a canned run, configure.
 
     animate();
 }

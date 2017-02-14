@@ -30,7 +30,7 @@ setMipMapOptions = function(texture) {
     // more: https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
     texture.minFilter = THREE.LinearFilter;   // eliminates pixellation.
     texture.magFilter = THREE.LinearFilter;   // ditto
-    texture.generateMipmaps = false;
+    texture.generateMipmaps = true;
 }
 
 function doFloor(scene) {

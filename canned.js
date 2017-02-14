@@ -5,6 +5,9 @@
 // This is done because in this order because cannedRun controls the outer sky dome too
 // which must be set up before the inner sky dome is created, so that transparency works.
 // So for a given mode, we setup some uniforms in init(), and store data about 'configs'.
+
+var _verticalMirror = {};        // hack! for now
+
 function getAnyMaterialMesh(meshName, meshSpecs) {
     var mesh = TRANSFORM.meshInventory.newMesh(
         meshName, 
@@ -59,7 +62,7 @@ function cannedRun(scene) {
             that.scene.fog = new THREE.Fog( 0xaaaaaa, 1, 1000);
         }
     }
-    this.setup = function (mediaUtils, transformUtils) {
+    this.setup = function (mediaUtils, transformUtils, renderer) {
         mediaUtils.toggleControlPanel();
         this._initMediaUtils(mediaUtils);                   // setup camera
 
@@ -123,14 +126,32 @@ function cannedRun(scene) {
                 // mirror ball is handled with these 2 global variables. later, if we want more than one,
                 // i suppose we'll need to have a mirrorBallManager or something.
                 _mirrorSphere = mesh.mesh;
-                _mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+                mirrorCameraNearClippingDistance = 'mirrorCameraNearClippingDistance' in meshSpecs ?
+                    meshSpecs['mirrorCameraNearClippingDistance'] : .1;
+                _mirrorSphereCamera = new THREE.CubeCamera(mirrorCameraNearClippingDistance, 5000, 512 );
+
                 that.scene.add( _mirrorSphereCamera );
                 var mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
                     { color: 0xccccff, envMap: _mirrorSphereCamera.renderTarget, side: THREE.DoubleSide, reflectivity: 0.6 } );
 
                 mesh.mesh.material = mirrorSphereMaterial;
-                _mirrorSphereCamera.position = mesh.mesh.position;
-
+                if ('mirrorCameraPosition' in meshSpecs)
+                    _mirrorSphereCamera.position.copy(meshSpecs['mirrorCameraPosition']);
+                else
+                    _mirrorSphereCamera.position.copy(mesh.mesh.position);
+            }
+            else if (meshSpecs['textureType'] == 'mirror2') {
+                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+                var WIDTH = window.innerWidth;
+                var HEIGHT = window.innerHeight;
+                var verticalMirror = new THREE.Mirror( renderer, mediaUtils.camera, { 
+                    clipBias: 0.003, 
+                    textureWidth: WIDTH, 
+                    textureHeight: HEIGHT, 
+                    color:0x889900 } );
+                mesh.mesh.material =  verticalMirror.material;
+				mesh.mesh.add( verticalMirror );
+                _verticalMirror[meshName] = verticalMirror;
             }
             else {
                 mediaUtils.initializeReimannDomeForVideoName(

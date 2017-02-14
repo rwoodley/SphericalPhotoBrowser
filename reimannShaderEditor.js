@@ -85,7 +85,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'diffMask.svg', 'mask is delayed feed', that.useDelayMask);
         appendSingleIcon(container, 'transformControlIcon', 'diffGreenMask.svg', 'mask out green', that.useGreenMask);
         appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
-        appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use original color', that.beigeMask);
+        appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use high pass filter', that.beigeMask);
         appendSingleIcon(container, 'transformControlIcon', 'nadir.png', 'mask out nadir', that.nadirMask);
 
     	var container = document.getElementById(that.textureControlsContainerId);
@@ -202,10 +202,10 @@ this.reimannUniformsEditor = function(
             showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.blackMask = function() {
-            that.currentUniforms.uBlackMask.value = 1;
+            that.currentUniforms.uBlackMask.value = that.currentUniforms.uBlackMask.value == 1 ? 0 : 1;
     }
     this.beigeMask = function() {
-            that.currentUniforms.uBlackMask.value = 0;
+            that.currentUniforms.uHighPassFilter.value = that.currentUniforms.uHighPassFilter.value == 1 ? 0 : 1;
     }
     this.nadirMask = function() {
             that.currentUniforms.uNadirMask.value = that.currentUniforms.uNadirMask.value == 1 ? 0 : 1;

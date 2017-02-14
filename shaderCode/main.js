@@ -47,6 +47,8 @@ var x = `
     uniform int uNumCircles;
 
     uniform int  uBlackMask;
+    uniform int uHighPassFilter;
+    uniform vec3 uHighPassFilterThreshold;
     uniform int  uNadirMask;
     uniform int  uMaskType;
     uniform int  uTextureNumber;

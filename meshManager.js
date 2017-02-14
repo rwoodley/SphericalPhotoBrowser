@@ -23,7 +23,13 @@ function getGeometryForName(geoName) {
         var geo = new THREE.SphereGeometry(sphereRadius,segment,segment, 0., 2.*Math.PI, 4.0, 2*Math.PI-4.0);
     }
     if (geoName == "cylinder") {
-        var geo = new THREE.CylinderGeometry(sphereRadius,sphereRadius,segment,segment);
+        var geo = new THREE.CylinderGeometry(
+            sphereRadius,       // radius top
+            sphereRadius,       // radius bottom
+            sphereRadius*2,     // height
+            segment,            // radial segments
+            10,                 // height segments 
+            true);              // open-ended
     }
     if (geoName == "plane") {
         var geo = new THREE.PlaneBufferGeometry( sphereRadius/4, sphereRadius/4, segment, segment );
@@ -33,6 +39,9 @@ function getGeometryForName(geoName) {
     }
     if (geoName == "torus") {
         var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/2, segment, segment );
+    }
+    if (geoName == "cylinder") {
+        var geo = new THREE.CylinderGeometry( sphereRadius, sphereRadius, sphereRadius, segment, segment );
     }
     if (geoName == "rotatedFatTorus") {
         var geo = new THREE.TorusGeometry( sphereRadius, sphereRadius/1.5, segment, segment );
@@ -138,6 +147,14 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
         if (that.geoName == "torus") {
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+            });
+        }
+        if (that.geoName == "cylinder") {
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            // mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {
                 newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;

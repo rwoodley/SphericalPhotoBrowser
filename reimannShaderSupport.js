@@ -60,6 +60,7 @@ reimannShaderDetailsObject = function(name) {
         hyperbolicTilingEffectOnOff: { type: 'i', value: 0},
         showFixedPoints: { type: 'i', value: 1 },
         uBlackMask: { type: 'i', value: 0 },
+        uHighPassFilter : { type: 'i', value: 0 },
         uNadirMask: { type: 'i', value: 0 },
         uMaskType: { type: 'i', value: 0 },
         uTextureNumber: { type: 'i', value: 0 },
@@ -82,6 +83,7 @@ reimannShaderDetailsObject = function(name) {
         u3p2: { type: "v2", value: new THREE.Vector2(0,0) },
         u3q2: { type: "v2", value: new THREE.Vector2(0,0) },
         u3r2: { type: "v2", value: new THREE.Vector2(0,0) },
+        uHighPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.5,.5,.5) },
         uThreePointMappingOn: { type: 'i', value: 0 }
     };
     this.setDefaults = function() {

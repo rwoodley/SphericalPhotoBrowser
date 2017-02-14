@@ -48,10 +48,23 @@ bool checkMaskPoint(vec2 uv) {
         );
 }
 vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
+    // uMaskType == 1 - delay mask, uses iChannelDelayMask
+    // uMaskType == 2 - green mask, makes green transparent.
+    // uMaskType == 3 - still mask, uses iChannelStillMask1
+    // uBlackMask == 1 - black mask
     vec4 textureValue;
     if (uNadirMask == 1) {
         if (uv.y < .15)
             return vec4(0.,0.,0.,1.);
+    }
+    if (uHighPassFilter == 1) {
+        vec4 t1 = wrappedTexture2D( iChannel0,  uv);
+        if (
+        t1.r > uHighPassFilterThreshold.r &&
+        t1.g > uHighPassFilterThreshold.g &&
+        t1.b > uHighPassFilterThreshold.b
+         )
+            return vec4(0.,0.,0.,0.);
     }
 
     if (uTextureNumber == 0)

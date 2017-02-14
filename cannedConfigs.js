@@ -52,39 +52,57 @@ function getCannedConfigs(mode, generalSettings) {
         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'drosophila') {     // this is what you get by default if no mode specifed.
-        generalSettings.cameraPosition = [122.,29,142.];     // expected by trackerUtils.
-        generalSettings.rotateYAmount = .002;
+        generalSettings.cameraPosition = [8.,2,0];     // expected by trackerUtils.
+        generalSettings.rotateYAmount = .004;
         generalSettings.fog = true;
 
-        var uniforms = TRANSFORM.reimannShaderList.createShader('other');
-        configs['other'] = {
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.textureUAdjustment.value = 0.485;
+        configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',
             'textureName': 'altesMuster.png',
             'geometry': 'floor',
-            'position': [0.0,-50,0],
-            'scale': [200,200,-200],
+            'position': [0.0,-2.5,0],
+            'scale': [50,50,1],
+        }
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane1');
+         configs['plane1'] = {
+            'uniforms': uniforms, 
+            'textureType': 'mirror2', 
+            'geometry': 'plane', 
+            'scale': [2,2,2],
+            'position': [2.5,0,0],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': Math.PI/2
         }
 
-         configs['default'] = {
-            'uniforms': uniforms,   // we don't really need these except the editor expects them and will try to set them
-                                    // so setting them here prevents errors. TODO: fix this.
-            'textureType': 'mirror',
-            // 'textureName': 'drosophila',
-            'geometry': 'catenoid',
-            'position': [0,-25,0],
-            'scale': [1,1.,2.],
-            'rotationAxis': new THREE.Vector3( 1, 0, 0 ),
-            'rotationAngle': Math.PI/2 
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane2');
+         configs['plane2'] = {
+            'uniforms': uniforms, 'textureType': 'mirror2', 'geometry': 'plane', 
+            'scale': [2,2,2],
+            'position': [0,0,-2.5],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': Math.PI
         }
 
-        //  configs['cylinder'] = {
-        //     'textureType': 'mirror',
-        //     // 'textureName': 'drosophila',
-        //     'geometry': 'cylinder',
-        //     'position': [100,0,0],
-        //     'scale': [5,.25,5],
-        // }
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane3');
+         configs['plane3'] = {
+            'uniforms': uniforms, 'textureType': 'mirror2', 'geometry': 'plane', 
+            'scale': [2,2,2],
+            'position': [0,0,2.5],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': 0
+        }
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane4');
+         configs['plane4'] = {
+            'uniforms': uniforms, 'textureType': 'mirror2', 'geometry': 'plane', 
+            'scale': [2,2,2],
+            'position': [-2.5,0,0],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': -Math.PI/2
+        }
 
         configs['skyDome'] = phongSkyDome() ;
     }
@@ -290,7 +308,7 @@ function getCannedConfigs(mode, generalSettings) {
         generalSettings.rotateYAmount = 0.;
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        uniforms.textureScaleY.value = .7;
+        uniforms.textureScaleY.value = .6;
         uniforms.textureVAdjustment.value = -1;
         configs['default'] = {
             'uniforms': uniforms,
@@ -302,7 +320,7 @@ function getCannedConfigs(mode, generalSettings) {
         };
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
-        uniforms.textureScaleY.value = .7;
+        uniforms.textureScaleY.value = .6;
         uniforms.textureVAdjustment.value = -1;
         configs['default2'] = {
             'uniforms': uniforms,
@@ -313,6 +331,39 @@ function getCannedConfigs(mode, generalSettings) {
             'scale': [1,1,1],
         };
         configs['skyDome'] = phongSkyDome();
+    }
+    if (mode == 'something') {
+        generalSettings.cameraPosition = [1,0,-1];     // expected by trackerUtils.
+        generalSettings.rotateYAmount = 0.;
+
+        // configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
+
+        // var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
+        //  uniforms.fractalEffectOnOff.value = 2;
+        // configs['default2'] = {
+        //     'uniforms': uniforms,
+        //     'textureType': 'still',
+        //     'textureName': 'placeholderStill.png',
+        //     'geometry': 'sphere',
+        //     'position': [0,0,0],
+        //     'scale': [2,2,2],
+        //     'rotationAxis': new THREE.Vector3( 1, 1, 0 ),
+        //     'rotationAngle': Math.PI
+        // };
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        // uniforms.uHighPassFilterThreshold.value = new THREE.Vector3(.5, .5, .5  );
+        // uniforms.uHighPassFilter.value = 1;
+        // uniforms.complexEffect3OnOff.value = 0;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'churchYard.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+
     }
     if (mode == 'fractal') {
         generalSettings.cameraPosition = [23.8, 0.1, -1.4];
