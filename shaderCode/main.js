@@ -31,6 +31,7 @@ var x = `
     uniform int enableTracking;
     uniform float trackingX;
     uniform float trackingY;
+    uniform bool flipTexture;
     uniform float textureUAdjustment;
     uniform float textureVAdjustment;
     uniform int complexEffect1OnOff;

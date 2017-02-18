@@ -39,16 +39,6 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
-
-        // var uniforms = TRANSFORM.reimannShaderList.createShader('other');
-        // configs['other'] = {
-        //     'uniforms': uniforms,
-        //     'textureType': 'still',
-        //     'textureName': 'uv.jpg',
-        //     'geometry': 'torus',
-        //     'position': [24.0,0,0],
-        //     'scale': [1,1,-1],
-        // }
         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'drosophila') {     // this is what you get by default if no mode specifed.
@@ -299,7 +289,7 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,0,0],
             'scale': [1,1,1],
         };
-        uniforms.textureVAdjustment.value = -1;
+        uniforms.flipTexture.value = 1;
         configs['skyDome'] = phongSkyDome();
     }
     if (mode == 'domes') {
@@ -309,7 +299,7 @@ function getCannedConfigs(mode, generalSettings) {
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         uniforms.textureScaleY.value = .6;
-        uniforms.textureVAdjustment.value = -1;
+        uniforms.flipTexture.value = 1;
         configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'video',
@@ -321,7 +311,7 @@ function getCannedConfigs(mode, generalSettings) {
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
         uniforms.textureScaleY.value = .6;
-        uniforms.textureVAdjustment.value = -1;
+        uniforms.flipTexture.value = 1;
         configs['default2'] = {
             'uniforms': uniforms,
             'textureType': 'video',
@@ -335,8 +325,12 @@ function getCannedConfigs(mode, generalSettings) {
     if (mode == 'something') {
         generalSettings.cameraPosition = [1,0,-1];     // expected by trackerUtils.
         generalSettings.rotateYAmount = 0.;
+        // generalSettings.cameraPosition = [8.,2,0];     // expected by trackerUtils.
+        // generalSettings.rotateYAmount = .004;
+        generalSettings.fog = true;
 
-        // configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
+
+        //configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
 
         // var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
         //  uniforms.fractalEffectOnOff.value = 2;
@@ -355,13 +349,54 @@ function getCannedConfigs(mode, generalSettings) {
         // uniforms.uHighPassFilterThreshold.value = new THREE.Vector3(.5, .5, .5  );
         // uniforms.uHighPassFilter.value = 1;
         // uniforms.complexEffect3OnOff.value = 0;
+        uniforms.textureScaleY.value = .7 ;
          configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',
             'textureName': 'churchYard.jpg',
-            'geometry': 'sphere',
+            'geometry': 'tsphere',
             'position': [0,0,0],
-            'scale': [1,1,-1],
+            'scale': [1,1,1],
+        }
+        uniforms.flipTexture.value = 1;
+        var sFactor = 15;
+        var scale = 2*sFactor/2.5;
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane1');
+         configs['plane1'] = {
+            'uniforms': uniforms, 
+            'textureType': 'mirror2', 
+            'geometry': 'plane', 
+            'scale': [scale,scale,scale],
+            'position': [sFactor,0,0],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': -Math.PI/2
+        }
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane2');
+         configs['plane2'] = {
+            'uniforms': uniforms, 'textureType': 'mirror2', 'geometry': 'plane', 
+            'scale': [scale,scale,scale],
+            'position': [0,0,-sFactor],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': 0
+        }
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane3');
+         configs['plane3'] = {
+            'uniforms': uniforms, 'textureType': 'mirror2', 'geometry': 'plane', 
+            'scale': [scale,scale,scale],
+            'position': [0,0,sFactor],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': Math.PI
+        }
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane4');
+         configs['plane4'] = {
+            'uniforms': uniforms, 'textureType': 'mirror2', 'geometry': 'plane', 
+            'scale': [scale,scale,scale],
+            'position': [-sFactor,0,0],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': Math.PI/2
         }
 
     }

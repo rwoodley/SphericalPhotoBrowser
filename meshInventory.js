@@ -13,7 +13,7 @@ function meshInventory(scene) {
         if (that.meshes.hasOwnProperty(meshName)) 
             console.log('"' + meshName + '" mesh already exists, not recreating.')
         else {
-            if (textureType == 'reimann') {
+            if (textureType == 'reimann') { 
                 that.meshes[meshName] = new meshManager(that.scene, position, scale, desiredGeoName, rotationAxis, rotationAngle);
                 that.reimannMeshes[meshName] = that.meshes[meshName];
             }

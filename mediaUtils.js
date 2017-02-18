@@ -188,15 +188,7 @@ function mediaUtils(canned, scene, camera,
                     .normalize()
                     .multiplyScalar(cameraVectorLength);
                 that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
-
             }
-            // $$$
-            // var unitVector = (new THREE.Vector3())
-            //     .copy(that.camera.position)
-            //     .normalize();
-            // _mirrorSphereCamera.position.set(unitVector.x, unitVector.y, unitVector.z);
-            // $$$
-
             that.camera.lookAt(new THREE.Vector3(0,0,0));
             rotateCameraY(that.camera, that.rotateYAmount);
             rotateCameraUpDown(that.camera, that.rotateXAmount);

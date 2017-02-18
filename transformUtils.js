@@ -65,17 +65,17 @@ function transformUtils(camera,
     this.animate = function() {
 
         var videoCurrentTime = 0;
-        if (that.mediaUtils.videoDisplayed) {
+        if (that.mediaUtils.videoManager.videoDisplayed) {
             if (that.capturer == undefined)
-                videoCurrentTime = that.mediaUtils.video.currentTime;
+                videoCurrentTime = that.mediaUtils.videoManager.video.currentTime;
             else
                 videoCurrentTime = that.capturer.getTiming().performancetime;
         }
         TRANSFORM.reimannShaderList.animate(
             that.mediaUtils.animationFrame,
-            that.mediaUtils.videoDisplayed,
+            that.mediaUtils.videoManager.videoDisplayed,
             videoCurrentTime,
-            that.mediaUtils.videoFileName);
+            that.mediaUtils.videoManager.videoFileName);
 
         that.mediaUtils.animate(that.cameraVectorLength, videoCurrentTime);
     }

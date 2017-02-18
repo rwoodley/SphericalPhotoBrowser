@@ -49,6 +49,7 @@ reimannShaderDetailsObject = function(name) {
         enableTracking: { type: 'i', value: 0 },
         textureX: { type: 'f', value: 0. },
         textureY: { type: 'f', value: 0. },
+        flipTexture: { type: 'i', value: 0 },
         textureUAdjustment: { type: 'f', value: 0 },
         textureVAdjustment: { type: 'f', value: 0 },
         complexEffect1OnOff: { type: 'i', value: 1 },

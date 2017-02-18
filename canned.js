@@ -148,7 +148,7 @@ function cannedRun(scene) {
                     clipBias: 0.003, 
                     textureWidth: WIDTH, 
                     textureHeight: HEIGHT, 
-                    color:0x889900 } );
+                    color:0x00aaaa } );
                 mesh.mesh.material =  verticalMirror.material;
 				mesh.mesh.add( verticalMirror );
                 _verticalMirror[meshName] = verticalMirror;

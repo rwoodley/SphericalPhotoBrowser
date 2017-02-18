@@ -1,9 +1,10 @@
 SHADERCODE.mainShader_fs = function() {
 var x = `  
 vec2 getNewUVForWrappedTexture(vec2 inUV) {
-    vec2 uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(inUV.y + textureVAdjustment, 1.));
-    if (textureVAdjustment < 0.)    // hack to flip texture upside down.
-        uv = vec2(mod(inUV.x + textureUAdjustment, 1.), mod(1.0 - inUV.y, 1.));
+    vec2 uv = vec2( mod(inUV.x + textureUAdjustment, 1.), 
+                    mod(inUV.y + textureVAdjustment, 1.));
+    if (flipTexture)    // hack to flip texture upside down.
+        uv = vec2(uv.x, mod(1.0 - uv.y, 1.));
 
     float widthx = 1./textureScaleX;
     float widthy = 1./textureScaleY;
@@ -222,7 +223,11 @@ vec2 uvToComplex(vec2 uv) {
 }
 vec2 getNewTrackerUVForWrappedTexture(vec2 inUV) {
     // this is almost an identical copy of getNewUVForWrappedTexture except for signs in next line:
-    vec2 uv = vec2(mod(inUV.x - textureUAdjustment, 1.), mod(inUV.y - textureVAdjustment, 1.));
+    vec2 uv = vec2( mod(inUV.x - textureUAdjustment, 1.), 
+                    mod(inUV.y - textureVAdjustment, 1.));
+    if (flipTexture)    // hack to flip texture upside down.
+        uv = vec2(uv.x, mod(1.0 - uv.y, 1.));
+
     float widthx = 1.;
     float minx = .5 - widthx/2.;
     float maxx = .5 + widthx/2.;
