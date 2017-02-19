@@ -58,7 +58,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         if (uv.y < .15)
             return vec4(0.,0.,0.,1.);
     }
-    if (uHighPassFilter == 1) {
+    if (uHighPassFilter == 1) { 
         vec4 t1 = wrappedTexture2D( iChannel0,  uv);
         if (
         t1.r > uHighPassFilterThreshold.r &&
@@ -83,7 +83,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     }
 
     vec4 clr;
-    if (uMaskType == 1 || uMaskType == 3) {   // delay mask
+    if (uMaskType == 1 || uMaskType == 3) {   // delay mask (1) or still mask (3)
         float d = .0001;
         float dp = 1. + d;
         float dm = 1. - d;

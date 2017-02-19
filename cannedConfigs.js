@@ -322,8 +322,8 @@ function getCannedConfigs(mode, generalSettings) {
         };
         configs['skyDome'] = phongSkyDome();
     }
-    if (mode == 'something') {
-        generalSettings.cameraPosition = [1,0,-1];     // expected by trackerUtils.
+    if (mode == 'flockingMirrors') {
+        generalSettings.cameraPosition = [1.7,-.7,-1.4];     // expected by trackerUtils.
         generalSettings.rotateYAmount = 0.;
         // generalSettings.cameraPosition = [8.,2,0];     // expected by trackerUtils.
         // generalSettings.rotateYAmount = .004;
@@ -350,10 +350,12 @@ function getCannedConfigs(mode, generalSettings) {
         // uniforms.uHighPassFilter.value = 1;
         // uniforms.complexEffect3OnOff.value = 0;
         uniforms.textureScaleY.value = .7 ;
+        uniforms.uHighPassFilter.value = 1;
+        uniforms.uMaskType.value = 2; // green mask just to hide the green screen a bit.
          configs['default'] = {
             'uniforms': uniforms,
-            'textureType': 'still',
-            'textureName': 'churchYard.jpg',
+            'textureType': 'video',
+            'textureName': 'flockingCropped',
             'geometry': 'tsphere',
             'position': [0,0,0],
             'scale': [1,1,1],
