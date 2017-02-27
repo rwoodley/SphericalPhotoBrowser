@@ -8,7 +8,8 @@ function videoManager() {
     this.videoDisplayed = false;
 
     this.newVideo = function(pid) {
-        that.videoDisplayed = true;
+        // if (that.videoDisplayed && that.videoFileName == pid)
+        //     return;
         var pathToTexture = 'media/' + pid + '.mp4';
         console.log('loading: ' + pathToTexture);
         that.videoFileName = pid;

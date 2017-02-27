@@ -15,6 +15,16 @@ function appendSingleIcon(containerEl, style, png, title, callback) {
     $(el).click(callback);
     containerEl.appendChild(el);
 }
+function antipode(inx,iny) {
+    // -(1/conj(x,y))
+    var x = inx;
+    var y = -iny; // conjugate
+    var denom = x*x + y*y;
+    return {
+        x: -x/denom,
+        y: y/denom
+    }
+}
 
 function onWindowResize() {
 

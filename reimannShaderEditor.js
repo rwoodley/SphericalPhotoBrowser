@@ -221,7 +221,7 @@ this.reimannUniformsEditor = function(
         	that.currentUniforms.e1y.value = y;
         	that.detailsObject.point1Defined = true;
         	if (!that.detailsObject.point2Defined) {
-            	var ant = that.antipode(x,y);
+            	var ant = antipode(x,y);
             	that.currentUniforms.e2x.value = ant.x;
             	that.currentUniforms.e2y.value = ant.y;	            		
         	}
@@ -231,7 +231,7 @@ this.reimannUniformsEditor = function(
         	that.currentUniforms.e2y.value = y;	            	
         	that.detailsObject.point2Defined = true;
         	if (!that.detailsObject.point1Defined) {
-            	var ant = that.antipode(x,y);
+            	var ant = antipode(x,y);
             	that.currentUniforms.e1x.value = ant.x;
             	that.currentUniforms.e1y.value = ant.y;	            		
         	}
@@ -277,16 +277,6 @@ this.reimannUniformsEditor = function(
         that.setLoxoPoint(
             that.currentUniforms.loxodromicX.value * factor,
             that.currentUniforms.loxodromicY.value * factor);
-    }
-    this.antipode = function(inx,iny) {
-    	// -(1/conj(x,y))
-    	var x = inx;
-    	var y = -iny; // conjugate
-    	var denom = x*x + y*y;
-    	return {
-    		x: -x/denom,
-    		y: y/denom
-    	}
     }
     this.showHelpPage = function() {
         window.location.href = 'info.html';

@@ -49,7 +49,9 @@ function cannedRun(scene) {
         // Initial Y rotation is determined entirely by cameraPosition. 
         this.generalSettings.rotateYAmount = 0.0005;    // additional rotation on each call to animate().
         this.generalSettings.videoReloadDelayInSeconds = 30;
-        this.configs = getCannedConfigs(mode, that.generalSettings)
+        var retdic = getCannedConfigs(mode, that.generalSettings);
+        that.configs = retdic['configs'];
+        that.keyControls = retdic['keyControls'];
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
         mediaUtils.camera.position.set(
@@ -176,6 +178,8 @@ function cannedRun(scene) {
             }
         }
         mediaUtils.doneLoadingConfig();
+        if (this.keyControls != undefined)
+            mediaUtils.onkeydown = this.keyControls.onKeyDown;
     }
     // ----
     this.init();

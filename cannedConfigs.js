@@ -26,6 +26,7 @@ function normalSkyDome() {
 }
 function getCannedConfigs(mode, generalSettings) {
     configs = {};
+    keycontrols = undefined;
     if (mode == 'uv') {     // this is what you get by default if no mode specifed.
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
@@ -39,7 +40,8 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
-        configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+        configs['skyDome'] = phongSkyDome();
+         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'drosophila') {     // this is what you get by default if no mode specifed.
         generalSettings.cameraPosition = [8.,2,0];     // expected by trackerUtils.
@@ -322,6 +324,37 @@ function getCannedConfigs(mode, generalSettings) {
         };
         configs['skyDome'] = phongSkyDome();
     }
+    if (mode == 'mathArt') {
+        generalSettings.cameraPosition = [20,0 ,0];
+        generalSettings.videoReloadDelayInSeconds = -1;
+        generalSettings.rotateYAmount = 0.;
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.textureScaleY.value = .6;
+        uniforms.flipTexture.value = 1;
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'lakeStreet',
+            'geometry': 'sphere',
+            'position': [0,0,-12],
+            'scale': [1,-1,1],
+        };
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
+        uniforms.textureScaleY.value = .6;
+        uniforms.flipTexture.value = 1;
+        configs['default2'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'lakeStreet',
+            'geometry': 'plane',
+            'position': [0,0,12],
+            'scale': [9,-9,9],
+        };
+        configs['skyDome'] = phongSkyDome();
+        keycontrols = new keyControls(['default', 'default2'], 1,0,-1,0);
+    }
     if (mode == 'flockingMirrors') {
         generalSettings.cameraPosition = [1.7,-.7,-1.4];     // expected by trackerUtils.
         generalSettings.rotateYAmount = 0.;
@@ -430,6 +463,9 @@ function getCannedConfigs(mode, generalSettings) {
         };
         configs['skyDome'] = normalSkyDome();
     }
-    return configs;    
+    return {
+        'configs': configs,
+        'keyControls': keycontrols
+    };    
     
 }
