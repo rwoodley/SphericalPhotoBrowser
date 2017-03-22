@@ -301,16 +301,22 @@ void main() {
     }
     if (hyperbolicTilingEffectOnOff > 0) {
         // fractal is in the bottom half plane. Rotate so it is over-head.
-        vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
-        vec2 b1 = applyRotation(b, 0.5*3.1415926);
-        a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
-
-        schottkyResult tesselationResult = applyHyperbolicTesselation(a);
+        // vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
+        // vec2 b1 = applyRotation(b, 0.5*3.1415926);
+        // a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
+        
+        schottkyResult tesselationResult = applyHyperbolicTesselation2(a);
         // for math functions, either sample from texture or use a color map.
         if (uColorVideoMode > 0.) {
             int iter = tesselationResult.iter;
-            float fiter = 0.1 * float(iter);
+            float fiter = .1 * float(iter);
             gl_FragColor = getRGBAForIter(iter,fiter);
+            if (tesselationResult.flag == 1)
+                gl_FragColor.a = .1;
+            if (iter == 0)
+                gl_FragColor = vec4(.25,0.,.25,1.);
+            if (iter > 98)
+                gl_FragColor = vec4(.25,0.25,.25,1.);
             return;
         }
         else
@@ -396,40 +402,10 @@ void main() {
             trackerToComplex(u3r2 )
             );
 
-        // vec2 newp2 = threePointMapping(
-        //     trackerToComplex(u3p2),
-            
-        //     trackerToComplex(u3p2),
-        //     trackerToComplex(u3q2),
-        //     trackerToComplex(u3r2),
-        //     trackerToComplex(u3p1),
-        //     trackerToComplex(u3q1),
-        //     trackerToComplex(u3r1)
-        //     );
-
-        // vec2 newq2 = threePointMapping(
-        //     trackerToComplex(u3q2),
-
-        //     trackerToComplex(u3p1),
-        //     trackerToComplex(u3q1),
-        //     trackerToComplex(u3r1),
-        //     trackerToComplex(u3p2),
-        //     trackerToComplex(u3q2),
-        //     trackerToComplex(u3r2)
-        //     );
-
         vec3 p1InCartesian = complexToCartesian(trackerToComplex(u3p1 ));
         vec3 p2InCartesian = complexToCartesian(trackerToComplex(u3p2 ));
         vec3 inresultInCartesian = complexToCartesian(inresult);
         vec3 resultInCartesian = complexToCartesian(result);
-        // if (distance(p2InCartesian, resultInCartesian) < .05) {
-        //     gl_FragColor = vec4(1.,0.,1.,1.);
-        //     return;
-        // } 
-        // if (distance(inresultInCartesian, p1InCartesian) < .10) {
-        //     gl_FragColor = vec4(1.,1.,1.,1.);
-        //     return;
-        // }
     }
 
     vec2 newuv = complexToUV(result);

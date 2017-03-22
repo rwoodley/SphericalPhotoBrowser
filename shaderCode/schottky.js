@@ -122,7 +122,7 @@ void defineInitialCircles3() {   // indra's necklace page 165, 170
     initialCircles.B.center = vec2(-x/y,0.);
     initialCircles.B.radius = 1./y;
 }
-void defineInitialCircles4() {   // indra's necklace page 201. apollonian gasket.
+void defineInitialCircles4old() {   // indra's necklace page 201. apollonian gasket.
 
     group_a = xformCtor(vec2(1.,0.), vec2(0.,0.), vec2(0.,-2.), vec2(1.,0.));
     group_b = xformCtor(vec2(1.,-1.), vec2(1.,0.), vec2(1.,0.), vec2(1.,1.));
@@ -138,6 +138,23 @@ void defineInitialCircles4() {   // indra's necklace page 201. apollonian gasket
     initialCircles.b.radius = 1.;
     initialCircles.B.center = vec2(-1.,-1.);
     initialCircles.B.radius = 1.;
+}
+void defineInitialCircles4() {   // modified apollonian gasket.
+
+    group_a = xformCtor(vec2(1.,0.), vec2(2.,0.), vec2(0.,0.), vec2(1.,0.));    // T
+    group_b = xformCtor(vec2(1.,0.), vec2(0.,0.), vec2(-2., 0.), vec2(1.,0.));  // S
+    group_A = inverseXformCtor(group_a);
+    group_B = inverseXformCtor(group_b);
+
+    initialCircles.a.center = vec2(10001, 0.);
+    initialCircles.a.radius = 10000.;
+    initialCircles.A.center = vec2(-10001,0.);
+    initialCircles.A.radius = 10000.;
+
+    initialCircles.b.center = vec2(-.5,0.);
+    initialCircles.b.radius = 0.5;
+    initialCircles.B.center = vec2(.5,0.);
+    initialCircles.B.radius = 0.5;
 }
 void defineInitialCircles() {
     if (schottkyEffectOnOff == 1)
@@ -239,6 +256,7 @@ struct schottkyResult {
     int iter;
     vec2 inverseZ;
     vec2 glitchZ;   // just a pretty effect i got by doing something wrong.
+    int flag;
 };
 circle applyTransformsToCircle(circle c, xform[6] xforms, int n) {
     circle res = c;
@@ -299,31 +317,100 @@ schottkyResult applyFractal(in vec2 z0) {
 schottkyResult applyHyperbolicTesselation(in vec2 z0) {
     // see https://en.wikipedia.org/wiki/Modular_group#Tessellation_of_the_hyperbolic_plane
     vec2 z = z0;
-    xform xf1 = xformCtor(zero,-one,one,zero);
-    xform xf2 = xformCtor(one, one, zero, one);
-    xform xf3 = xformCtor(one, -one, zero, one);
-    if (z.y <=0.)
-        z.y = z.y * -1.;
-    schottkyResult res;
+    float N = 4.0;
     const int MAX_ITER = 100;
-    for (int iter = 0; iter < MAX_ITER; iter++) {
-        if (length(z) > 1. && abs(z.x) < .5 && z.y > 0.) {
+
+    schottkyResult res;
+    for (int ilambda = 1; ilambda < 2; ilambda++) {
+        float lambda = float(1);
+        xform xf1 = xformCtor(zero, -one, one,one);   // S - inversion
+        xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
+
+        if (z.y <=0.) { // lower half-plane, ignore.
             res.inverseZ = z;
-            res.iter = iter;
+            res.iter = 0;
             return res;
+            // z.y = z.y * -1.;
         }
 
-        if (length(z) < 1.)
-            z = applyInverseMobiusTransformation(z, xf1);
-        else if (z.x < -.5)
-            z = applyInverseMobiusTransformation(z, xf3);
-        else
-            z = applyInverseMobiusTransformation(z, xf2);
+        vec2 leftCenter = vec2(-.5,0);
+        vec2 rightCenter = vec2(.5,0);
+        for (int iter = 0; iter < MAX_ITER; iter++) {
+            float realBoundary = lambda/2.;
+            if (length(z) > 1. && abs(z.x) < realBoundary && z.y > 0.) {
+                res.inverseZ = z;
+                res.iter = iter+1;
+                // if (abs(z.x) < 0.05 && abs(z.y) > 1.)
+                //     res.flag = 0;
+                // else
+                //     res.flag = 1;
+                return res;
+            }
+
+            if (length(z) < 1.)
+                z = applyInverseMobiusTransformation(z, xf1);
+            else if (z.x < -realBoundary)
+                z = applyMobiusTransformation(z, xf2);
+            else
+                z = applyInverseMobiusTransformation(z, xf2);
+        }
     }
     res.inverseZ = z;
     res.iter = MAX_ITER;
     return res;
 }
+schottkyResult applyHyperbolicTesselation2(in vec2 z0) {
+    // see https://en.wikipedia.org/wiki/Modular_group#Tessellation_of_the_hyperbolic_plane
+    vec2 z = z0;
+    float N = 4.0;
+    const int MAX_ITER = 100;
+
+    schottkyResult res;
+    for (int ilambda = 1; ilambda < 2; ilambda++) {
+        float lambda = float(2);
+        // xform xf1 = xformCtor(zero, -one, one,one);   // S - inversion
+        // xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
+        xform xf1 = xformCtor(one, zero, -lambda*one,one);   // S - inversion
+        xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
+
+        // if (z.y <=0.) { // lower half-plane, ignore.
+        //     res.inverseZ = z;
+        //     res.iter = 0;
+        //     return res;
+        //     // z.y = z.y * -1.;
+        // }
+
+        vec2 leftCenter = vec2(-.5,0);
+        vec2 rightCenter = vec2(.5,0);
+        for (int iter = 0; iter < MAX_ITER; iter++) {
+            float lenLeftCircle = distance(vec2(-.5,0),z);
+            float lenRightCircle = distance(vec2(.5,0),z);
+            float realBoundary = lambda/2.;
+            if ((lenLeftCircle > .5 && lenRightCircle > .5) && abs(z.x) < realBoundary ) {
+                res.inverseZ = z;
+                res.iter = iter+1;
+                // if (abs(z.x) < 0.05 && abs(z.y) > 1.)
+                //     res.flag = 0;
+                // else
+                //     res.flag = 1;
+                return res;
+            }
+
+            if (lenLeftCircle < .5 )
+                z = applyInverseMobiusTransformation(z, xf1);
+            else if (lenRightCircle < .5) 
+                z = applyMobiusTransformation(z, xf1);
+            else if (z.x < -realBoundary)
+                z = applyMobiusTransformation(z, xf2);
+            else
+                z = applyInverseMobiusTransformation(z, xf2);
+        }
+    }
+    res.inverseZ = z;
+    res.iter = MAX_ITER;
+    return res;
+}
+
 `;
 return x;
 }

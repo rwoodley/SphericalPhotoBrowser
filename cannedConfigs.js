@@ -40,6 +40,41 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
+        // configs['skyDome'] = phongSkyDome();
+         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+    }
+    if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        generalSettings.cameraPosition = [-10.8,0,0.];     // expected by trackerUtils.
+        uniforms.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms.complexEffect3OnOff.value = 0;
+        uniforms.uColorVideoMode.value = mode == 'hyperbolicTessellation' ?  2 : 3;
+        generalSettings.rotateYAmount = 0.;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+        configs['skyDome'] = phongSkyDome();
+         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+    }
+    if (mode == 'apollonian' ) {
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        generalSettings.cameraPosition = [-10.8,0,0.];     // expected by trackerUtils.
+        uniforms.schottkyEffectOnOff.value = 3;
+        uniforms.uColorVideoMode.value = mode == 'hyperbolicTessellation' ?  2 : 3;
+        generalSettings.rotateYAmount = 0.;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
         configs['skyDome'] = phongSkyDome();
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
