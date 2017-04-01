@@ -85,7 +85,8 @@ function transformUtils(camera,
     this.reimannShaderEditor = new reimannUniformsEditor(
         this.camera, this.mediaUtils,
         transformControlsContainerId, complexControlsContainerId, 
-        transformControls2ContainerId, textureControlsContainerId
+        transformControls2ContainerId, textureControlsContainerId,
+        new SU2Symmetries()
     );
     if (detailsObject != undefined)
         this.reimannShaderEditor.setShaderDetails(detailsObject);

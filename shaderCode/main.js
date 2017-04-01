@@ -51,7 +51,11 @@ var x = `
     uniform int uHighPassFilter;
     uniform vec3 uHighPassFilterThreshold;
     uniform int  uNadirMask;
-    uniform int uTetrahedralGroup;
+    uniform int uApplyMobiusTransform;
+    uniform vec2 uXformA;
+    uniform vec2 uXformB;
+    uniform vec2 uXformC;
+    uniform vec2 uXformD;
     uniform int  uMaskType;
     uniform int  uTextureNumber;
 

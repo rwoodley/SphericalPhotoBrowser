@@ -15,8 +15,7 @@ function keyControls(inMeshNames, e1x, e1y, e2x, e2y) {
             this.iterateOverMeshes(
                 {},
                 function(unused, meshName, detailsObject, uniforms) {
-                    uniforms.uTetrahedralGroup.value = uniforms.uTetrahedralGroup.value+1;
-                    uniforms.uTetrahedralGroup.value = uniforms.uTetrahedralGroup.value%12;            
+                    // TODO
                 }
             );
         }

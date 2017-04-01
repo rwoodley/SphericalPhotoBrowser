@@ -390,8 +390,11 @@ void main() {
     if (complexEffect5OnOff == 1) {
         result = cx_log(result);
     }
-    if ( uTetrahedralGroup > 0) {
-        result = tetrahedralGroup(result, uTetrahedralGroup);
+    if (uApplyMobiusTransform > 0) {
+        result = applyInverseMobiusTransformation(result, 
+            xformCtor(uXformA, uXformB, uXformC, uXformD));
+        // result = applyMobiusTransformation(result, 
+        //     xformCtor(vec2(-1.,0.), vec2(0.,0.), vec2(0.0,0.), vec2(1.,0.)));
     }
     if (uThreePointMappingOn) {
         vec2 inresult = result;

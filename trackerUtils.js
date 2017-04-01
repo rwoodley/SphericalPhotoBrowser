@@ -13,7 +13,6 @@ function threePointTracker(videoFileName) {
         uniforms.u3p1.value = that.startPoint[0];
         uniforms.u3q1.value = that.startPoint[1];
         uniforms.u3r1.value = that.startPoint[2];
-
         uniforms.u3p2.value = 
             that.tracker[0].getXYAsVector2(currentTime);
         uniforms.u3q2.value = 
@@ -30,20 +29,26 @@ function threePointTracker(videoFileName) {
 var _trackerUtilsFileName = "tubes/woman1WhiteShirt.json";
 function trackerUtils(filename) {
     var that = this;
-    this.coords = [];
-    this.coordsIndex = 0;
     this.previousCoord = undefined;
     var data = $.ajax({
         type: "GET",
         url: filename,
         async: false
     }).responseText;
-    that.coords = JSON.parse(data);
-    that.previousCoord = that.coords[0];
+    this.getCoords = function(index) {
+        // this should be the only place the coords structure is accessed.
+        var scale = 2.0;
+        return [
+            that._coords[index][0]/scale,
+            that._coords[index][1]/scale,
+            that._coords[index][2],
+        ];
+    }
+    that._coords = JSON.parse(data);
+    that.previousCoord = that.getCoords(0);
     that.coordIndex = 0;
-
     this.reset = function() {
-        that.previousCoord = that.coords[0];
+        that.previousCoord = that.getCoords(0);
         that.coordIndex = 0;
     }
     this.getXYAsVector2 = function(currentTime) {
@@ -51,15 +56,17 @@ function trackerUtils(filename) {
         return new THREE.Vector2(coords[0], coords[1]);
     }
     this.getXY = function(currentTime) {
-        while ( that.coordIndex < that.coords.length-1) {
-            var coord = that.coords[that.coordIndex];
+        while ( that.coordIndex < that._coords.length-1) {
+            var coord = that.getCoords(that.coordIndex);
             if (coord[2] > currentTime) {
+                if (that.previousCoord[2] == coord[2])
+                    return coord;
                 return this.lerp(that.previousCoord, coord, currentTime);
             }
             that.previousCoord = coord;
             that.coordIndex++;
         }
-        return that.coords[that.coords.length-1];
+        return that.getCoords(that._coords.length-1);
     }    
     this.lerp = function(pc, c, ct) {
         var fullIntervalLength = c[2] - pc[2];

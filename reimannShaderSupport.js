@@ -63,7 +63,14 @@ reimannShaderDetailsObject = function(name) {
         uBlackMask: { type: 'i', value: 0 },
         uHighPassFilter : { type: 'i', value: 0 },
         uNadirMask: { type: 'i', value: 0 },
-        uTetrahedralGroup: { type: 'i', value:-1},
+        uApplyMobiusTransform: { type: 'i', value:-1},
+
+        uXformA: { type: "v2", value: new THREE.Vector2(0,0) },
+        uXformB: { type: "v2", value: new THREE.Vector2(0,0) },
+        uXformC: { type: "v2", value: new THREE.Vector2(0,0) },
+        uXformD: { type: "v2", value: new THREE.Vector2(0,0) },
+
+
         uMaskType: { type: 'i', value: 0 },
         uTextureNumber: { type: 'i', value: 0 },
         e1x: { type: 'f', value: 0. },
