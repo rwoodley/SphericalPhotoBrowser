@@ -390,6 +390,9 @@ void main() {
     if (complexEffect5OnOff == 1) {
         result = cx_log(result);
     }
+    if ( uTetrahedralGroup > 0) {
+        result = tetrahedralGroup(result, uTetrahedralGroup);
+    }
     if (uThreePointMappingOn) {
         vec2 inresult = result;
         result = threePointMapping(

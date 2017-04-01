@@ -23,6 +23,7 @@
         <script src="shaderCode/droste.js"></script>
         <script src="shaderCode/schottky.js"></script>
         <script src="shaderCode/mathUtils.js"></script>
+        <script src="shaderCode/symmetryUtils.js"></script>
         <script src="shaderCode/mobiusTransformUtils.js"></script>
         <script src="shaderCode/mainShader_fs.js"></script>
         <script src="shaderCode/outerShader_fs.js"></script>
@@ -162,7 +163,8 @@ $().ready(function() {
 		  controls="true" autoplay="true">
 		</video>
 		<div id="container"><br /><br /><br /><br /><br />Generating...</div>
-
+        <div id="matrixText" style="display: block; position: fixed; top: 10%; left: 10%; font-size: 40px; color: red; ">
+        </div>
         <div style="position: fixed; top: 30%; width:95%; ">
              <div id='cameraText' class="statusText"></div>
              <div id='unitVectorText' class="statusText"></div>

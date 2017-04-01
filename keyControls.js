@@ -11,6 +11,15 @@ function keyControls(inMeshNames, e1x, e1y, e2x, e2y) {
             if (e.keyCode == 83)  // s - stop
                 that.rotationOff();
         }
+        if (e.keyCode == 84) {  // t - tetrahedral symmetry.
+            this.iterateOverMeshes(
+                {},
+                function(unused, meshName, detailsObject, uniforms) {
+                    uniforms.uTetrahedralGroup.value = uniforms.uTetrahedralGroup.value+1;
+                    uniforms.uTetrahedralGroup.value = uniforms.uTetrahedralGroup.value%12;            
+                }
+            );
+        }
     }
     this.init = function(e1x, e1y, e2x, e2y) {
         that.setFixedPoint(1, e1x, e1y);

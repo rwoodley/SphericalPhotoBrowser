@@ -43,6 +43,24 @@ function getCannedConfigs(mode, generalSettings) {
         // configs['skyDome'] = phongSkyDome();
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
+    if (mode == 'tetra') {     // this is what you get by default if no mode specifed.
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        var s3 = 1./Math.sqrt(3.0);
+        generalSettings.cameraPosition = [-s3,-s3,-s3];
+        uniforms.textureUAdjustment.value = -0.2;
+        uniforms.textureVAdjustment.value = -0.15;
+        generalSettings.rotateYAmount = 0.;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'tetrahedron.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+        // configs['skyDome'] = phongSkyDome();
+         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+    }
     if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [-10.8,0,0.];     // expected by trackerUtils.

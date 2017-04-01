@@ -63,6 +63,7 @@ reimannShaderDetailsObject = function(name) {
         uBlackMask: { type: 'i', value: 0 },
         uHighPassFilter : { type: 'i', value: 0 },
         uNadirMask: { type: 'i', value: 0 },
+        uTetrahedralGroup: { type: 'i', value:-1},
         uMaskType: { type: 'i', value: 0 },
         uTextureNumber: { type: 'i', value: 0 },
         e1x: { type: 'f', value: 0. },
@@ -139,6 +140,7 @@ function getReimannShaderMaterial(texture, uniforms) {
         + SHADERCODE.uniformsAndGlobals()
         + SHADERCODE.mathUtils()
         + SHADERCODE.mobiusTransformUtils()
+        + SHADERCODE.symmetryUtils()
         + SHADERCODE.drosteUtils()
         + SHADERCODE.schottkyUtils()
         + SHADERCODE.mainShader_fs()

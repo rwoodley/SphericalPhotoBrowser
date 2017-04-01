@@ -54,6 +54,20 @@ this.reimannUniformsEditor = function(
             if (e.keyCode == 83)  // s - stop
                 that.mediaUtils.cameraStop();
         }
+        if (e.keyCode == 84) {  // t - tetrahedral symmetry.
+            that.currentUniforms.uTetrahedralGroup.value = that.currentUniforms.uTetrahedralGroup.value+1;
+            that.currentUniforms.uTetrahedralGroup.value = that.currentUniforms.uTetrahedralGroup.value%12;
+            var labels = getTetrahedralGroupDisplayString(that.currentUniforms.uTetrahedralGroup.value);
+            var template = 
+            "<table><tr><td>&nbsp&nbsp&nbsp;&nbsp</td><td>&nbsp&nbsp&nbsp&nbsp</td></tr></tr>" + 
+            "<tr><td align='right'>$1</td><td align='right'>$2</td></tr><tr><td align='right'>$3</td><td align='right'>$4</td></tr>";
+            var str = template
+            .replace('$1', labels[0])
+            .replace('$2', labels[1])
+            .replace('$3', labels[2])
+            .replace('$4', labels[3]);
+            document.getElementById('matrixText').innerHTML = str;
+        }
         var textureNumber = e.keyCode - 48;
         if (textureNumber < 10 && textureNumber >= 0)
             that.currentUniforms.uTextureNumber.value = textureNumber;        
@@ -87,6 +101,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
         appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use high pass filter', that.beigeMask);
         appendSingleIcon(container, 'transformControlIcon', 'nadir.png', 'mask out nadir', that.nadirMask);
+        appendSingleIcon(container, 'transformControlIcon', 'nadir.png', 'tetrahedral group', that.tetrahedralGroup);
 
     	var container = document.getElementById(that.textureControlsContainerId);
     	appendSingleIcon(container, 'cameraControlIcon', 'left.png', 'texture Left', that.textureLeft);
@@ -209,6 +224,11 @@ this.reimannUniformsEditor = function(
     }
     this.nadirMask = function() {
             that.currentUniforms.uNadirMask.value = that.currentUniforms.uNadirMask.value == 1 ? 0 : 1;
+    }
+    this.tetrahedralGroup = function() {
+            that.currentUniforms.uTetrahedralGroup.value = that.currentUniforms.uTetrahedralGroup.value+1;
+            that.currentUniforms.uTetrahedralGroup.value = that.currentUniforms.uTetrahedralGroup.value%12;
+            showToast("x = " + that.currentUniforms.uTetrahedralGroup.value, 500);
     }
     this.setFixedPoint1 = function() {that.setFixedPoint(1); }
     this.setFixedPoint2 = function() {that.setFixedPoint(2); }

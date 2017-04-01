@@ -1,5 +1,5 @@
-SHADERCODE.mobiusTransformUtils = function() {
-var x = `  
+SHADERCODE.mobiusTransformUtils = function () {
+    var x = `  
 
 // ====== Transformation Code
 // xform is a mobius transform.
@@ -71,6 +71,6 @@ vec2 threePointMapping(vec2 z, vec2 q1, vec2 r1, vec2 s1, vec2 q2, vec2 r2, vec2
     return w;
 }
 
-`;
-return x;
-}
+    `;
+        return x;
+    }
