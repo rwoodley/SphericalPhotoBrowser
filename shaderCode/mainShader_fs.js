@@ -305,7 +305,12 @@ void main() {
         // vec2 b1 = applyRotation(b, 0.5*3.1415926);
         // a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
         
-        schottkyResult tesselationResult = applyHyperbolicTesselation2(a);
+        schottkyResult tesselationResult;
+        if (hyperbolicTilingEffectOnOff == 1) 
+            tesselationResult = applyHyperbolicTesselation(a);
+        else
+            tesselationResult = applyHyperbolicTesselation2(a);
+
         // for math functions, either sample from texture or use a color map.
         if (uColorVideoMode > 0.) {
             int iter = tesselationResult.iter;

@@ -188,7 +188,8 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.fractalEffectOnOff.value = that.currentUniforms.fractalEffectOnOff.value == 0 ? 1 : 0;
     }
     this.hyperbolicTilingEffect = function() { 
-        that.currentUniforms.hyperbolicTilingEffectOnOff.value = that.currentUniforms.hyperbolicTilingEffectOnOff.value == 0 ? 1 : 0;
+        that.currentUniforms.hyperbolicTilingEffectOnOff.value = that.currentUniforms.hyperbolicTilingEffectOnOff.value == 0 ? 1 : 
+        that.currentUniforms.hyperbolicTilingEffectOnOff.value == 1 ?2 : 0;
     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.detailsObject.point1Defined && !that.detailsObject.point2Defined) {

@@ -63,10 +63,10 @@ function getCannedConfigs(mode, generalSettings) {
     }
     if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        generalSettings.cameraPosition = [-10.8,0,0.];     // expected by trackerUtils.
-        uniforms.hyperbolicTilingEffectOnOff.value = 1;
+        generalSettings.cameraPosition = [-10.8,0,0.];
+        uniforms.hyperbolicTilingEffectOnOff.value = mode == 'hyperbolicTessellation' ? 1 : 2;
         uniforms.complexEffect3OnOff.value = 0;
-        uniforms.uColorVideoMode.value = mode == 'hyperbolicTessellation' ?  2 : 3;
+        uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
         generalSettings.rotateYAmount = 0.;
          configs['default'] = {
             'uniforms': uniforms,
