@@ -43,14 +43,14 @@ function getCannedConfigs(mode, generalSettings) {
         // configs['skyDome'] = phongSkyDome();
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
-    if (mode == 'tetra') {     // this is what you get by default if no mode specifed.
+    if (mode == 'tetra') {  
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         var s3 = 1./Math.sqrt(3.0);
         generalSettings.cameraPosition = [-s3,-s3,-s3];
         uniforms.textureUAdjustment.value = -0.2;
         uniforms.textureVAdjustment.value = -0.15;
         generalSettings.rotateYAmount = 0.;
-         configs['default'] = {
+        configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',
             'textureName': 'tetrahedron.jpg',
@@ -59,7 +59,7 @@ function getCannedConfigs(mode, generalSettings) {
             'scale': [1,1,-1],
         }
         // configs['skyDome'] = phongSkyDome();
-         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+        // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
@@ -360,7 +360,7 @@ function getCannedConfigs(mode, generalSettings) {
             'textureType': 'video',
             'textureName': 'flockingCropped',
             'geometry': 'tsphere',
-            'position': [0,0,0],
+            'position': [-15,0,0],
             'scale': [1,1,1],
         };
 
@@ -372,7 +372,7 @@ function getCannedConfigs(mode, generalSettings) {
             'textureType': 'video',
             'textureName': 'flockingCropped',
             'geometry': 'tsphere',
-            'position': [30,0,0],
+            'position': [15,0,0],
             'scale': [1,1,1],
         };
         configs['skyDome'] = phongSkyDome();

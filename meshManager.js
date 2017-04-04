@@ -19,6 +19,9 @@ function getGeometryForName(geoName) {
     if (geoName == "sphere") {
         var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
     }
+    if (geoName == "box") {
+        var geo = new THREE.BoxGeometry(sphereRadius,sphereRadius,sphereRadius);
+    }
     if (geoName == "tsphere") {
         var geo = new THREE.SphereGeometry(sphereRadius,segment,segment, 0., 2.*Math.PI, 4.0, 2*Math.PI-4.0);
     }
@@ -126,6 +129,14 @@ function meshManager(scene, position, scale, desiredGeoName) {   // TODO: rename
             });
         }
         if (that.geoName == "tsphere") {
+            var mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            // mesh.rotateX(Math.PI/2. );
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+            });
+        }
+        if (that.geoName == "box") {
             var mesh = new THREE.Mesh( geo, that.materialGenerator() );
             // mesh.rotateX(Math.PI/2. );
             that._addMesh( mesh, function(msh, newMaterial) {

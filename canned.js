@@ -31,7 +31,6 @@ function cannedRun(scene) {
         this.initialUpDownRotation = undefined;
         this.fog = false;
     };
-    this.skyDomeMesh = undefined;
     this.init = function() {
         var mode = getParameter('mode', window.location.href);
 
@@ -143,6 +142,8 @@ function cannedRun(scene) {
                     _mirrorSphereCamera.position.copy(mesh.mesh.position);
             }
             else if (meshSpecs['textureType'] == 'mirror2') {
+                // mirror2 is used for planes. Uses THREE.Mirror instead of a CubeCamera. 
+                // Simpler if you want a bunch of mirrors.
                 mesh = getAnyMaterialMesh(meshName, meshSpecs);
                 var WIDTH = window.innerWidth;
                 var HEIGHT = window.innerHeight;

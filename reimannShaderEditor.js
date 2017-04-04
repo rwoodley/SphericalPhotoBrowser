@@ -59,6 +59,13 @@ this.reimannUniformsEditor = function(
         if (e.keyCode == 84) {  // t - tetrahedral symmetry.
             that.tetrahedralGroup();
         }
+        if (e.keyCode == 85) {  // u - take a snap.
+            var equiUnmanaged = new CubemapToEquirectangular( _renderer, false );
+            _mirrorSphereCamera.position.copy( that.camera.position );
+            _mirrorSphereCamera.updateCubeMap( _renderer, _innerScene );
+            equiUnmanaged.convert( _mirrorSphereCamera );
+        }
+
         var textureNumber = e.keyCode - 48;
         if (textureNumber < 10 && textureNumber >= 0)
             that.currentUniforms.uTextureNumber.value = textureNumber;        
