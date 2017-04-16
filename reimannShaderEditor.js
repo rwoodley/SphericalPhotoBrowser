@@ -24,16 +24,25 @@ this.reimannUniformsEditor = function(
 	}
     this.onkeydown = function(e, extraKey) {
         if (extraKey == 0 || extraKey == undefined) {
-            if (e.keyCode == 39)    // right arrow
+            if (e.keyCode == 39) {   // right arrow
                 that.currentUniforms.textureUAdjustment.value += .0025;
-            if (e.keyCode == 37)    // left arrow
+                console.log("shift texture");
+            }
+            if (e.keyCode == 37) {   // left arrow
                 that.currentUniforms.textureUAdjustment.value -= .0025;
-            if (e.keyCode == 38)    // up arrow
+                console.log("shift texture");
+            }
+            if (e.keyCode == 38) {   // up arrow
                 that.currentUniforms.textureVAdjustment.value += .0025;
-            if (e.keyCode == 40)    // down arrow
+                console.log("shift texture");
+            }
+            if (e.keyCode == 40) {   // down arrow
                 that.currentUniforms.textureVAdjustment.value -= .0025;
+                console.log("shift texture");
+            }
             if (e.keyCode == 83) {  // s - stop
                 that.currentUniforms.textureVAdjustment.value = 0;
+                console.log("shift texture");
             }
         }
         if (extraKey == 16) {       // shift
@@ -45,25 +54,46 @@ this.reimannUniformsEditor = function(
                 that.rotationOff();
         }
         if (extraKey == 17) {       // ctrl
-            if (e.keyCode == 39)    // right arrow
+            if (e.keyCode == 39) {   // right arrow
                 that.mediaUtils.cameraRight();
-            if (e.keyCode == 37)    // left arrow
+                console.log("move camera");
+            }
+            if (e.keyCode == 37) {   // left arrow
                 that.mediaUtils.cameraLeft();
-            if (e.keyCode == 38)    // up arrow
+                console.log("move camera");
+            }
+            if (e.keyCode == 38) {   // up arrow
                 that.mediaUtils.cameraUp();
-            if (e.keyCode == 40)    // down arrow
+                console.log("move camera");
+            }
+            if (e.keyCode == 40) {   // down arrow
                 that.mediaUtils.cameraDown();
-            if (e.keyCode == 83)  // s - stop
+                console.log("move camera");
+            }
+            if (e.keyCode == 83) { // s - stop
                 that.mediaUtils.cameraStop();
+                console.log("move camera");
+            }
         }
         if (e.keyCode == 84) {  // t - tetrahedral symmetry.
             that.tetrahedralGroup();
         }
         if (e.keyCode == 85) {  // u - take a snap.
+
+            var cubeCamera = new THREE.CubeCamera( .1, 1000, 4096 );
+            var mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
+                { color: 0xccccff, envMap: cubeCamera.renderTarget, side: THREE.DoubleSide } );
+
+            var sphereGeom =  new THREE.SphereGeometry( 5, 32, 16 ); // radius, segmentsWidth, segmentsHeight
+            var mirrorSphere = new THREE.Mesh( sphereGeom, mirrorSphereMaterial );
+            _scene.add(mirrorSphere);
+            _renderer.render( _scene, _camera );
+
+
             var equiUnmanaged = new CubemapToEquirectangular( _renderer, false );
-            _mirrorSphereCamera.position.copy( that.camera.position );
-            _mirrorSphereCamera.updateCubeMap( _renderer, _innerScene );
-            equiUnmanaged.convert( _mirrorSphereCamera );
+            cubeCamera.updateCubeMap( _renderer, _scene );
+            equiUnmanaged.convert( cubeCamera );
+            _scene.remove(mirrorSphere);
         }
 
         var textureNumber = e.keyCode - 48;
@@ -226,9 +256,10 @@ this.reimannUniformsEditor = function(
     }
     this.tetrahedralGroup = function() {
         that.currentUniforms.uApplyMobiusTransform.value = 1;
-            that.symmetryUtils.updateUniformsForNextSymmetry(1, that.currentUniforms);
-            var labels = that.symmetryUtils.getLabelsAsHTML(1);
-            document.getElementById('matrixText').innerHTML = labels;
+        var polyhedronIndex = 2;   // tetrahedron
+        that.symmetryUtils.updateUniformsForNextSymmetry(polyhedronIndex, that.currentUniforms);
+        var labels = that.symmetryUtils.getLabelsAsHTML(polyhedronIndex);
+        document.getElementById('matrixText').innerHTML = labels;
     }
     this.setFixedPoint1 = function() {that.setFixedPoint(1); }
     this.setFixedPoint2 = function() {that.setFixedPoint(2); }

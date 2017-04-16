@@ -325,6 +325,7 @@ schottkyResult applyHyperbolicTesselation(in vec2 z0) {
         float lambda = float(1);
         xform xf1 = xformCtor(zero, -one, one,one);   // S - inversion
         xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
+        // xform xf2 = xformCtor(zero, -one, one, one);   // T - translation
 
         if (z.y <=0.) { // lower half-plane, ignore.
             res.inverseZ = z;

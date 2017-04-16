@@ -115,7 +115,7 @@ reimannShaderDetailsObject = function(name) {
             that.setDefaults();
         }
         that.firstTime = false;
-        that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .1*that.rotateDirection;
+        that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .05*that.rotateDirection;
         that.currentUniforms.iGlobalTime.value = that.currentUniforms.iGlobalTime.value  + 1;
 
         if (videoDisplayed) {
