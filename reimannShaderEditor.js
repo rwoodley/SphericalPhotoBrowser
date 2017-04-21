@@ -46,11 +46,11 @@ this.reimannUniformsEditor = function(
             }
         }
         if (extraKey == 16) {       // shift
-            if (e.keyCode == 39)    // right arrow
+            if (e.keyCode == 37)    // right arrow
                 that.rotateLeft();
-            if (e.keyCode == 37)    // left arrow
+            if (e.keyCode == 39)    // left arrow
                 that.rotateRight();
-            if (e.keyCode == 83)  // s - stop
+            if (e.keyCode == 83)  // s - stop/reset
                 that.rotationOff();
         }
         if (extraKey == 17) {       // ctrl
@@ -225,9 +225,10 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.fractalEffectOnOff.value = that.currentUniforms.fractalEffectOnOff.value == 0 ? 1 : 0;
     }
     this.hyperbolicTilingEffect = function() { 
-        that.currentUniforms.hyperbolicTilingEffectOnOff.value = that.currentUniforms.hyperbolicTilingEffectOnOff.value == 0 ? 1 : 
-        that.currentUniforms.hyperbolicTilingEffectOnOff.value == 1 ?2 : 0;
-    }
+        that.currentUniforms.hyperbolicTilingEffectOnOff.value++;         that.currentUniforms.hyperbolicTilingEffectOnOff.value = 
+            that.currentUniforms.hyperbolicTilingEffectOnOff.value%4;
+        console.log(that.currentUniforms.hyperbolicTilingEffectOnOff.value);
+     }
     this.setFixedPointsIfUndefined = function() {
     	if (!that.detailsObject.point1Defined && !that.detailsObject.point2Defined) {
     		that.setFixedPoint(1);
@@ -451,9 +452,11 @@ this.reimannUniformsEditor = function(
                 ") len: " 
 				+ unitVector.length().toFixed(1) + "</nobr>" ;   
 
-            document.getElementById('complexPointText').innerHTML = "Looking at " + 
+            var mess = "Looking at " + 
             	that.detailsObject.cameraLookAtComplexX.toFixed(2) + " + " + 
             	that.detailsObject.cameraLookAtComplexY.toFixed(2) + "i";
+            console.log(mess);
+            document.getElementById('complexPointText').innerHTML = mess;
 
             document.getElementById('windowSizeText').innerHTML = "Window (wxh): " + 
             	window.innerWidth + " , " + window.innerHeight;

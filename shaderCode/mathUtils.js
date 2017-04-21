@@ -51,6 +51,21 @@ var x = `
         float z = (c.x*c.x + c.y*c.y - 1.0)/denom;
         return vec3(x,y,z);
     }
+    vec2 cartesianToPolar(float x, float y, float z) {
+        float theta;
+        float phi;
+        phi = atan2(y, x);
+        phi -= (PI/2.0);    // this correction lines up the UV texture nicely.
+        if (phi <= 0.0) {
+            phi = phi + PI*2.0; 
+        }
+        if (phi >= (2.0 * PI)) {    // allow 2PI since we gen uv over [0,1]
+            phi = phi - 2.0 * PI;
+        }
+        phi = 2. * PI - phi;        // flip the texture around.
+        theta = acos(z);
+        return vec2(phi, theta);
+    }
 `;
 return x;
 }

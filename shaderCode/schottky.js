@@ -411,6 +411,184 @@ schottkyResult applyHyperbolicTesselation2(in vec2 z0) {
     res.iter = MAX_ITER;
     return res;
 }
+schottkyResult colorTest(in vec2 z0) {
+    vec2 z = z0;
+    vec3 zc0 = complexToCartesian(z);
+    schottkyResult res;
+    res.inverseZ.x = zc0.z;
+    res.inverseZ.y = zc0.y;
+    return res;
+}
+
+schottkyResult applyTriangleTesselation(in vec2 z0) {
+
+    float N = 4.0;
+    const int MAX_ITER = 100;
+
+    // SEE: https://books.google.com/books?id=BFQbCAAAQBAJ&pg=PA57&lpg=PA57&dq=generators+for+spherical+triangle+groups&source=bl&ots=iLcRJuDxj3&sig=NrPhLVsApzo7XSnrVCQTImcQMi0&hl=en&sa=X&ved=0ahUKEwju1pmZo6jTAhUE6YMKHRTmBY4Q6AEIXDAJ#v=onepage&q=generators%20for%20spherical%20triangle%20groups&f=false
+    // PAGE 65
+
+    // vec2 a = vec2(-.5, sqrt(2.0)/2.);
+    // vec2 oneHalf = vec2(.5,0.);
+    // xform xf1 = xformCtor(a, oneHalf, -oneHalf, a);
+    // xform xf2 = xformCtor(-oneHalf, a, a, -oneHalf);
+
+    // vec2 epsilon = cx_exp(vec2(0., PI/4.));
+    // vec2 epsilon_inv = cx_exp(vec2(0., -PI/4.));
+    // xform xf1 = xformCtor(epsilon, zero, -epsilon, zero);
+    // xform xf2 = xformCtor(zero, i, i, zero);
+
+    // xform xf1 = xformCtor(i, zero, zero, one);
+    // xform xf2 = xformCtor(zero, one, -one, zero);
+
+    // https://books.google.com/books?id=iLkzandfCc8C&pg=PA73&lpg=PA73&dq=2,3,3+triangle+group+length+of+sides&source=bl&ots=u2ep_gOvKI&sig=pVOtBPeq5dV8nQQgvJt00FNLjWA&hl=en&sa=X&ved=0ahUKEwjB_q_z46nTAhXB5YMKHbZADBIQ6AEIVjAJ#v=onepage&q=2%2C3%2C3%20triangle%20group%20length%20of%20sides&f=false
+    // xform xf1 = xformCtor(vec2(1.,-1.), vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,1.));
+    // xform xf2 = xformCtor(vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,-1.), vec2(1.,1.));
+    xform xf1 = xformCtor(vec2(.5,-.5), vec2(.5,-.5), vec2(-.5,-.5), vec2(.5,.5));
+    xform xf2 = xformCtor(vec2(.5,-.5), vec2(-.5,-.5), vec2(.5,-.5), vec2(.5,.5));
+    schottkyResult res;
+
+    vec2 z = z0;
+    vec3 zc0 = complexToCartesian(z);
+    vec2 polarCoords = cartesianToPolar(zc0.x,zc0.y,zc0.z);
+    float theta;
+    float phi;
+    phi = polarCoords.x;
+    theta = polarCoords.y;
+    if (theta <= PI/24.) {
+        res.inverseZ = z;
+        res.iter = 0;
+        return res;            
+    }
+
+    float lenAB = acos((cos(PI/3.)+cos(PI/3.)*cos(PI/2.))/(sin(PI/3.)*sin(PI/2.)));
+    for (int iter = 0; iter < 24; iter++) {
+
+        zc0 = complexToCartesian(z);
+        polarCoords = cartesianToPolar(zc0.x,zc0.y,zc0.z);
+        // phi = mod(polarCoords.x+PI/4.,2.*PI);
+        phi = polarCoords.x;
+        theta = polarCoords.y;
+
+        // fundamental domain is a right triangle ABC with the right angle A at the pole.
+        // AB is latitude zero. Angle B and C are PI/3.
+        // Need to test if Z is inside ABC.
+        // fundamental domain is -PI/4 < phi < PI/4, and theta < hypotenuse
+        if (phi <= PI/4. || phi >= PI*2.-PI/4.) {
+            // see: https://math.stackexchange.com/a/231225/202346
+            float lenBZ = acos((
+                sin(lenAB)*sin(theta)*cos(-PI/4.-phi)+cos(lenAB)*cos(theta)
+            ));
+
+            // see: https://math.stackexchange.com/a/2241348/202346
+            float angleABZ = acos(
+                (cos(theta) - cos(lenAB)*cos(lenBZ)) / (sin(lenAB)*sin(lenBZ))
+                );
+            if (angleABZ <= PI/3.) {
+                res.inverseZ = z;
+                res.iter = iter+1;
+                return res;            
+            }
+        }
+
+        // z = tetrahedralGroup(z0, iter);
+        if (iter == 0)
+            z = z0;
+        if (iter == 1)
+             z = applyInverseMobiusTransformation(z0, xf1);
+        if (iter == 2)
+             z = applyInverseMobiusTransformation(z0, xf2);
+        if (iter == 3) {
+             z = applyInverseMobiusTransformation(z0, xf2);
+             z = applyInverseMobiusTransformation(z, xf1);
+        }
+        if (iter == 4) {
+             z = applyInverseMobiusTransformation(z0, xf1);
+             z = applyInverseMobiusTransformation(z, xf2);
+        }
+        if (iter == 5) {
+             z = applyInverseMobiusTransformation(z0, xf2);
+             z = applyInverseMobiusTransformation(z, xf2);
+        }
+        if (iter == 6) {
+             z = applyInverseMobiusTransformation(z0, xf1);
+             z = applyInverseMobiusTransformation(z, xf1);
+        }
+        if (iter == 7) {
+             z = applyInverseMobiusTransformation(z0, xf2);
+             z = applyInverseMobiusTransformation(z, xf1);
+             z = applyInverseMobiusTransformation(z, xf1);
+        }
+        // if (iter == 8) {
+        //      z = applyInverseMobiusTransformation(z0, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        // }
+        if (iter == 9) {
+             z = applyInverseMobiusTransformation(z0, xf2);
+             z = applyInverseMobiusTransformation(z, xf2);
+             z = applyInverseMobiusTransformation(z, xf1);
+        }
+        if (iter == 10) {
+             z = applyInverseMobiusTransformation(z0, xf1);
+             z = applyInverseMobiusTransformation(z, xf2);
+             z = applyInverseMobiusTransformation(z, xf2);
+        }
+        if (iter == 11) {
+             z = applyInverseMobiusTransformation(z0, xf1);
+             z = applyInverseMobiusTransformation(z, xf1);
+             z = applyInverseMobiusTransformation(z, xf2);
+        }
+        // if (iter == 12) {
+        //      z = applyInverseMobiusTransformation(z0, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        // }
+
+        if (iter == 13) {
+             z = applyInverseMobiusTransformation(z0, xf2);
+             z = applyInverseMobiusTransformation(z, xf1);
+             z = applyInverseMobiusTransformation(z, xf1);
+             z = applyInverseMobiusTransformation(z, xf2);
+        }
+        // if (iter == 14) {
+        //      z = applyInverseMobiusTransformation(z0, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        // }
+        // if (iter == 15) {
+        //      z = applyInverseMobiusTransformation(z0, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        // }
+        // if (iter == 16) {
+        //      z = applyInverseMobiusTransformation(z0, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        // }
+        // if (iter == 17) {
+        //      z = applyInverseMobiusTransformation(z0, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        // }
+        // if (iter == 18) {
+        //      z = applyInverseMobiusTransformation(z0, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        //      z = applyInverseMobiusTransformation(z, xf1);
+        //      z = applyInverseMobiusTransformation(z, xf2);
+        // }
+
+
+
+    }
+    res.inverseZ = z;
+    res.iter = MAX_ITER;
+    return res;
+}
 
 `;
 return x;

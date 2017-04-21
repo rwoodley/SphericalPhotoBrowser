@@ -148,6 +148,7 @@ function getReimannShaderMaterial(texture, uniforms) {
         + SHADERCODE.mathUtils()
         + SHADERCODE.mobiusTransformUtils()
         + SHADERCODE.drosteUtils()
+        + SHADERCODE.symmetryUtils()
         + SHADERCODE.schottkyUtils()
         + SHADERCODE.mainShader_fs()
     ;

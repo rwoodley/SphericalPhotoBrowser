@@ -255,16 +255,9 @@ vec2 complexToUV(vec2 result) {
     z = (result.x*result.x + result.y*result.y - 1.0)/denom;
 
     // convert to polar
-    phi = atan2(y, x);
-    phi -= (PI/2.0);    // this correction lines up the UV texture nicely.
-    if (phi <= 0.0) {
-        phi = phi + PI*2.0; 
-    }
-    if (phi >= (2.0 * PI)) {    // allow 2PI since we gen uv over [0,1]
-        phi = phi - 2.0 * PI;
-    }
-    phi = 2. * PI - phi;        // flip the texture around.
-    theta = acos(z);
+        vec2 polarCoords = cartesianToPolar(x,y,z);
+        phi = polarCoords.x;
+        theta = polarCoords.y;
 
     // now get uv in new chart.
     float newv = 1.0 - theta/PI;
@@ -306,7 +299,14 @@ void main() {
         // a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
         
         schottkyResult tesselationResult;
-        if (hyperbolicTilingEffectOnOff == 1) 
+        if (hyperbolicTilingEffectOnOff == 1)  {
+            tesselationResult = applyTriangleTesselation(a);
+            // tesselationResult = colorTest(a);
+            // gl_FragColor = vec4(mod(tesselationResult.inverseZ.x,1.),
+            // mod(tesselationResult.inverseZ.y,1.), 0., 1.);
+            // return;
+        }
+        else if (hyperbolicTilingEffectOnOff == 2) 
             tesselationResult = applyHyperbolicTesselation(a);
         else
             tesselationResult = applyHyperbolicTesselation2(a);

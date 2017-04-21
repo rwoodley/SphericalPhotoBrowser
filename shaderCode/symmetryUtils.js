@@ -118,4 +118,45 @@ function getTetrahedralGroupDisplayString(index) {
     if (index == 11)
         return ["-1", "1", "1", "1"];
 }
-
+SHADERCODE.symmetryUtils = function () {
+    var x = `  
+vec2 tetrahedralGroup(in vec2 z, in int index) {
+    if (index == 1) {
+        return applyInverseMobiusTransformation(z,xformCtor(-one,zero,zero,one));
+    }
+    if (index == 2) {
+        return applyInverseMobiusTransformation(z,xformCtor(zero,one,one,zero));
+    }
+    if (index == 3) {
+        return applyInverseMobiusTransformation(z,xformCtor(zero,-one,one,zero));
+    }
+    if (index == 4) {
+        return applyInverseMobiusTransformation(z,xformCtor(i,i,one,-one));
+    }
+    if (index == 5) {
+        return applyInverseMobiusTransformation(z,xformCtor(-i,-i,one,-one));
+    }
+    if (index == 6) {
+        return applyInverseMobiusTransformation(z,xformCtor(i,-i,one,one));
+    }
+    if (index == 7) {
+        return applyInverseMobiusTransformation(z,xformCtor(-i,i,one,one));
+    }
+    if (index == 8) {
+        return applyInverseMobiusTransformation(z,xformCtor(one,one,one,-one));
+    }
+    if (index == 9) {
+        return applyInverseMobiusTransformation(z,xformCtor(-one,-one,one,-one));
+    }
+    if (index == 10) {
+        return applyInverseMobiusTransformation(z,xformCtor(one,-one,one,one));
+    }
+    if (index == 11) {
+        return applyInverseMobiusTransformation(z,xformCtor(-one,one,one,one));
+    }
+    else 
+        return applyInverseMobiusTransformation(z,xformCtor(one,zero,zero,one));
+}
+`;
+    return x;
+}

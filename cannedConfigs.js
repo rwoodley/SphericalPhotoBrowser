@@ -72,12 +72,46 @@ function getCannedConfigs(mode, generalSettings) {
             'uniforms': uniforms,
             'textureType': 'still',
             'textureName': 'uv.jpg',
-            'geometry': 'sphere',
+            'geometry': 'plane',
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
         configs['skyDome'] = phongSkyDome();
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+    }
+    if (mode == 'mathArt2') {
+        generalSettings.rotateYAmount = 0.;
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+
+        generalSettings.cameraPosition = [-20,0,0.];
+        uniforms.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms.complexEffect3OnOff.value = 0;
+        uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
+
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,-12],
+            'scale': [-1,1,1],
+        };
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
+        uniforms.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms.complexEffect3OnOff.value = 0;
+        uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
+        configs['default2'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'plane',
+            'position': [0,0,12],
+            'scale': [9,9,9],
+        };
+        configs['skyDome'] = phongSkyDome();
+        keycontrols = new keyControls(['default', 'default2'], 1,0,-1,0);
     }
     if (mode == 'apollonian' ) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
