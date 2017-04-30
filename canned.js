@@ -8,13 +8,13 @@
 
 var _verticalMirror = {};        // hack! for now
 
-function getAnyMaterialMesh(meshName, meshSpecs) {
+function getNoMaterialMesh(meshName, meshSpecs) {
     var mesh = TRANSFORM.meshInventory.newMesh(
         meshName, 
         meshSpecs['geometry'],
         meshSpecs['position'],
         meshSpecs['scale'],
-        'anyMaterial',
+        'noMaterial',
         meshSpecs['rotationAxis'],
         meshSpecs['rotationAngle']
         );
@@ -83,7 +83,7 @@ function cannedRun(scene) {
                     meshSpecs['rotationAngle']
                     );
             else if (meshSpecs['textureType'] == 'basic') {
-                var mesh = TRANSFORM.meshInventory.newMesh(
+                var basicmesh = TRANSFORM.meshInventory.newMesh(
                     meshName, 
                     meshSpecs['geometry'],
                     meshSpecs['position'],
@@ -93,11 +93,11 @@ function cannedRun(scene) {
                     meshSpecs['rotationAngle']
                     );
                 (new THREE.TextureLoader()).load("media/" + meshSpecs['textureName'], function ( texture ) {
-                    mesh.setTexture(texture,null, null);
+                    basicmesh.setTexture(texture,null, null);
                 });
             }
-            else if (meshSpecs['textureType'] == 'anyMaterial') {
-                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+            else if (meshSpecs['textureType'] == 'outerShaderMaterial') {
+                var mesh = getNoMaterialMesh(meshName, meshSpecs);
                 var skyMaterial = new THREE.ShaderMaterial( {
                     uniforms: meshSpecs['uniforms'],
                     vertexShader: SHADERCODE.mainShader_vs(),
@@ -108,7 +108,7 @@ function cannedRun(scene) {
                 mesh.mesh.material = skyMaterial;
             }
             else if (meshSpecs['textureType'] == 'phong') {
-                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+                var mesh = getNoMaterialMesh(meshName, meshSpecs);
                 var skyMaterial =  new THREE.MeshPhongMaterial({ 
                     side: THREE.DoubleSide,
                     color: 0x255c78,
@@ -118,11 +118,11 @@ function cannedRun(scene) {
                 mesh.mesh.material = skyMaterial;
             }
             else if (meshSpecs['textureType'] == 'normal') {
-                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+                var mesh = getNoMaterialMesh(meshName, meshSpecs);
                 mesh.mesh.material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide});
             }
             else if (meshSpecs['textureType'] == 'mirror') {
-                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+                var mesh = getNoMaterialMesh(meshName, meshSpecs);
 
                 // mirror ball is handled with these 2 global variables. later, if we want more than one,
                 // i suppose we'll need to have a mirrorBallManager or something.
@@ -144,7 +144,7 @@ function cannedRun(scene) {
             else if (meshSpecs['textureType'] == 'mirror2') {
                 // mirror2 is used for planes. Uses THREE.Mirror instead of a CubeCamera. 
                 // Simpler if you want a bunch of mirrors.
-                mesh = getAnyMaterialMesh(meshName, meshSpecs);
+                var mesh = getNoMaterialMesh(meshName, meshSpecs);
                 var WIDTH = window.innerWidth;
                 var HEIGHT = window.innerHeight;
                 var verticalMirror = new THREE.Mirror( renderer, mediaUtils.camera, { 

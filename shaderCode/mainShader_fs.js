@@ -265,6 +265,33 @@ vec2 complexToUV(vec2 result) {
     vec2 newuv = vec2(newu, newv);
     return newuv;
 }
+schottkyResult doGeometry(in vec2 a) {
+    // geometries include triangleGroup, modularGroups 1 and 2, and fractal.
+    // if you call this before you do the rotations/zoom etc, then the geometry stays fixed and the pictures move thru.
+    // if you call this after the rotation/zoom etc then the geometry rotates, etc.
+    schottkyResult tesselationResult;
+    // assign defaults in case nothing is done.
+    tesselationResult.iter = -1;
+    tesselationResult.inverseZ = a;
+
+    if (hyperbolicTilingEffectOnOff >= 1) {
+        if (hyperbolicTilingEffectOnOff == 1)  {
+            tesselationResult = applyTriangleTesselation(a);
+        }
+        if (hyperbolicTilingEffectOnOff == 2) 
+            tesselationResult = applyHyperbolicTesselation(a);
+        if (hyperbolicTilingEffectOnOff == 3) 
+            tesselationResult = applyHyperbolicTesselation2(a);
+    }
+    if (fractalEffectOnOff > 0) {
+        // fractal is in the bottom half plane. Rotate so it is over-head.
+        vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
+        vec2 b1 = applyRotation(b, 2.718);
+        a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
+        tesselationResult = applyFractal(a);
+    }
+    return tesselationResult;
+}
 void main() {
 
     vec2 uv = vUv;
@@ -277,9 +304,9 @@ void main() {
     // ========================
     // Apply tesselation effects: Schottky, Apollonian, Fractal, Hyperbolic Triangles.
     // ========================
-
+    schottkyResult tesselationResult;
     if (schottkyEffectOnOff > 0) {
-        schottkyResult tesselationResult = applySchottkyLoop(a);
+        tesselationResult = applySchottkyLoop(a);
 
         // for math functions, either sample from texture or use a color map.
         if (uColorVideoMode > 0.) {
@@ -292,57 +319,28 @@ void main() {
             a = tesselationResult.inverseZ;
 
     }
-    if (hyperbolicTilingEffectOnOff > 0) {
-        // fractal is in the bottom half plane. Rotate so it is over-head.
-        // vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
-        // vec2 b1 = applyRotation(b, 0.5*3.1415926);
-        // a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
-        
-        schottkyResult tesselationResult;
-        if (hyperbolicTilingEffectOnOff == 1)  {
-            tesselationResult = applyTriangleTesselation(a);
-            // tesselationResult = colorTest(a);
-            // gl_FragColor = vec4(mod(tesselationResult.inverseZ.x,1.),
-            // mod(tesselationResult.inverseZ.y,1.), 0., 1.);
-            // return;
-        }
-        else if (hyperbolicTilingEffectOnOff == 2) 
-            tesselationResult = applyHyperbolicTesselation(a);
-        else
-            tesselationResult = applyHyperbolicTesselation2(a);
 
-        // for math functions, either sample from texture or use a color map.
+    if (geometryTiming == 0) {
+        tesselationResult = doGeometry(a);
+        int iter = tesselationResult.iter;
+        // for geometry functions, either sample from texture or use a color map.
         if (uColorVideoMode > 0.) {
-            int iter = tesselationResult.iter;
             float fiter = .1 * float(iter);
             gl_FragColor = getRGBAForIter(iter,fiter);
-            if (tesselationResult.flag == 1)
-                gl_FragColor.a = .1;
+
             if (iter == 0)
                 gl_FragColor = vec4(.25,0.,.25,1.);
             if (iter > 98)
                 gl_FragColor = vec4(.25,0.25,.25,1.);
             return;
         }
-        else
-            a = vec2(tesselationResult.inverseZ);
-    }
-    if (fractalEffectOnOff > 0) {
-        // fractal is in the bottom half plane. Rotate so it is over-head.
-        vec2 b = transformForFixedPoints(a, vec2(1.,0.), vec2(-1.,0.));
-        vec2 b1 = applyRotation(b, 2.718);
-        a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
-
-        schottkyResult tesselationResult = applyFractal(a);
-        // for math functions, either sample from texture or use a color map.
-        if (uColorVideoMode > 0.) {
-            float fiter = 0.01 * float(tesselationResult.iter);
-            gl_FragColor = getRGBAForIter(tesselationResult.iter,fiter);
+        if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
+            gl_FragColor = vec4(.25,0.,.25,0.);
             return;
         }
-        else
-            a = tesselationResult.inverseZ;
+        a = tesselationResult.inverseZ;
     }
+
     // ========================
     // Now apply Mobius Transforms and Complex transforms.
     // ========================
@@ -421,6 +419,27 @@ void main() {
 
     vec2 newuv = complexToUV(result);
     gl_FragColor = applyMask(newuv);
+
+    if (geometryTiming == 1) {
+        tesselationResult = doGeometry(result);
+        int iter = tesselationResult.iter;
+        // for geometry functions, either sample from texture or use a color map.
+        if (uColorVideoMode > 0.) {
+
+            float fiter = .1 * float(iter);
+            gl_FragColor = getRGBAForIter(iter,fiter);
+
+            if (iter == 0)
+                gl_FragColor = vec4(.25,0.,.25,1.);
+            if (iter > 98)
+                gl_FragColor = vec4(.25,0.25,.25,1.);
+            return;
+        }
+        if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
+            gl_FragColor = vec4(.25,0.,.25,0.);
+        }
+    }
+
 }
 `;
 return x;

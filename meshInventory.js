@@ -20,7 +20,7 @@ function meshInventory(scene) {
             else if (textureType == 'basic') {
                 that.meshes[meshName] = new basicMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle);
             }
-            else if (textureType == 'anyMaterial') {
+            else if (textureType == 'noMaterial') {
                 that.meshes[meshName] = new noMaterialMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle);
             }
         }
@@ -58,6 +58,9 @@ function basicMesh(scene, position, scale, desiredGeoName, rotationAxis, rotatio
 }
 function noMaterialMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle) {
     // You specify whichever material you want on your own. This just does the basic setup.
+    // that's the theory. As currently implemented the material is defined in line 103 of canned.js
+    // where it is bound to avertexShader: SHADERCODE.mainShader_vs(), and a fragmentShader: SHADERCODE.outerShader_fs(),
+
     var that = this;
     this.scene = scene;
     this.position = position;

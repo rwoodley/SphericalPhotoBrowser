@@ -61,25 +61,7 @@ function getCannedConfigs(mode, generalSettings) {
         // configs['skyDome'] = phongSkyDome();
         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
-    if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
-        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        generalSettings.cameraPosition = [-10.8,0,0.];
-        uniforms.hyperbolicTilingEffectOnOff.value = mode == 'hyperbolicTessellation' ? 1 : 2;
-        uniforms.complexEffect3OnOff.value = 0;
-        uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
-        generalSettings.rotateYAmount = 0.;
-         configs['default'] = {
-            'uniforms': uniforms,
-            'textureType': 'still',
-            'textureName': 'uv.jpg',
-            'geometry': 'plane',
-            'position': [0,0,0],
-            'scale': [1,1,-1],
-        }
-        configs['skyDome'] = phongSkyDome();
-         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
-    }
-    if (mode == 'mathArt2') {
+    if (mode == 'trianglesWithSomeReflectionPlanes') {
         generalSettings.rotateYAmount = 0.;
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
@@ -94,24 +76,43 @@ function getCannedConfigs(mode, generalSettings) {
             'textureType': 'still',
             'textureName': 'uv.jpg',
             'geometry': 'sphere',
-            'position': [0,0,-12],
+            'position': [0,0,0],
             'scale': [-1,1,1],
         };
 
-        var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
-        uniforms.hyperbolicTilingEffectOnOff.value = 1;
-        uniforms.complexEffect3OnOff.value = 0;
-        uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
-        configs['default2'] = {
-            'uniforms': uniforms,
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane1a');
+         configs['plane1a'] = {
+            'uniforms': uniforms, 
             'textureType': 'still',
-            'textureName': 'uv.jpg',
-            'geometry': 'plane',
-            'position': [0,0,12],
-            'scale': [9,9,9],
-        };
-        configs['skyDome'] = phongSkyDome();
-        keycontrols = new keyControls(['default', 'default2'], 1,0,-1,0);
+            'textureName': 'coolGradient.jpg',
+            'geometry': 'plane', 
+            'scale': [11,11,11],
+            'position': [0,0,0],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': Math.PI/4.
+        }
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane2a');
+         configs['plane2a'] = {
+            'uniforms': uniforms, 
+            'textureType': 'still',
+            'textureName': 'coolGradient.jpg',
+            'geometry': 'plane', 
+            'scale': [11,11,11],
+            'position': [0,0,0],
+            'rotationAxis': new THREE.Vector3( 1, 1, 0 ),
+            'rotationAngle': Math.PI/4 + Math.PI/4.
+        }
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane3a');
+         configs['plane3a'] = {
+            'uniforms': uniforms, 
+            'textureType': 'still',
+            'textureName': 'coolGradient.jpg',
+            'geometry': 'plane', 
+            'scale': [11,11,11],
+            'position': [0,0,0],
+            'rotationAxis': new THREE.Vector3( 1, 0, 0 ),
+            'rotationAngle': Math.PI/4 + Math.PI/4 + Math.PI/4
+        }
     }
     if (mode == 'apollonian' ) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
@@ -186,7 +187,7 @@ function getCannedConfigs(mode, generalSettings) {
         configs['skyDome'] = phongSkyDome() ;
     }
     if (mode == 'couple2') {
-        generalSettings.cameraPosition = [-8.4,3.6,10.1];
+      generalSettings.cameraPosition = [-8.4,3.6,10.1];
         //generalSettings.videoReloadDelayInSeconds = -1;
         var uniforms = {
             iChannelStillMask1:  { type: 't', value: 0 },
@@ -204,7 +205,7 @@ function getCannedConfigs(mode, generalSettings) {
         });
         configs['greyOutline'] = {
             'uniforms': uniforms,
-            'textureType': 'anyMaterial',
+            'textureType': 'outerShaderMaterial',
             'geometry': 'sphere',
             'position': [0,0,0],
             'scale': [50,50,50],
@@ -230,6 +231,24 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,-8.,0],
             'scale': [.7,.7,.7],
         };
+    }
+    if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
+       var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        generalSettings.cameraPosition = [-10.8,0,0.];
+        uniforms.hyperbolicTilingEffectOnOff.value = mode == 'hyperbolicTessellation' ? 2 : 3;
+        uniforms.complexEffect3OnOff.value = 0;
+        uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
+        generalSettings.rotateYAmount = 0.;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+        configs['skyDome'] = phongSkyDome();
+         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'triangles') {
         generalSettings.cameraPosition = [-7.8,4.8,-2.7];
@@ -410,6 +429,70 @@ function getCannedConfigs(mode, generalSettings) {
             'scale': [1,1,1],
         };
         configs['skyDome'] = phongSkyDome();
+    }
+    if (mode == 'bob') {
+        generalSettings.cameraPosition = [15,0,0];
+
+        configs['skyDome'] = simpleSkyDome('hdr10.jpg');
+        configs['skyDome']['scale'] = [-50,50,50];
+        generalSettings.fog = true;
+
+        var uniforms2 = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms2.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms2.geometryTiming.value = 1;
+        uniforms2.uColorVideoMode.value = 0; // mode == 'hyperbolicTessellation' ?  2 : 3;
+        generalSettings.rotateYAmount = 0.01;
+        configs['default'] = {
+            'uniforms': uniforms2,
+            'textureType': 'still',
+            'textureName': 'hdr10.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+        // configs['mirrorBall'] =
+        // {
+        //     'textureType': 'mirror',
+        //     'geometry': 'sphere',
+        //     'position': [0,-8.,0],
+        //     'scale': [.7,.7,.7],
+        // };
+    }
+    if (mode == 'mathArtTriangles') {
+        generalSettings.cameraPosition = [20,0 ,0];
+        generalSettings.videoReloadDelayInSeconds = -1;
+        generalSettings.rotateYAmount = 0.;
+        configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
+
+        // this must go after sky dome so transparency works.
+
+        var uniforms2 = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms2.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms2.uColorVideoMode.value = 0; // mode == 'hyperbolicTessellation' ?  2 : 3;
+        generalSettings.rotateYAmount = 0.;
+        configs['default'] = {
+            'uniforms': uniforms2,
+            'textureType': 'still',
+            'textureName': 'BlueMetal.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,-12],
+            'scale': [1,1,-1],
+        }
+
+        var uniforms2 = TRANSFORM.reimannShaderList.createShader('default2');
+        uniforms2.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms2.uColorVideoMode.value = 0; // mode == 'hyperbolicTessellation' ?  2 : 3;
+        generalSettings.rotateYAmount = 0.;
+        configs['default2'] = {
+            'uniforms': uniforms2,
+            'textureType': 'still',
+            'textureName': 'BlueMetal.jpg',
+            'geometry': 'plane',
+            'position': [0,0,12],
+            'scale': [9,-9,9],
+        }
+
+        keycontrols = new keyControls(['default', 'default2'], 1,0,-1,0);
     }
     if (mode == 'mathArt') {
         generalSettings.cameraPosition = [20,0 ,0];

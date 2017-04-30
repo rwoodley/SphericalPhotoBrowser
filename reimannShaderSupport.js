@@ -45,7 +45,7 @@ reimannShaderDetailsObject = function(name) {
         textureScaleY: { type: 'f', value: 1. },
         tesselate: { type: 'f', value: 0. },
         uAlpha: { type: 'f', value: 1. },
-        uColorVideoMode: { type: 'f', value: 1. },  // need value = 1 for outer texture.
+        uColorVideoMode: { type: 'f', value: 0. },  // need value = 1 for outer texture.
         enableTracking: { type: 'i', value: 0 },
         textureX: { type: 'f', value: 0. },
         textureY: { type: 'f', value: 0. },
@@ -58,6 +58,7 @@ reimannShaderDetailsObject = function(name) {
         complexEffect5OnOff: { type: 'i', value: 0 },
         schottkyEffectOnOff: { type: 'i', value: 0 },
         fractalEffectOnOff: { type: 'i', value: 0 },
+        geometryTiming: { type: 'i', value: 0 },
         hyperbolicTilingEffectOnOff: { type: 'i', value: 0},
         showFixedPoints: { type: 'i', value: 1 },
         uBlackMask: { type: 'i', value: 0 },

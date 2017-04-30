@@ -256,7 +256,6 @@ struct schottkyResult {
     int iter;
     vec2 inverseZ;
     vec2 glitchZ;   // just a pretty effect i got by doing something wrong.
-    int flag;
 };
 circle applyTransformsToCircle(circle c, xform[6] xforms, int n) {
     circle res = c;
@@ -341,10 +340,6 @@ schottkyResult applyHyperbolicTesselation(in vec2 z0) {
             if (length(z) > 1. && abs(z.x) < realBoundary && z.y > 0.) {
                 res.inverseZ = z;
                 res.iter = iter+1;
-                // if (abs(z.x) < 0.05 && abs(z.y) > 1.)
-                //     res.flag = 0;
-                // else
-                //     res.flag = 1;
                 return res;
             }
 
@@ -390,10 +385,6 @@ schottkyResult applyHyperbolicTesselation2(in vec2 z0) {
             if ((lenLeftCircle > .5 && lenRightCircle > .5) && abs(z.x) < realBoundary ) {
                 res.inverseZ = z;
                 res.iter = iter+1;
-                // if (abs(z.x) < 0.05 && abs(z.y) > 1.)
-                //     res.flag = 0;
-                // else
-                //     res.flag = 1;
                 return res;
             }
 
@@ -442,10 +433,10 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
     // xform xf2 = xformCtor(zero, one, -one, zero);
 
     // https://books.google.com/books?id=iLkzandfCc8C&pg=PA73&lpg=PA73&dq=2,3,3+triangle+group+length+of+sides&source=bl&ots=u2ep_gOvKI&sig=pVOtBPeq5dV8nQQgvJt00FNLjWA&hl=en&sa=X&ved=0ahUKEwjB_q_z46nTAhXB5YMKHbZADBIQ6AEIVjAJ#v=onepage&q=2%2C3%2C3%20triangle%20group%20length%20of%20sides&f=false
-    // xform xf1 = xformCtor(vec2(1.,-1.), vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,1.));
-    // xform xf2 = xformCtor(vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,-1.), vec2(1.,1.));
-    xform xf1 = xformCtor(vec2(.5,-.5), vec2(.5,-.5), vec2(-.5,-.5), vec2(.5,.5));
-    xform xf2 = xformCtor(vec2(.5,-.5), vec2(-.5,-.5), vec2(.5,-.5), vec2(.5,.5));
+    xform xf1 = xformCtor(vec2(1.,-1.), vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,1.));
+    xform xf2 = xformCtor(vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,-1.), vec2(1.,1.));
+    // xform xf1 = xformCtor(vec2(.5,-.5), vec2(.5,-.5), vec2(-.5,-.5), vec2(.5,.5));
+    // xform xf2 = xformCtor(vec2(.5,-.5), vec2(-.5,-.5), vec2(.5,-.5), vec2(.5,.5));
     schottkyResult res;
 
     vec2 z = z0;
@@ -455,18 +446,17 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
     float phi;
     phi = polarCoords.x;
     theta = polarCoords.y;
-    if (theta <= PI/24.) {
-        res.inverseZ = z;
-        res.iter = 0;
-        return res;            
-    }
+    // if (theta <= PI/24.) {
+    //     res.inverseZ = z;
+    //     res.iter = 0;
+    //     return res;            
+    // }
 
     float lenAB = acos((cos(PI/3.)+cos(PI/3.)*cos(PI/2.))/(sin(PI/3.)*sin(PI/2.)));
     for (int iter = 0; iter < 24; iter++) {
 
         zc0 = complexToCartesian(z);
         polarCoords = cartesianToPolar(zc0.x,zc0.y,zc0.z);
-        // phi = mod(polarCoords.x+PI/4.,2.*PI);
         phi = polarCoords.x;
         theta = polarCoords.y;
 
@@ -490,12 +480,17 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
                 return res;            
             }
         }
+        // if (mod(float(iter),2.0) == 0.)
+        //     z = applyInverseMobiusTransformation(z,xf2);
+        // else
+            // z = applyInverseMobiusTransformation(z,xf1);
+
 
         // z = tetrahedralGroup(z0, iter);
         if (iter == 0)
             z = z0;
         if (iter == 1)
-             z = applyInverseMobiusTransformation(z0, xf1);
+             z = applyInverseMobiusTransformation(z, xf1);
         if (iter == 2)
              z = applyInverseMobiusTransformation(z0, xf2);
         if (iter == 3) {
@@ -519,11 +514,6 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
              z = applyInverseMobiusTransformation(z, xf1);
              z = applyInverseMobiusTransformation(z, xf1);
         }
-        // if (iter == 8) {
-        //      z = applyInverseMobiusTransformation(z0, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        // }
         if (iter == 9) {
              z = applyInverseMobiusTransformation(z0, xf2);
              z = applyInverseMobiusTransformation(z, xf2);
@@ -539,54 +529,15 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
              z = applyInverseMobiusTransformation(z, xf1);
              z = applyInverseMobiusTransformation(z, xf2);
         }
-        // if (iter == 12) {
-        //      z = applyInverseMobiusTransformation(z0, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        // }
-
-        if (iter == 13) {
+        if (iter == 12) {
              z = applyInverseMobiusTransformation(z0, xf2);
              z = applyInverseMobiusTransformation(z, xf1);
              z = applyInverseMobiusTransformation(z, xf1);
              z = applyInverseMobiusTransformation(z, xf2);
         }
-        // if (iter == 14) {
-        //      z = applyInverseMobiusTransformation(z0, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        // }
-        // if (iter == 15) {
-        //      z = applyInverseMobiusTransformation(z0, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        // }
-        // if (iter == 16) {
-        //      z = applyInverseMobiusTransformation(z0, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        // }
-        // if (iter == 17) {
-        //      z = applyInverseMobiusTransformation(z0, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        // }
-        // if (iter == 18) {
-        //      z = applyInverseMobiusTransformation(z0, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        //      z = applyInverseMobiusTransformation(z, xf1);
-        //      z = applyInverseMobiusTransformation(z, xf2);
-        // }
-
-
-
     }
-    res.inverseZ = z;
-    res.iter = MAX_ITER;
+    res.inverseZ = z0;
+    res.iter = 0;
     return res;
 }
 

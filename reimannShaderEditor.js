@@ -143,7 +143,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'cameraControlIcon', 'crosshairs.png', 'Track', that.textureTrack);
         appendSingleIcon(container, 'cameraControlIcon', 'three.png', 'Track', that.threePoint);
         appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 'Change Alpha', that.changeAlpha);
-        appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 
+        appendSingleIcon(container, 'cameraControlIcon', 'colorWheel.png', 
             'Toggle Color/Video (only works for some math transforms)', that.toggleColorVideo);
     }
     this.setupComplexControlIcons = function() {
@@ -158,6 +158,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'A.png', 'Apollonian Gasket', that.schottkyEffect3);
         appendSingleIcon(container, 'transformControlIcon', 'F.png', 'Fractal', that.fractalEffect);
         appendSingleIcon(container, 'transformControlIcon', 'triangles.png', 'Hyperbolic Triangles', that.hyperbolicTilingEffect);
+        appendSingleIcon(container, 'transformControlIcon', 'before.png', 'Toggle: apply Geometry first/last', that.toggleGeometryTiming);
     }
     
     this.textureLeft = function() { that.currentUniforms.textureUAdjustment.value += .1; }
@@ -224,6 +225,10 @@ this.reimannUniformsEditor = function(
     this.fractalEffect = function() { 
         that.currentUniforms.fractalEffectOnOff.value = that.currentUniforms.fractalEffectOnOff.value == 0 ? 1 : 0;
     }
+    this.toggleGeometryTiming = function() { 
+        that.currentUniforms.geometryTiming.value = that.currentUniforms.geometryTiming.value == 0 ? 1 : 0;
+    }
+
     this.hyperbolicTilingEffect = function() { 
         that.currentUniforms.hyperbolicTilingEffectOnOff.value++;         that.currentUniforms.hyperbolicTilingEffectOnOff.value = 
             that.currentUniforms.hyperbolicTilingEffectOnOff.value%4;
@@ -409,6 +414,7 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.complexEffect5OnOff.value = 0;
         that.currentUniforms.schottkyEffectOnOff.value = 0;
         that.currentUniforms.fractalEffectOnOff.value = 0;
+        that.currentUniforms.geometryTiming.value = 0;
         that.currentUniforms.hyperbolicTilingEffectOnOff.value = 0;
     	that.currentUniforms.e1x.value = that.currentUniforms.e1y.value = that.currentUniforms.e2x.value = that.currentUniforms.e2y.value = 0;
         that.currentUniforms.loxodromicX.value = 1;
@@ -455,7 +461,7 @@ this.reimannUniformsEditor = function(
             var mess = "Looking at " + 
             	that.detailsObject.cameraLookAtComplexX.toFixed(2) + " + " + 
             	that.detailsObject.cameraLookAtComplexY.toFixed(2) + "i";
-            console.log(mess);
+            // console.log(mess);
             document.getElementById('complexPointText').innerHTML = mess;
 
             document.getElementById('windowSizeText').innerHTML = "Window (wxh): " + 
