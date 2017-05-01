@@ -6,11 +6,14 @@ reimannShaderListObject = function() {
     var that = this;
     this.detailsObjectList = {}
     this.editor = undefined;
-    this.createShader = function(name) {
-        var uniforms = new reimannShaderDetailsObject(name);
-        this.detailsObjectList[name] = uniforms;
+    this.createShader2 = function(name) {
+        var obj = new reimannShaderDetailsObject(name);
+        this.detailsObjectList[name] = obj;
 
-        return uniforms.currentUniforms;
+        return obj;
+    }
+    this.createShader = function(name) {
+        return this.createShader2(name).currentUniforms;
     }
     this.animate = function(animationFrame, videoDisplayed, videoCurrentTime, videoFileName) {
         that.editor.updateVariousNumbersForCamera();

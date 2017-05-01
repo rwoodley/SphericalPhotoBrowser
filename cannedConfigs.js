@@ -274,7 +274,7 @@ function getCannedConfigs(mode, generalSettings) {
         uniforms.textureUAdjustment.value = 0;
         uniforms.uColorVideoMode.value = 0;
         generalSettings.videoReloadDelayInSeconds = 1;
-        uniforms.mobiusEffectsOnOff.value = 1
+        uniforms.mobiusEffectsOnOff.value = 1;
         uniforms.iRotationAmount.value = 10.*Math.PI/2.;
         uniforms.e1x.value = -1;
         uniforms.e1y.value = 0;
@@ -450,13 +450,50 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
-        // configs['mirrorBall'] =
-        // {
-        //     'textureType': 'mirror',
-        //     'geometry': 'sphere',
-        //     'position': [0,-8.,0],
-        //     'scale': [.7,.7,.7],
-        // };
+    }
+    if (mode == 'bob2') {
+        generalSettings.cameraPosition = [20,10,0];
+
+        configs['skyDome'] = simpleSkyDome('taosPueblo1.jpg');
+        // configs['skyDome']['scale'] = [-50,50,50];
+        // generalSettings.fog = true;
+
+        var obj = TRANSFORM.reimannShaderList.createShader2('default');
+        obj.rotateDirection = 10;
+        var uniforms2 = obj.currentUniforms;
+        uniforms2.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms2.geometryTiming.value = 1;
+        uniforms2.uColorVideoMode.value = 0; // mode == 'hyperbolicTessellation' ?  2 : 3;
+
+        uniforms2.mobiusEffectsOnOff.value = 1
+        // uniforms2.iRotationAmount.value = 10.*Math.PI/2.;
+        uniforms2.e1x.value = -1;
+        uniforms2.e1y.value = 0.5;
+        uniforms2.e2x.value = 1;
+        uniforms2.e2y.value = -0.5;
+        uniforms2.showFixedPoints.value = 0;
+
+        generalSettings.rotateYAmount = 0.0;
+        configs['default'] = {
+            'uniforms': uniforms2,
+            'textureType': 'still',
+            'textureName': 'BlueMetal.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+        var sFactor = 15;
+        var scale = 4*sFactor/2.5;
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane1');
+         configs['plane1'] = {
+            'uniforms': uniforms, 
+            'textureType': 'mirror2', 
+            'geometry': 'plane', 
+            'scale': [scale,scale,scale],
+            'position': [0,-12,0],
+            'rotationAxis': new THREE.Vector3( 1, 0, 0 ),
+            'rotationAngle': -Math.PI/2
+        }
     }
     if (mode == 'mathArtTriangles') {
         generalSettings.cameraPosition = [20,0 ,0];

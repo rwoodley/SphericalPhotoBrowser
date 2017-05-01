@@ -416,23 +416,6 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
     float N = 4.0;
     const int MAX_ITER = 100;
 
-    // SEE: https://books.google.com/books?id=BFQbCAAAQBAJ&pg=PA57&lpg=PA57&dq=generators+for+spherical+triangle+groups&source=bl&ots=iLcRJuDxj3&sig=NrPhLVsApzo7XSnrVCQTImcQMi0&hl=en&sa=X&ved=0ahUKEwju1pmZo6jTAhUE6YMKHRTmBY4Q6AEIXDAJ#v=onepage&q=generators%20for%20spherical%20triangle%20groups&f=false
-    // PAGE 65
-
-    // vec2 a = vec2(-.5, sqrt(2.0)/2.);
-    // vec2 oneHalf = vec2(.5,0.);
-    // xform xf1 = xformCtor(a, oneHalf, -oneHalf, a);
-    // xform xf2 = xformCtor(-oneHalf, a, a, -oneHalf);
-
-    // vec2 epsilon = cx_exp(vec2(0., PI/4.));
-    // vec2 epsilon_inv = cx_exp(vec2(0., -PI/4.));
-    // xform xf1 = xformCtor(epsilon, zero, -epsilon, zero);
-    // xform xf2 = xformCtor(zero, i, i, zero);
-
-    // xform xf1 = xformCtor(i, zero, zero, one);
-    // xform xf2 = xformCtor(zero, one, -one, zero);
-
-    // https://books.google.com/books?id=iLkzandfCc8C&pg=PA73&lpg=PA73&dq=2,3,3+triangle+group+length+of+sides&source=bl&ots=u2ep_gOvKI&sig=pVOtBPeq5dV8nQQgvJt00FNLjWA&hl=en&sa=X&ved=0ahUKEwjB_q_z46nTAhXB5YMKHbZADBIQ6AEIVjAJ#v=onepage&q=2%2C3%2C3%20triangle%20group%20length%20of%20sides&f=false
     xform xf1 = xformCtor(vec2(1.,-1.), vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,1.));
     xform xf2 = xformCtor(vec2(1.,-1.), vec2(-1.,-1.), vec2(1.,-1.), vec2(1.,1.));
     // xform xf1 = xformCtor(vec2(.5,-.5), vec2(.5,-.5), vec2(-.5,-.5), vec2(.5,.5));
@@ -440,12 +423,14 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
     schottkyResult res;
 
     vec2 z = z0;
-    vec3 zc0 = complexToCartesian(z);
-    vec2 polarCoords = cartesianToPolar(zc0.x,zc0.y,zc0.z);
+    vec3 zc0;
+    vec2 polarCoords;
     float theta;
     float phi;
-    phi = polarCoords.x;
-    theta = polarCoords.y;
+    // zc0 = complexToCartesian(z);
+    // polarCoords = cartesianToPolar(zc0.x,zc0.y,zc0.z);
+    // phi = polarCoords.x;
+    // theta = polarCoords.y;
     // if (theta <= PI/24.) {
     //     res.inverseZ = z;
     //     res.iter = 0;
@@ -453,7 +438,9 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
     // }
 
     float lenAB = acos((cos(PI/3.)+cos(PI/3.)*cos(PI/2.))/(sin(PI/3.)*sin(PI/2.)));
-    for (int iter = 0; iter < 24; iter++) {
+    float sinlenAB = sin(lenAB);
+    float coslenAB = cos(lenAB);
+    for (int iter = 0; iter < 12; iter++) {
 
         zc0 = complexToCartesian(z);
         polarCoords = cartesianToPolar(zc0.x,zc0.y,zc0.z);
@@ -467,12 +454,12 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
         if (phi <= PI/4. || phi >= PI*2.-PI/4.) {
             // see: https://math.stackexchange.com/a/231225/202346
             float lenBZ = acos((
-                sin(lenAB)*sin(theta)*cos(-PI/4.-phi)+cos(lenAB)*cos(theta)
+                sinlenAB*sin(theta)*cos(-PI/4.-phi)+coslenAB*cos(theta)
             ));
 
             // see: https://math.stackexchange.com/a/2241348/202346
             float angleABZ = acos(
-                (cos(theta) - cos(lenAB)*cos(lenBZ)) / (sin(lenAB)*sin(lenBZ))
+                (cos(theta) - coslenAB*cos(lenBZ)) / (sinlenAB*sin(lenBZ))
                 );
             if (angleABZ <= PI/3.) {
                 res.inverseZ = z;
@@ -480,59 +467,58 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
                 return res;            
             }
         }
-        // if (mod(float(iter),2.0) == 0.)
-        //     z = applyInverseMobiusTransformation(z,xf2);
-        // else
-            // z = applyInverseMobiusTransformation(z,xf1);
-
 
         // z = tetrahedralGroup(z0, iter);
-        if (iter == 0)
-            z = z0;
-        if (iter == 1)
-             z = applyInverseMobiusTransformation(z, xf1);
-        if (iter == 2)
-             z = applyInverseMobiusTransformation(z0, xf2);
-        if (iter == 3) {
-             z = applyInverseMobiusTransformation(z0, xf2);
-             z = applyInverseMobiusTransformation(z, xf1);
-        }
-        if (iter == 4) {
+
+        if (iter == 11)
+            break;
+
+        // z0 was already checked on the first pass.
+        if (iter == 0) {
              z = applyInverseMobiusTransformation(z0, xf1);
+        }
+        if (iter == 1) {
+            //  z = applyInverseMobiusTransformation(z0, xf1);
              z = applyInverseMobiusTransformation(z, xf2);
+        }
+        if (iter == 2) {
+            //  z = applyInverseMobiusTransformation(z0, xf1);
+            //  z = applyInverseMobiusTransformation(z, xf2);
+             z = applyInverseMobiusTransformation(z, xf2);
+        }
+        if (iter == 3)
+             z = applyInverseMobiusTransformation(z0, xf2);
+        if (iter == 4) {
+            //  z = applyInverseMobiusTransformation(z0, xf2);
+             z = applyInverseMobiusTransformation(z, xf1);
         }
         if (iter == 5) {
-             z = applyInverseMobiusTransformation(z0, xf2);
-             z = applyInverseMobiusTransformation(z, xf2);
+            //  z = applyInverseMobiusTransformation(z0, xf2);
+            //  z = applyInverseMobiusTransformation(z, xf1);
+             z = applyInverseMobiusTransformation(z, xf1);
         }
         if (iter == 6) {
-             z = applyInverseMobiusTransformation(z0, xf1);
-             z = applyInverseMobiusTransformation(z, xf1);
+            //  z = applyInverseMobiusTransformation(z0, xf2);
+            //  z = applyInverseMobiusTransformation(z, xf1);
+            //  z = applyInverseMobiusTransformation(z, xf1);
+             z = applyInverseMobiusTransformation(z, xf2);
         }
         if (iter == 7) {
              z = applyInverseMobiusTransformation(z0, xf2);
-             z = applyInverseMobiusTransformation(z, xf1);
+             z = applyInverseMobiusTransformation(z, xf2);
+        }
+        if (iter == 8) {
+            //  z = applyInverseMobiusTransformation(z0, xf2);
+            //  z = applyInverseMobiusTransformation(z, xf2);
              z = applyInverseMobiusTransformation(z, xf1);
         }
         if (iter == 9) {
-             z = applyInverseMobiusTransformation(z0, xf2);
-             z = applyInverseMobiusTransformation(z, xf2);
+             z = applyInverseMobiusTransformation(z0, xf1);
              z = applyInverseMobiusTransformation(z, xf1);
         }
         if (iter == 10) {
-             z = applyInverseMobiusTransformation(z0, xf1);
-             z = applyInverseMobiusTransformation(z, xf2);
-             z = applyInverseMobiusTransformation(z, xf2);
-        }
-        if (iter == 11) {
-             z = applyInverseMobiusTransformation(z0, xf1);
-             z = applyInverseMobiusTransformation(z, xf1);
-             z = applyInverseMobiusTransformation(z, xf2);
-        }
-        if (iter == 12) {
-             z = applyInverseMobiusTransformation(z0, xf2);
-             z = applyInverseMobiusTransformation(z, xf1);
-             z = applyInverseMobiusTransformation(z, xf1);
+            //  z = applyInverseMobiusTransformation(z0, xf1);
+            //  z = applyInverseMobiusTransformation(z, xf1);
              z = applyInverseMobiusTransformation(z, xf2);
         }
     }
