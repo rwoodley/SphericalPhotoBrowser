@@ -23,7 +23,9 @@ function getGeometryForName(geoName) {
         var geo = new THREE.BoxGeometry(sphereRadius,sphereRadius,sphereRadius);
     }
     if (geoName == "tsphere") {
-        var geo = new THREE.SphereGeometry(sphereRadius,segment,segment, 0., 2.*Math.PI, 4.0, 2*Math.PI-4.0);
+        var thetaStart = 4.8;
+        var geo = new THREE.SphereGeometry(sphereRadius,segment,segment, 0., 2.*Math.PI, 
+                        thetaStart, 2*Math.PI-thetaStart);
     }
     if (geoName == "cylinder") {
         var geo = new THREE.CylinderGeometry(

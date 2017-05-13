@@ -441,7 +441,6 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
     float sinlenAB = sin(lenAB);
     float coslenAB = cos(lenAB);
     for (int iter = 0; iter < 12; iter++) {
-
         zc0 = complexToCartesian(z);
         polarCoords = cartesianToPolar(zc0.x,zc0.y,zc0.z);
         phi = polarCoords.x;
@@ -470,7 +469,7 @@ schottkyResult applyTriangleTesselation(in vec2 z0) {
 
         // z = tetrahedralGroup(z0, iter);
 
-        if (iter == 11)
+        if (iter >= uSymmetryIndex)
             break;
 
         // z0 was already checked on the first pass.

@@ -75,8 +75,11 @@ this.reimannUniformsEditor = function(
                 console.log("move camera");
             }
         }
+        if (e.keyCode == 83) {  // s - tetrahedral symmetry over triangle group.
+            that.tetrahedralGroup(2);
+        }
         if (e.keyCode == 84) {  // t - tetrahedral symmetry.
-            that.tetrahedralGroup();
+            that.tetrahedralGroup(1);
         }
         if (e.keyCode == 85) {  // u - take a snap.
 
@@ -260,10 +263,10 @@ this.reimannUniformsEditor = function(
     this.nadirMask = function() {
             that.currentUniforms.uNadirMask.value = that.currentUniforms.uNadirMask.value == 1 ? 0 : 1;
     }
-    this.tetrahedralGroup = function() {
+    this.tetrahedralGroup = function(mode) {
         that.currentUniforms.uApplyMobiusTransform.value = 1;
         var polyhedronIndex = 2;   // tetrahedron
-        that.symmetryUtils.updateUniformsForNextSymmetry(polyhedronIndex, that.currentUniforms);
+        that.symmetryUtils.updateUniformsForNextSymmetry(polyhedronIndex, that.currentUniforms, mode);
         var labels = that.symmetryUtils.getLabelsAsHTML(polyhedronIndex);
         document.getElementById('matrixText').innerHTML = labels;
     }

@@ -2,14 +2,20 @@ function SU2Symmetries() {
     var that = this;
     that.symmetryIndex = 0;
 
-    that.updateUniformsForNextSymmetry = function (polyhedronIndex, uniforms) {
+    that.updateUniformsForNextSymmetry = function (polyhedronIndex, uniforms, mode) {
         var symmetryGroup = that.nextSymmetry(polyhedronIndex);
-        uniforms.uXformA.value = symmetryGroup[0];
-        uniforms.uXformB.value = symmetryGroup[1];
-        uniforms.uXformC.value = symmetryGroup[2];
-        uniforms.uXformD.value = symmetryGroup[3];
+        if (mode == 1) {
+            uniforms.uXformA.value = symmetryGroup[0];
+            uniforms.uXformB.value = symmetryGroup[1];
+            uniforms.uXformC.value = symmetryGroup[2];
+            uniforms.uXformD.value = symmetryGroup[3];
+        }
+        else
+            uniforms.uSymmetryIndex.value = this.symmetryIndex;
     }
     that.getLabelsAsHTML = function (polyhedronIndex) {
+        if (that.labels != undefined)
+            return that.labels[that.symmetryIndex];
         var symmetries = that.getSymmetriesForPolyhedron(polyhedronIndex);
         var current = symmetries[that.symmetryIndex];
         var labels = [
@@ -46,6 +52,25 @@ function SU2Symmetries() {
             return l == 0 ? one : l == 1 ? i : l == 2 ? minusone : l == 3 ? minusi : one;
         }
         if (polyhedronIndex == 2) { // tetrahedron
+            that.lookup = {
+                "I": [new THREE.Vector2(1,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(1,0)],
+                "U": [new THREE.Vector2(0.5,-0.5),new THREE.Vector2(0.5,-0.5),new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(0.5,0.5)],
+                "V": [new THREE.Vector2(0.5,-0.5),new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(0.5,-0.5),new THREE.Vector2(0.5,0.5)],
+                "UU": [new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(0.5,-0.5),new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(-0.5,0.5)],
+                "UV": [new THREE.Vector2(0,-1),new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(0,1)],
+                "VU": [new THREE.Vector2(0,0),new THREE.Vector2(0,-1),new THREE.Vector2(0,-1),new THREE.Vector2(0,0)],
+                "VV": [new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(0.5,-0.5),new THREE.Vector2(-0.5,0.5)],
+                "UUV": [new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(0.5,0.5),new THREE.Vector2(-0.5,0.5),new THREE.Vector2(-0.5,0.5)],
+                "UVV": [new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(-0.5,0.5),new THREE.Vector2(0.5,0.5),new THREE.Vector2(-0.5,0.5)],
+                "VUU": [new THREE.Vector2(-0.5,0.5),new THREE.Vector2(0.5,-0.5),new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(-0.5,-0.5)],
+                "VVU": [new THREE.Vector2(0.5,-0.5),new THREE.Vector2(0.5,-0.5),new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(0.5,0.5)],
+                "UVVU": [new THREE.Vector2(0,0),new THREE.Vector2(-1,0),new THREE.Vector2(1,0),new THREE.Vector2(0,0)]
+            };
+            var group = Object.values(that.lookup);
+            that.labels = Object.keys(that.lookup)
+            return group;
+        }
+        if (polyhedronIndex == 3) { // tetrahedron, old
             var group = [
                 [one, zero, zero, one],
                 [minusone, zero, zero, one],

@@ -73,6 +73,7 @@ reimannShaderDetailsObject = function(name) {
         uXformB: { type: "v2", value: new THREE.Vector2(0,0) },
         uXformC: { type: "v2", value: new THREE.Vector2(0,0) },
         uXformD: { type: "v2", value: new THREE.Vector2(0,0) },
+        uSymmetryIndex: { type: 'i', value: 999 },
 
 
         uMaskType: { type: 'i', value: 0 },

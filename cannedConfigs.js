@@ -433,9 +433,9 @@ function getCannedConfigs(mode, generalSettings) {
     if (mode == 'bob') {
         generalSettings.cameraPosition = [15,0,0];
 
-        configs['skyDome'] = simpleSkyDome('hdr10.jpg');
+        configs['skyDome'] = simpleSkyDome('hdr01b.jpg');
         configs['skyDome']['scale'] = [-50,50,50];
-        generalSettings.fog = true;
+        // generalSettings.fog = true;
 
         var uniforms2 = TRANSFORM.reimannShaderList.createShader('default');
         uniforms2.hyperbolicTilingEffectOnOff.value = 1;
@@ -445,16 +445,79 @@ function getCannedConfigs(mode, generalSettings) {
         configs['default'] = {
             'uniforms': uniforms2,
             'textureType': 'still',
-            'textureName': 'hdr10.jpg',
+            'textureName': 'hdr01a.jpg',
             'geometry': 'sphere',
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
     }
-    if (mode == 'bob2') {
+    if (mode == 'Louis') {
+        generalSettings.cameraPosition = [.1,0,0];
+
+        configs['skyDome'] = simpleSkyDome('Rookery.jpg');
+        configs['skyDome']['scale'] = [-50,50,50];
+        // generalSettings.fog = true;
+
+        var uniforms2 = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms2.textureUAdjustment.value = 0.35;
+        // uniforms2.textureScaleY.value = .8;
+        generalSettings.rotateYAmount = 0.0;
+        configs['default'] = {
+            'uniforms': uniforms2,
+            'textureType': 'still',
+            'textureName': 'Louis.jpg',
+            'geometry': 'tsphere',
+            'position': [0,7,0],
+            'scale': [1,-1,-1],
+        }
+    }
+    if (mode == 'louisTriangles') {
         generalSettings.cameraPosition = [20,10,0];
 
-        configs['skyDome'] = simpleSkyDome('taosPueblo1.jpg');
+        configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
+        // configs['skyDome']['scale'] = [-50,50,50];
+        // generalSettings.fog = true;
+
+        var obj = TRANSFORM.reimannShaderList.createShader2('default');
+        obj.rotateDirection = 10;
+        var uniforms2 = obj.currentUniforms;
+        uniforms2.hyperbolicTilingEffectOnOff.value = 1;
+        uniforms2.geometryTiming.value = 1;
+        uniforms2.uColorVideoMode.value = 0; // mode == 'hyperbolicTessellation' ?  2 : 3;
+
+        uniforms2.mobiusEffectsOnOff.value = 1
+        // uniforms2.iRotationAmount.value = 10.*Math.PI/2.;
+        uniforms2.e1x.value = -1;
+        uniforms2.e1y.value = 0.5;
+        uniforms2.e2x.value = 1;
+        uniforms2.e2y.value = -0.5;
+        uniforms2.showFixedPoints.value = 0;
+
+        generalSettings.rotateYAmount = 0.0;
+        configs['default'] = {
+            'uniforms': uniforms2,
+            'textureType': 'video',
+            'textureName': 'lGrid',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+        var scale = 500;
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane1');
+         configs['plane1'] = {
+            'uniforms': uniforms, 
+            'textureType': 'mirror2', 
+            'geometry': 'plane', 
+            'scale': [scale,scale,scale],
+            'position': [0,-12,0],
+            'rotationAxis': new THREE.Vector3( 1, 0, 0 ),
+            'rotationAngle': -Math.PI/2
+        }
+    }
+    if (mode == 'taosTriangles') {
+        generalSettings.cameraPosition = [20,10,0];
+
+        configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
         // configs['skyDome']['scale'] = [-50,50,50];
         // generalSettings.fog = true;
 
@@ -495,7 +558,7 @@ function getCannedConfigs(mode, generalSettings) {
             'rotationAngle': -Math.PI/2
         }
     }
-    if (mode == 'mathArtTriangles') {
+    if (mode == 'trianglesTwoViews') {
         generalSettings.cameraPosition = [20,0 ,0];
         generalSettings.videoReloadDelayInSeconds = -1;
         generalSettings.rotateYAmount = 0.;
@@ -543,7 +606,7 @@ function getCannedConfigs(mode, generalSettings) {
             'uniforms': uniforms,
             'textureType': 'video',
             'textureName': 'lakeStreet',
-            'geometry': 'sphere',
+            'geometry': 'psphere',
             'position': [0,0,-12],
             'scale': [1,-1,1],
         };
