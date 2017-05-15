@@ -25,6 +25,7 @@ function mediaUtils(canned, scene, camera,
     this.rotateZAmount = 0;
     this.rotateYAmount = 0;
     this.rotateXAmount = 0;
+    this.cameraZoomAmount = 1;
     this.FOV = 90;
     this.onkeydown = undefined;     // this gets defined by transformUtils... 
     this.material = new THREE.MeshNormalMaterial();
@@ -201,6 +202,10 @@ function mediaUtils(canned, scene, camera,
                 _verticalMirror[verticalMirrorName].render();
             // that.camera.rotateY(that.rotateZAmount);
             // that.camera.rotateX(that.rotateZAmount);
+            that.camera.position.x = that.cameraZoomAmount*that.camera.position.x;
+            that.camera.position.y = that.cameraZoomAmount*that.camera.position.y;
+            that.camera.position.z = that.cameraZoomAmount*that.camera.position.z;
+            
         }
         var statusString = that.videoManager.animate();
         if (statusString != undefined)
@@ -282,6 +287,9 @@ function mediaUtils(canned, scene, camera,
     }  
     this.cameraRotateRight = function() {
         that.rotateZAmount += 0.2;
+    }
+    this.cameraZoom = function(scale) {
+        that.cameraZoomAmount = scale;
     }  
     this.flipCamera = function() {
     	that.camera.position.x = - that.camera.position.x;

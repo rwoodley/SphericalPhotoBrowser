@@ -55,6 +55,7 @@ reimannShaderDetailsObject = function(name) {
         flipTexture: { type: 'i', value: 0 },
         textureUAdjustment: { type: 'f', value: 0 },
         textureVAdjustment: { type: 'f', value: 0 },
+        uSyntheticTexture: { type: 'i', value: 0 },
         complexEffect1OnOff: { type: 'i', value: 1 },
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },

@@ -75,6 +75,15 @@ this.reimannUniformsEditor = function(
                 console.log("move camera");
             }
         }
+        if (e.keyCode == 79) {  // o - stop zoom.
+            that.mediaUtils.cameraZoom(1.0);
+        }
+        if (e.keyCode == 80) {  // p - pan.
+            that.mediaUtils.cameraZoom(1.01);
+        }
+        if (e.keyCode == 81) {  // q - zoom.
+            that.mediaUtils.cameraZoom(.99);
+        }
         if (e.keyCode == 83) {  // s - tetrahedral symmetry over triangle group.
             that.tetrahedralGroup(2);
         }
@@ -264,8 +273,9 @@ this.reimannUniformsEditor = function(
             that.currentUniforms.uNadirMask.value = that.currentUniforms.uNadirMask.value == 1 ? 0 : 1;
     }
     this.tetrahedralGroup = function(mode) {
-        that.currentUniforms.uApplyMobiusTransform.value = 1;
-        var polyhedronIndex = 2;   // tetrahedron
+        if (mode == 1)
+            that.currentUniforms.uApplyMobiusTransform.value = 1;
+        var polyhedronIndex = 2;   // tetrahedron, UV
         that.symmetryUtils.updateUniformsForNextSymmetry(polyhedronIndex, that.currentUniforms, mode);
         var labels = that.symmetryUtils.getLabelsAsHTML(polyhedronIndex);
         document.getElementById('matrixText').innerHTML = labels;

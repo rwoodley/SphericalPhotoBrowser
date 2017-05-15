@@ -10,8 +10,10 @@ function SU2Symmetries() {
             uniforms.uXformC.value = symmetryGroup[2];
             uniforms.uXformD.value = symmetryGroup[3];
         }
-        else
+        else {
             uniforms.uSymmetryIndex.value = this.symmetryIndex;
+            console.log("Symmetry index = " + uniforms.uSymmetryIndex.value);
+        }
     }
     that.getLabelsAsHTML = function (polyhedronIndex) {
         if (that.labels != undefined)
@@ -91,6 +93,8 @@ function SU2Symmetries() {
             var group = [];
             var g;
             for (var l = 0; l < 4; l++) {   // see page 28, "Finite Mobius Groups...", Gabor Toth
+                // in numerator: where Toth has 1 we use term. where Toth has i we use termp1.
+                // denominator: leave as one and i.
                 var term = ipow(l);
                 var termp1 = ipow(l + 1);
                 // replace one by term, i by termp1. in numerator.

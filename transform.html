@@ -87,7 +87,7 @@ function init() {
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
     _controls.keys = {};    // this disable arrow keys which are now used for moving the texture.
     _axes = new THREE.AxisHelper( 15000 );
-    //_scene.add(_axes);
+    // _scene.add(_axes);
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
 
     _renderer.sortObjects = false;          // see: http://stackoverflow.com/a/15995475

@@ -21,10 +21,11 @@ vec2 getNewUVForWrappedTexture(vec2 inUV) {
 vec4 wrappedTexture2D(sampler2D texture, vec2 inUV) {
     vec2 uv = getNewUVForWrappedTexture(inUV);
     if (uv.x < 0.) 
-        return 
-            vec4(0.0,0.0,0.0,0.0);
-        else
-            return texture2D(texture, uv);    
+    return 
+        vec4(0.0,0.0,0.0,0.0);
+    else {
+        return texture2D(texture, uv);    
+    }
 }
 bool checkMaskPoint(vec2 uv) {
     vec4 t1 = wrappedTexture2D( iChannel0,  uv);
@@ -292,6 +293,67 @@ schottkyResult doGeometry(in vec2 a) {
     }
     return tesselationResult;
 }
+void handleSyntheticTexture(vec2 result) {
+    // This is for looking up the pic of Louis from the grid.
+    vec3 aa = complexToCartesian(result);
+    vec4 defaultColor = vec4(aa.z,0.,0.,0.5);
+    if (uSymmetryIndex < 100)
+        defaultColor.a = 0.;
+
+    float quadrant = 0.;
+    float x=0., y=0.;
+    float imageRadius = .80;
+    if (uSymmetryIndex < 100)
+        imageRadius = .5;
+    float textureW = 1818.; float textureH = 2160.;
+    float tileW=606.; float tileH=1080.;
+    if (aa.x > imageRadius) {       // blue axis
+        quadrant = 0.;
+        x = aa.y; y = aa.z;
+    }
+    else if (aa.y > imageRadius) {  // red axis
+        quadrant = 1.;
+        x = aa.x; y = aa.z;
+    }
+    else if (aa.z > imageRadius) {
+        quadrant = 2.;
+        x = aa.x; y = aa.y;
+    }
+    else if (aa.x < -imageRadius) {       // blue axis
+        quadrant = 3.;
+        x = aa.y; y = aa.z;
+    }
+    else if (aa.y < -imageRadius) {  // red axis
+        quadrant = 4.;
+        x = aa.x; y = aa.z;
+    }
+    else if (aa.z < -imageRadius) {
+        quadrant = 5.;
+        x = aa.x; y = aa.y;
+    }
+    else {
+        gl_FragColor =  defaultColor;
+        return;
+    }
+
+    float offsetX = (mod(quadrant,3.)+.5)*tileW;
+    float offsetY = textureH - tileH*.5;
+    if (quadrant > 2.)
+        offsetY = textureH - tileH*1.5;
+    // the .95 is a kludge to get rid of an artifact that crept in on the side of some videos.
+    float xWithinTile = clamp(x*tileW,-.95*tileW/2.,.95*tileW/2.);
+    float yWithinTile = clamp(y*tileH,-tileH/2.,tileH/2.);
+    offsetX = offsetX + xWithinTile;
+    offsetY = offsetY + yWithinTile;
+    vec2 uv = getNewUVForWrappedTexture(vec2(offsetX/textureW, offsetY/textureH));
+    gl_FragColor =  texture2D(iChannel0, uv);
+    // gl_FragColor =  texture2D(iChannel0, vec2(offsetX/textureW, offsetY/textureH));
+    // if (gl_FragColor.x < 0.05 && gl_FragColor.y < 0.05 && gl_FragColor.z < 0.05) {
+    //     gl_FragColor.a = 0.; // = vec4(0.,0.,0.,0.);
+    //     //gl_FragColor = vec4(1.,0.,1.,1.);
+    // }
+
+}
 void main() {
 
     vec2 uv = vUv;
@@ -416,9 +478,13 @@ void main() {
         vec3 inresultInCartesian = complexToCartesian(inresult);
         vec3 resultInCartesian = complexToCartesian(result);
     }
-
-    vec2 newuv = complexToUV(result);
-    gl_FragColor = applyMask(newuv);
+    if (uSyntheticTexture) {
+        handleSyntheticTexture(result);
+    }
+    else {
+        vec2 newuv = complexToUV(result);
+        gl_FragColor = applyMask(newuv);
+    }
 
     if (geometryTiming == 1) {
         tesselationResult = doGeometry(result);

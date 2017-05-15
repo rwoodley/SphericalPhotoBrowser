@@ -34,6 +34,7 @@ var x = `
     uniform bool flipTexture;
     uniform float textureUAdjustment;
     uniform float textureVAdjustment;
+    uniform bool uSyntheticTexture;
     uniform int complexEffect1OnOff;
     uniform int complexEffect2OnOff;
     uniform int complexEffect3OnOff;
