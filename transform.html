@@ -4,6 +4,7 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="mediaUtils.css">
         <link rel="stylesheet" type="text/css" href="transformUtils.css">
+        <link rel="stylesheet" type="text/css" href="mathNotes.css">
 		<script src="r73/three.js"></script>
         <script src="r73/OrbitControls.js"></script>
 		<script src="r73/Detector.js"></script>
@@ -86,8 +87,8 @@ function init() {
 
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
     _controls.keys = {};    // this disable arrow keys which are now used for moving the texture.
-    _axes = new THREE.AxisHelper( 15000 );
-    // _scene.add(_axes);
+    // _axes = new THREE.AxisHelper( 15000 );
+    // _scene.add(_axes); 
     _renderer =  new THREE.WebGLRenderer({ antialias: true } );
 
     _renderer.sortObjects = false;          // see: http://stackoverflow.com/a/15995475
@@ -166,6 +167,30 @@ $().ready(function() {
 		<div id="container"><br /><br /><br /><br /><br />Generating...</div>
         <div id="matrixText" style="display: block; position: fixed; top: 10%; left: 10%; font-size: 40px; color: red; ">
         </div>
+        <div id="simpleText" class="generalText" >
+The only finite groups of direct isometries of R<sup>3</sup> are the cyclic groups C<sub>d</sub>, the dihedral groups D<sub>d</sub>, the tetrahedral group A<sub>4</sub>, the octahedral group S<sub>4</sub>, and the icosahedral group A<sub>5</sub>.  <span class="footNote">[1]</span>
+<p/>
+SU(2) is closely related to 3-dimensional rotations. Therefore, we can find the representation of the platonic solids in terms of SU(2) matrices, and turn these into Mobius transformations.  <span class="footNote">[2]</span>
+<p/>
+For the tetrahedron these are:
+<p/>
+        <img src="media/white.png" width=600px;></img>
+<span class="footNote">[3]</span>
+        </div>
+
+        <div id="simpleText2" class="generalText" >
+Back to Tetrahedrons...
+<p/>
+The alternating group <i>A<sub>4</sub></i> is the group of orientation-preserving symmetries of a regular tetrahedron.  
+<p/>
+Group presentation:
+<br/>
+<i>
+A<sub>4</sub> = &lt; u,v | u<sup>3</sup> = v<sup>3</sup> = (uv)<sup>2</sup> = I &gt;
+</i>
+        </div>
+
+
         <div style="position: fixed; top: 30%; width:95%; ">
              <div id='cameraText' class="statusText"></div>
              <div id='unitVectorText' class="statusText"></div>

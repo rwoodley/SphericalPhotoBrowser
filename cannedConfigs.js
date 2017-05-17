@@ -573,7 +573,22 @@ function getCannedConfigs(mode, generalSettings) {
 
         keycontrols = new keyControls(['default', 'default2'], 1,0,-1,0);
     }
-    if (mode == 'mathArt') {
+    if (mode == 'text') {
+        generalSettings.cameraPosition = [20,0 ,0];
+        generalSettings.videoReloadDelayInSeconds = -1;
+        generalSettings.rotateYAmount = 0.002;
+        configs['skyDome'] = phongSkyDome();
+        document.getElementById('simpleText').style.display= 'block';
+        
+    }
+    if (mode == 'text2') {
+        generalSettings.cameraPosition = [20,0 ,0];
+        generalSettings.videoReloadDelayInSeconds = -1;
+        generalSettings.rotateYAmount = 0.002;
+        configs['skyDome'] = phongSkyDome();
+        document.getElementById('simpleText2').style.display= 'block';
+    }
+    if (mode == 'equiAndSphere') {
         generalSettings.cameraPosition = [20,0 ,0];
         generalSettings.videoReloadDelayInSeconds = -1;
         generalSettings.rotateYAmount = 0.;
@@ -581,12 +596,14 @@ function getCannedConfigs(mode, generalSettings) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         uniforms.textureScaleY.value = .6;
         uniforms.flipTexture.value = 1;
+        var axes = drawAxes(14,new THREE.Vector3( 0, 0, -15 ));
+        _scene.add(axes); 
         configs['default'] = {
             'uniforms': uniforms,
-            'textureType': 'video',
-            'textureName': 'lakeStreet',
-            'geometry': 'psphere',
-            'position': [0,0,-12],
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'sphere',
+            'position': [0,0,-15],
             'scale': [1,-1,1],
         };
 
@@ -595,10 +612,10 @@ function getCannedConfigs(mode, generalSettings) {
         uniforms.flipTexture.value = 1;
         configs['default2'] = {
             'uniforms': uniforms,
-            'textureType': 'video',
-            'textureName': 'lakeStreet',
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
             'geometry': 'plane',
-            'position': [0,0,12],
+            'position': [0,0,15],
             'scale': [9,-9,9],
         };
         configs['skyDome'] = phongSkyDome();
