@@ -44,8 +44,8 @@ vec2 zoom(in vec2 z, in vec2 zoomDegree) {
 vec2 anotherTransform(vec2 z) {
     vec2 n = z-i;
     vec2 d = z+i;
-    vec2 f = cx_divide(n,d);
-    vec2 res = 1. * cx_exp(4.*f);
+    vec2 res = cx_divide(n,d);
+    res = 1. * cx_exp(4.*res);
     return res;
 }
 vec2 threePointMapping(vec2 z, vec2 q1, vec2 r1, vec2 s1, vec2 q2, vec2 r2, vec2 s2) {

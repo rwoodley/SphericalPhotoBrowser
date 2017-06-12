@@ -68,6 +68,15 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
          )
             return vec4(0.,0.,0.,0.);
     }
+    if (uHighPassFilter == 2) { 
+        vec4 t1 = wrappedTexture2D( iChannel0,  uv);
+        if (
+        t1.r < uLowPassFilterThreshold.r &&
+        t1.g < uLowPassFilterThreshold.g &&
+        t1.b < uLowPassFilterThreshold.b
+         )
+            return vec4(0.,0.,0.,0.);
+    }
 
     if (uTextureNumber == 0)
         textureValue = wrappedTexture2D( iChannel0,  uv);
@@ -117,39 +126,50 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         // want a green tinge ringing everything, so just average.
         // different set of constants depending on brightness, as follows:
         // in bright areas
-        float avg = (t1.g + t1.r + t1.b)/3.0;
-        if (t1.g > t1.r && t1.g > t1.b) {
-            if (t1.g > .7 && t1.r > .9 * t1.g && t1.b > .9 * t1.g) {
-                clr = vec4(avg, avg, avg ,1.);
-            }
-            // in dark areas 
-            else if (t1.g < .4 && t1.r > .6 * t1.g && t1.b > .6 * t1.g) {
-                clr = vec4(avg, avg, avg ,1.);
-            }
-            // in in-between areas
-            else if (t1.g > .4 && t1.g < .7 && t1.r > .85 * t1.g && t1.b > .85 * t1.g) {
-                clr = vec4(avg, avg, avg ,1.);
-            }
+
+        // float avg = (t1.g + t1.r + t1.b)/3.0;
+        // if (t1.g > t1.r && t1.g > t1.b) {
+        //     if (1 == 0) {
+        //         // pass.
+        //     }
+            // else if {
+            //     (t1.g > .7 && t1.r > .9 * t1.g && t1.b > .9 * t1.g) {
+            //     clr = vec4(avg, avg, avg ,1.);
+            // }
+            // // in dark areas 
+            // else if (t1.g < .4 && t1.r > .6 * t1.g && t1.b > .6 * t1.g) {
+            //     clr = vec4(avg, avg, avg ,1.);
+            // }
+            // // in in-between areas
+            // else if (t1.g > .4 && t1.g < .7 && t1.r > .85 * t1.g && t1.b > .85 * t1.g) {
+            //     clr = vec4(avg, avg, avg ,1.);
+            // }
 
             // now for really green areas, we cut out enitrely. once again, different constants
             // for different brightness.
-            else if (t1.g > .40 && t1.g > .6*(t1.r + t1.b))
+            // else if (t1.g > .40 && t1.g > .6*(t1.r + t1.b))
+            //     clr = vec4(0.,0.,0.,0.);
+            // else if (t1.g > .5 && 
+            //     ((t1.g*.85 > t1.r && t1.g > t1.b) ||
+            //     (t1.g*.85 > t1.b && t1.g > t1.r) )
+            // )
+            //     {
+            //     clr = vec4(0.,0.,0.,0.);
+            // }
+            // else if (t1.g > .6 && 
+            //     ((t1.g*.9 > t1.r && t1.g > t1.b) ||
+            //     (t1.g*.9 > t1.b && t1.g > t1.r)) 
+            // )
+            //     {
+            //     clr = vec4(0.,0.,0.,0.);
+            // }
+        // }        
+        if (t1.g > .6 && t1.b < .45 && t1.r < .45) {
                 clr = vec4(0.,0.,0.,0.);
-            else if (t1.g > .5 && 
-                ((t1.g*.85 > t1.r && t1.g > t1.b) ||
-                (t1.g*.85 > t1.b && t1.g > t1.r) )
-            )
-                {
-                clr = vec4(0.,0.,0.,0.);
-            }
-            else if (t1.g > .6 && 
-                ((t1.g*.9 > t1.r && t1.g > t1.b) ||
-                (t1.g*.9 > t1.b && t1.g > t1.r)) 
-            )
-                {
-                clr = vec4(0.,0.,0.,0.);
-            }
-        }        
+        }
+        else if (t1.a > 0.1) {
+                clr = vec4(vec3(t1),1.);            
+        }
         return clr;
 
     }
@@ -452,9 +472,15 @@ void main() {
     if (complexEffect4OnOff == 1) {
         result = cx_exp(result);
     }
-    if (complexEffect5OnOff == 1) {
-        result = cx_log(result);
+    if (uPolygonalGroups == 1) {
+        result = polygonalGroup_Tetrahedron(result);
     }
+    if (uPolygonalGroups == 2) {
+        result = polygonalGroup_Octagon(result);
+    }
+    if (uPolygonalGroups == 3) {
+        result = polygonalGroup_Icosahedron(result);
+    } 
     if (uApplyMobiusTransform > 0) {
         result = applyInverseMobiusTransformation(result, 
             xformCtor(uXformA, uXformB, uXformC, uXformD));
@@ -478,6 +504,7 @@ void main() {
         vec3 inresultInCartesian = complexToCartesian(inresult);
         vec3 resultInCartesian = complexToCartesian(result);
     }
+
     if (uSyntheticTexture) {
         handleSyntheticTexture(result);
     }

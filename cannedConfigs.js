@@ -43,23 +43,52 @@ function getCannedConfigs(mode, generalSettings) {
         configs['skyDome'] = phongSkyDome();
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
-    if (mode == 'tetra') {  
+    if (mode == 'complex') {     // this is what you get by default if no mode specifed.
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        var s3 = 1./Math.sqrt(3.0);
-        generalSettings.cameraPosition = [-s3,-s3,-s3];
-        uniforms.textureUAdjustment.value = -0.2;
-        uniforms.textureVAdjustment.value = -0.15;
+        generalSettings.cameraPosition = [-20,-10,0.];     // expected by trackerUtils.
+        uniforms.uPolygonalGroups.value = 1;
         generalSettings.rotateYAmount = 0.;
-        configs['default'] = {
+         configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',
-            'textureName': 'tetrahedron.jpg',
+            'textureName': 'C.png',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [4,4,-4],
+        }
+        var uniforms = TRANSFORM.reimannShaderList.createShader('inner');
+         configs['inner'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'C.png',
             'geometry': 'sphere',
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
-        // configs['skyDome'] = phongSkyDome();
-        // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+    }
+    if (mode == 'rootFindingBot') {     // this is what you get by default if no mode specifed.
+        generalSettings.videoReloadDelayInSeconds = -1;
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
+        uniforms.complexEffect3OnOff.value = 0;
+        generalSettings.rotateYAmount = 0.;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'octagon',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [4,4,-4],
+        }
+        configs['mirrorBall'] =
+        {
+            'textureType': 'mirror',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [.7,.7,.7],
+        };
+        configs['skyDome'] = phongSkyDome();
     }
     if (mode == 'trianglesWithSomeReflectionPlanes') {
         generalSettings.rotateYAmount = 0.;
@@ -430,64 +459,24 @@ function getCannedConfigs(mode, generalSettings) {
         };
         configs['skyDome'] = phongSkyDome();
     }
-    if (mode == 'bob') {
-        generalSettings.cameraPosition = [15,0,0];
-
-        configs['skyDome'] = simpleSkyDome('hdr01b.jpg');
-        configs['skyDome']['scale'] = [-50,50,50];
-        // generalSettings.fog = true;
-
-        var uniforms2 = TRANSFORM.reimannShaderList.createShader('default');
-        uniforms2.hyperbolicTilingEffectOnOff.value = 1;
-        uniforms2.geometryTiming.value = 1;
-        uniforms2.uColorVideoMode.value = 0; // mode == 'hyperbolicTessellation' ?  2 : 3;
-        generalSettings.rotateYAmount = 0.01;
-        configs['default'] = {
-            'uniforms': uniforms2,
-            'textureType': 'still',
-            'textureName': 'hdr01a.jpg',
-            'geometry': 'sphere',
-            'position': [0,0,0],
-            'scale': [1,1,-1],
-        }
-    }
-    if (mode == 'Louis') {
-        generalSettings.cameraPosition = [.1,0,0];
-
-        configs['skyDome'] = simpleSkyDome('Rookery.jpg');
-        configs['skyDome']['scale'] = [-50,50,50];
-        // generalSettings.fog = true;
-
-        var uniforms2 = TRANSFORM.reimannShaderList.createShader('default');
-        uniforms2.textureUAdjustment.value = 0.35;
-        // uniforms2.textureScaleY.value = .8;
-        generalSettings.rotateYAmount = 0.0;
-        configs['default'] = {
-            'uniforms': uniforms2,
-            'textureType': 'still',
-            'textureName': 'Louis.jpg',
-            'geometry': 'tsphere',
-            'position': [0,7,0],
-            'scale': [1,-1,-1],
-        }
-    }
     if (mode == 'louisTriangles') {
         generalSettings.cameraPosition = [0,00,40];
         generalSettings.videoReloadDelayInSeconds = -1;
 
-        configs['skyDome'] = phongSkyDome();
+        // configs['skyDome'] = phongSkyDome();
+        configs['skyDome'] = simpleSkyDome('hdr1.jpg');
 
         var obj = TRANSFORM.reimannShaderList.createShader2('default');
         obj.rotateDirection = 10;
 
         var uniforms2 = obj.currentUniforms;
-        uniforms2.geometryTiming.value = 1;
+        uniforms2.geometryTiming.value = 0;         // apply geometry before or after mobius xforms.
         uniforms2.uSyntheticTexture.value = 1;
         generalSettings.rotateYAmount = 0.0;
         configs['default'] = {
             'uniforms': uniforms2,
             'textureType': 'video',
-            'textureName': 'lGrid6',
+            'textureName': '2g.webm',
             'geometry': 'sphere',
             'position': [0,0,0],
             'scale': [1,1,-1],
@@ -596,8 +585,8 @@ function getCannedConfigs(mode, generalSettings) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         uniforms.textureScaleY.value = .6;
         uniforms.flipTexture.value = 1;
-        var axes = drawAxes(14,new THREE.Vector3( 0, 0, -15 ));
-        _scene.add(axes); 
+        // var axes = drawAxes(14,new THREE.Vector3( 0, 0, -15 ));
+        // _scene.add(axes); 
         configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',

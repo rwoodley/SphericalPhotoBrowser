@@ -84,7 +84,7 @@ this.reimannUniformsEditor = function(
         if (e.keyCode == 81) {  // q - zoom.
             that.mediaUtils.cameraZoom(.99);
         }
-        if (e.keyCode == 83) {  // s - tetrahedral symmetry over triangle group.
+        if (e.keyCode == 82) {  // r - tetrahedral symmetry over triangle group.
             that.tetrahedralGroup(2);
         }
         if (e.keyCode == 84) {  // t - tetrahedral symmetry.
@@ -139,7 +139,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'diffMask.svg', 'mask is delayed feed', that.useDelayMask);
         appendSingleIcon(container, 'transformControlIcon', 'diffGreenMask.svg', 'mask out green', that.useGreenMask);
         appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
-        appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'use high pass filter', that.beigeMask);
+        appendSingleIcon(container, 'transformControlIcon', 'beigeMask.svg', 'Toggle high pass/low pass filter', that.beigeMask);
         appendSingleIcon(container, 'transformControlIcon', 'nadir.png', 'mask out nadir', that.nadirMask);
         appendSingleIcon(container, 'transformControlIcon', 'nadir.png', 'tetrahedral group', that.tetrahedralGroup);
 
@@ -164,13 +164,13 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Decrease N', that.complexEffect2);                
         appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Apply transform', that.complexEffect3);                
         appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);
-        appendSingleIcon(container, 'transformControlIcon', 'surprise.png', 'Debugging transform', that.complexEffect5);                
+        appendSingleIcon(container, 'transformControlIcon', 'polygons.png', 'Polygonal Groups', that.polygonalGroups);                
         appendSingleIcon(container, 'transformControlIcon', 'S1.png', 'Apply theta schottky (Equal Circles)', that.schottkyEffect1);
         appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apply theta schottky (Uneven Circles)', that.schottkyEffect2);
         appendSingleIcon(container, 'transformControlIcon', 'A.png', 'Apollonian Gasket', that.schottkyEffect3);
         appendSingleIcon(container, 'transformControlIcon', 'F.png', 'Fractal', that.fractalEffect);
         appendSingleIcon(container, 'transformControlIcon', 'triangles.png', 'Hyperbolic Triangles', that.hyperbolicTilingEffect);
-        appendSingleIcon(container, 'transformControlIcon', 'before.png', 'Toggle: apply Geometry first/last', that.toggleGeometryTiming);
+        appendSingleIcon(container, 'transformControlIcon', 'beforeOrAfter.png', 'Toggle: apply Geometry first/last', that.toggleGeometryTiming);
     }
     
     this.textureLeft = function() { that.currentUniforms.textureUAdjustment.value += .1; }
@@ -222,8 +222,10 @@ this.reimannUniformsEditor = function(
     this.complexEffect4 = function() { 
         that.currentUniforms.complexEffect4OnOff.value = that.currentUniforms.complexEffect4OnOff.value == 0 ? 1 : 0;
     }
-    this.complexEffect5 = function() { 
-        that.currentUniforms.complexEffect5OnOff.value = that.currentUniforms.complexEffect5OnOff.value == 0 ? 1 : 0;
+    this.polygonalGroups = function() { 
+        that.currentUniforms.uPolygonalGroups.value++;
+        console.log(that.currentUniforms.uPolygonalGroups.value);
+        that.currentUniforms.uPolygonalGroups.value = that.currentUniforms.uPolygonalGroups.value%4;
     }
     this.schottkyEffect1 = function() { 
         that.currentUniforms.schottkyEffectOnOff.value = that.currentUniforms.schottkyEffectOnOff.value == 0 ? 1 : 0;
@@ -267,7 +269,10 @@ this.reimannUniformsEditor = function(
             that.currentUniforms.uBlackMask.value = that.currentUniforms.uBlackMask.value == 1 ? 0 : 1;
     }
     this.beigeMask = function() {
-            that.currentUniforms.uHighPassFilter.value = that.currentUniforms.uHighPassFilter.value == 1 ? 0 : 1;
+            that.currentUniforms.uHighPassFilter.value = 
+            that.currentUniforms.uHighPassFilter.value == 1 ? 2 :
+            that.currentUniforms.uHighPassFilter.value == 2 ? 0 :
+             1;
     }
     this.nadirMask = function() {
             that.currentUniforms.uNadirMask.value = that.currentUniforms.uNadirMask.value == 1 ? 0 : 1;
@@ -424,7 +429,7 @@ this.reimannUniformsEditor = function(
         // that.currentUniforms.complexEffect2OnOff.value = 0;
         that.currentUniforms.complexEffect3OnOff.value = 0;
         that.currentUniforms.complexEffect4OnOff.value = 0;
-        that.currentUniforms.complexEffect5OnOff.value = 0;
+        that.currentUniforms.uPolygonalGroups.value = 0;
         that.currentUniforms.schottkyEffectOnOff.value = 0;
         that.currentUniforms.fractalEffectOnOff.value = 0;
         that.currentUniforms.geometryTiming.value = 0;

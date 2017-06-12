@@ -2,7 +2,8 @@ SHADERCODE = {
     drosteUtils: "",
     mathUtils: "",
     schottkyUtils: "",
-    mobiusTransformUtils: ""
+    mobiusTransformUtils: "",
+    polygonalGroupsCode: ""
 };
 SHADERCODE.uniformsAndGlobals = function() {
 var x = `  
@@ -39,7 +40,7 @@ var x = `
     uniform int complexEffect2OnOff;
     uniform int complexEffect3OnOff;
     uniform int complexEffect4OnOff;
-    uniform int complexEffect5OnOff;
+    uniform int uPolygonalGroups;
     uniform int schottkyEffectOnOff;
     uniform int fractalEffectOnOff;
     uniform int geometryTiming;
@@ -52,6 +53,7 @@ var x = `
     uniform int  uBlackMask;
     uniform int uHighPassFilter;
     uniform vec3 uHighPassFilterThreshold;
+    uniform vec3 uLowPassFilterThreshold;
     uniform int  uNadirMask;
     uniform int uApplyMobiusTransform;
     uniform vec2 uXformA;

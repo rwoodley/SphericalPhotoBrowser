@@ -59,7 +59,7 @@ reimannShaderDetailsObject = function(name) {
         complexEffect1OnOff: { type: 'i', value: 1 },
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },
-        complexEffect5OnOff: { type: 'i', value: 0 },
+        uPolygonalGroups: { type: 'i', value: 0 },
         schottkyEffectOnOff: { type: 'i', value: 0 },
         fractalEffectOnOff: { type: 'i', value: 0 },
         geometryTiming: { type: 'i', value: 0 },
@@ -99,6 +99,7 @@ reimannShaderDetailsObject = function(name) {
         u3q2: { type: "v2", value: new THREE.Vector2(0,0) },
         u3r2: { type: "v2", value: new THREE.Vector2(0,0) },
         uHighPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.5,.5,.5) },
+        uLowPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.05,.05,.05) },
         uThreePointMappingOn: { type: 'i', value: 0 }
     };
     this.setDefaults = function() {
@@ -153,6 +154,7 @@ function getReimannShaderMaterial(texture, uniforms) {
         + SHADERCODE.uniformsAndGlobals()
         + SHADERCODE.mathUtils()
         + SHADERCODE.mobiusTransformUtils()
+        + SHADERCODE.polygonalGroupsCode()
         + SHADERCODE.drosteUtils()
         + SHADERCODE.symmetryUtils()
         + SHADERCODE.schottkyUtils()
