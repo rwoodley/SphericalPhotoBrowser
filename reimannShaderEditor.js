@@ -85,6 +85,7 @@ this.reimannUniformsEditor = function(
             that.mediaUtils.cameraZoom(.99);
         }
         if (e.keyCode == 82) {  // r - tetrahedral symmetry over triangle group.
+            that.currentUniforms.hyperbolicTilingEffectOnOff.value = 1; // turn on triangles...
             that.tetrahedralGroup(2);
         }
         if (e.keyCode == 84) {  // t - tetrahedral symmetry.
@@ -244,7 +245,8 @@ this.reimannUniformsEditor = function(
     }
 
     this.hyperbolicTilingEffect = function() { 
-        that.currentUniforms.hyperbolicTilingEffectOnOff.value++;         that.currentUniforms.hyperbolicTilingEffectOnOff.value = 
+        that.currentUniforms.hyperbolicTilingEffectOnOff.value++;
+        that.currentUniforms.hyperbolicTilingEffectOnOff.value = 
             that.currentUniforms.hyperbolicTilingEffectOnOff.value%4;
         console.log(that.currentUniforms.hyperbolicTilingEffectOnOff.value);
      }

@@ -297,7 +297,7 @@ schottkyResult doGeometry(in vec2 a) {
 
     if (hyperbolicTilingEffectOnOff >= 1) {
         if (hyperbolicTilingEffectOnOff == 1)  {
-            tesselationResult = applyTriangleTesselation(a);
+            tesselationResult = applyTriangleTesselation(a);    // triangle group
         }
         if (hyperbolicTilingEffectOnOff == 2) 
             tesselationResult = applyHyperbolicTesselation(a);
