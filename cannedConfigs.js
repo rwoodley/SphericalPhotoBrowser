@@ -67,7 +67,7 @@ function getCannedConfigs(mode, generalSettings) {
         }
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
-    if (mode == 'rootFindingBot') {     // this is what you get by default if no mode specifed.
+    if (mode == 'rootFindingBot') {
         generalSettings.videoReloadDelayInSeconds = -1;
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
@@ -394,6 +394,27 @@ function getCannedConfigs(mode, generalSettings) {
         };
         configs['skyDome'] = phongSkyDome();
     }
+
+    if (mode == 'flower') {
+        generalSettings.cameraPosition = [10.6,5.4,0];
+        generalSettings.videoReloadDelayInSeconds = 1;
+        generalSettings.rotateYAmount = 0.;
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.geometryTiming.value = 0;         // apply geometry before or after mobius xforms.
+        uniforms.uSyntheticTexture.value = 1;
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': '2g.webm',
+            'geometry': 'morphinFlower',
+            'position': [0,0,0],
+            'scale': [1,1,1],
+        };
+        configs['skyDome'] = phongSkyDome();
+    }
+
+
     if (mode == 'dollyZoom') {
         generalSettings.cameraPosition = [1,0,0];
         generalSettings.videoReloadDelayInSeconds = 1;

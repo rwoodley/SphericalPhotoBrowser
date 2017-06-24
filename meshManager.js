@@ -72,6 +72,17 @@ function getGeometryForName(geoName) {
             klein, 
             40, 40 );
     }
+    if (geoName == "morphinFlower") {
+        var kgeo = new THREE.ParametricGeometry( klein, 90, 90 );
+        var flatDumpling = function(u,v) { return dumpling(u, v, -1, 0, 0, 0, 8, 8); }
+        var funcCup = function(u,v) { return      dumpling(u, v, 1, 1, 3, 1.7, 8, 4); }
+        var funcLeaves = function(u,v) { return   dumpling(u, v, -1, .5, .5, .2, 16, 7); }
+        var func1Geo = new THREE.ParametricGeometry(funcLeaves, 90, 90, false);
+        var func2Geo = new THREE.ParametricGeometry(funcCup, 90, 90, false);
+        func1Geo.morphTargets.push( { name: "target1", vertices: func2Geo.vertices } );
+        func1Geo.computeMorphNormals();
+        geo = func1Geo;
+    }
     return geo;
 }
 function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
@@ -219,6 +230,23 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
             that._addMesh( mesh, function(msh, newMaterial) {
                 newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;
+            });
+        }
+        if (that.geoName == "morphinFlower") {
+            mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            mesh.rotateY(-Math.PI/2);
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+                if (newMaterial.type != 'MeshNormalMaterial') {
+                    newMaterial.morphTargets = true;
+                    var myMorphFunction = function(animationFrame) {
+                        msh.morphTargetInfluences[0] = (animationFrame%2000.0)/2000.0;
+                        // console.log(msh.morphTargetInfluences[0]*10.);
+                    }
+                    TRANSFORM.meshInventory.listOfMorphFunctions.push(myMorphFunction);
+
+                }
             });
         }
         if (rotationAxis != undefined) {

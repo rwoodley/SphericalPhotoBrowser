@@ -10,7 +10,9 @@ function videoManager() {
     this.newVideo = function(pid) {
         // if (that.videoDisplayed && that.videoFileName == pid)
         //     return;
-        var pathToTexture = 'media/' + pid + '.mp4';
+        var pathToTexture = 'media/' + pid;
+        if (pid.indexOf('.') == -1)
+            pathToTexture = 'media/' + pid + '.mp4';
         console.log('loading: ' + pathToTexture);
         that.videoFileName = pid;
         that.videoSource.setAttribute('src', pathToTexture);

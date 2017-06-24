@@ -29,6 +29,11 @@ function meshInventory(scene) {
     this.changeGeometry = function(meshName, desiredGeoName) {
         that.meshes[meshName].setGeometry(desiredGeoName);        
     }
+    this.listOfMorphFunctions = [];
+    this.morphFunction = function(animationFrame) {
+        for (var i = 0; i < that.listOfMorphFunctions.length; i++)
+            that.listOfMorphFunctions[i](animationFrame);
+    }
 }
 function basicMesh(scene, position, scale, desiredGeoName, rotationAxis, rotationAngle) {
     // very basic. always a sphere, can't be moved or changed later.

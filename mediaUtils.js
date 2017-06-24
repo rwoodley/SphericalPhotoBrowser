@@ -191,6 +191,7 @@ function mediaUtils(canned, scene, camera,
                 that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
             }
             that.camera.lookAt(new THREE.Vector3(0,0,0));
+            TRANSFORM.meshInventory.morphFunction(this.animationFrame);
             rotateCameraY(that.camera, that.rotateYAmount);
             rotateCameraUpDown(that.camera, that.rotateXAmount);
             if (that.rotateZAmount > 0) {

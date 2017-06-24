@@ -60,9 +60,9 @@ vec2 polygonalGroup_Octagon(vec2 z) {
     return f;
 }
 vec2 polygonalGroup_Tetrahedron(vec2 z) {
-    vec2 con = vec2(0., 2.*sqrt(3.));
-    vec2 n = spow(z,4.) + cx_product(con, spow(z,2.)) + 1.;
-    vec2 d = spow(z,4.) - cx_product(con, spow(z,2.)) + 1.;
+    vec2 midTerm = 3.464101* cx_product(i,cx_product(z,z));
+    vec2 n = spow(z,4.) + midTerm + one;
+    vec2 d = spow(z,4.) - midTerm + one;
     vec2 f = cx_divide(n,d);
     return spow(f,3.);
 }
