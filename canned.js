@@ -119,7 +119,17 @@ function cannedRun(scene) {
             }
             else if (meshSpecs['textureType'] == 'normal') {
                 var mesh = getNoMaterialMesh(meshName, meshSpecs);
-                mesh.mesh.material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide});
+                mesh.mesh.material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide, shading: THREE.FlatShading});
+            }
+            else if (meshSpecs['textureType'] == 'tetraNormal') {
+                var mesh = getNoMaterialMesh(meshName, meshSpecs);
+                // see: https://stackoverflow.com/questions/45156446/color-a-tetrahedron-in-three-js/45156649#45156649
+                var skyMaterial = new THREE.MeshBasicMaterial({
+                    side: THREE.DoubleSide,
+                    shading: THREE.FlatShading,
+                    vertexColors: THREE.VertexColors
+                })
+                mesh.mesh.material = skyMaterial;
             }
             else if (meshSpecs['textureType'] == 'mirror') {
                 var mesh = getNoMaterialMesh(meshName, meshSpecs);

@@ -13,6 +13,7 @@ echo "<script>
 qlmanage -ti * -o proofSheet
 for f in `ls *.webm *.mp4`
 do
+	echo $f
 	ffmpeg -i $f -ss 00:00:07.000 -vframes 1 -y proofSheet/$f.png
 done
 
@@ -24,7 +25,7 @@ cat notes.html >> proofSheet.html
 echo "<p>Must be viewed with Chrome</p>" >> proofSheet.html
 echo "<h4>Stills:</h4>" >> proofSheet.html 
 #echo  "<table border='1'>" >> proofSheet.html
-for f in `find . -name "*.png" -maxdepth 1 -not -type d|grep -v proofSheet.html|egrep -i "png|mov"| sed -e "s;./;;"`
+for f in `find . -type f \( -name "*.png" -o -name "*.jpg" \) -maxdepth 1 -not -type d|grep -v proofSheet.html|egrep -i "jpg|png|mov"| sed -e "s;./;;"`
 do
     echo "Processing $f" 
     #echo "<tr><td><a href='$f'><img width=150px src='proofSheet/$f.png' /></a></td><td>$f</td>" >> proofSheet.html

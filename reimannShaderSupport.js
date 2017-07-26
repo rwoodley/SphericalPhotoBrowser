@@ -56,6 +56,7 @@ reimannShaderDetailsObject = function(name) {
         textureUAdjustment: { type: 'f', value: 0 },
         textureVAdjustment: { type: 'f', value: 0 },
         uSyntheticTexture: { type: 'i', value: 0 },
+        uSyntheticTextureQuadrant: { type: 'f', value: -1 },
         complexEffect1OnOff: { type: 'i', value: 1 },
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },

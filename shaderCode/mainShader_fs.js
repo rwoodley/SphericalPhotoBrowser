@@ -316,15 +316,11 @@ schottkyResult doGeometry(in vec2 a) {
 void handleSyntheticTexture(vec2 result) {
     // This is for looking up the pic of Louis from the grid.
     vec3 aa = complexToCartesian(result);
-    vec4 defaultColor = vec4(aa.z,0.,0.,0.5);
-    if (uSymmetryIndex < 100)
-        defaultColor.a = 0.;
+    vec4 defaultColor = vec4(aa.z,0.,0.,0.0);
 
     float quadrant = 0.;
     float x=0., y=0.;
     float imageRadius = .80;
-    if (uSymmetryIndex < 100)
-        imageRadius = .5;
     float textureW = 1818.; float textureH = 2160.;
     float tileW=606.; float tileH=1080.;
     if (aa.x > imageRadius) {       // blue axis
@@ -356,6 +352,9 @@ void handleSyntheticTexture(vec2 result) {
         return;
     }
 
+    if (uSyntheticTextureQuadrant > -1.0) { // over-ride.
+        quadrant = uSyntheticTextureQuadrant;
+    }
     float offsetX = (mod(quadrant,3.)+.5)*tileW;
     float offsetY = textureH - tileH*.5;
     if (quadrant > 2.)

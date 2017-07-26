@@ -442,7 +442,9 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.drosteType.value = 0;
         that.currentUniforms.tesselate.value = 0;
         that.currentUniforms.uAlpha.value = 1.0;
-        that.currentUniforms.uColorVideoMode.value = 1.0;      // need for outer texture.
+
+        // reseting this can be confusing...
+        // that.currentUniforms.uColorVideoMode.value = 1.0;      // need for outer texture.
     }
     this.updateVariousNumbersForCamera = function() {
         if (that.detailsObject == undefined) return;
@@ -470,15 +472,17 @@ this.reimannUniformsEditor = function(
                 + _camera.position.z.toFixed(1) + ") len: " 
                 + _camera.position.length().toFixed(1) + "</nobr>" ;
 
-            document.getElementById('unitVectorText').innerHTML = 
+            var mess = 
             "<nobr>Camera in Cartesian Space: (" + 
             	x.toFixed(1) + "," + 
             	y.toFixed(1) + "," + 
                 z.toFixed(1) + "" + 
                 ") len: " 
 				+ unitVector.length().toFixed(1) + "</nobr>" ;   
+            // console.log(mess);
+            document.getElementById('unitVectorText').innerHTML = mess;
 
-            var mess = "Looking at " + 
+            mess = "Looking at " + 
             	that.detailsObject.cameraLookAtComplexX.toFixed(2) + " + " + 
             	that.detailsObject.cameraLookAtComplexY.toFixed(2) + "i";
             // console.log(mess);

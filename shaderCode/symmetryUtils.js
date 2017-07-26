@@ -53,7 +53,7 @@ function SU2Symmetries() {
         var ipow = function (l) {    // returns i^l
             return l == 0 ? one : l == 1 ? i : l == 2 ? minusone : l == 3 ? minusi : one;
         }
-        if (polyhedronIndex == 2) { // tetrahedron
+        if (polyhedronIndex == 3) { // tetrahedron
             that.lookup = {
                 "I": [new THREE.Vector2(1,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(1,0)],
                 "U": [new THREE.Vector2(0.5,-0.5),new THREE.Vector2(0.5,-0.5),new THREE.Vector2(-0.5,-0.5),new THREE.Vector2(0.5,0.5)],
@@ -72,21 +72,23 @@ function SU2Symmetries() {
             that.labels = Object.keys(that.lookup)
             return group;
         }
-        if (polyhedronIndex == 3) { // tetrahedron, old
-            var group = [
-                [one, zero, zero, one],
-                [minusone, zero, zero, one],
-                [zero, one, one, zero],
-                [zero, minusone, one, zero],
-                [i, i, one, minusone],
-                [minusi, minusi, one, minusone],
-                [i, minusi, one, one],
-                [minusi, i, one, one],
-                [one, one, one, minusone],
-                [minusone, minusone, one, minusone],
-                [one, minusone, one, one],
-                [minusone, one, one, one]
-            ];
+        if (polyhedronIndex == 2) { // tetrahedron, old
+            that.lookup = {
+                "I": [one, zero, zero, one],
+                "U": [minusone, zero, zero, one],
+                "V": [zero, one, one, zero],
+                "UU": [zero, minusone, one, zero],
+                "UV": [i, i, one, minusone],
+                "VU": [minusi, minusi, one, minusone],
+                "VV": [i, minusi, one, one],
+                "UUV": [minusi, i, one, one],
+                "UVV": [one, one, one, minusone],
+                "VUU": [minusone, minusone, one, minusone],
+                "VVU": [one, minusone, one, one],
+                "UVVU": [minusone, one, one, one]
+            };
+            var group = Object.values(that.lookup);
+            that.labels = Object.keys(that.lookup)
             return group;
         }
         if (polyhedronIndex == 1) { // octagon

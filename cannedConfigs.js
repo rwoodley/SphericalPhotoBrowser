@@ -43,6 +43,25 @@ function getCannedConfigs(mode, generalSettings) {
         configs['skyDome'] = phongSkyDome();
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
+    if (mode == 'tothTetrahedron') {
+        // aligned as per Toth, page 27.
+
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        var xx = -3./Math.sqrt(3.0);    // alignment specified in Toth.
+        generalSettings.cameraPosition = [xx,xx,xx];
+        uniforms.complexEffect3OnOff.value = 0;
+        generalSettings.rotateYAmount = 0.;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'tetraNormal',
+            'geometry': 'tetrahedron',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+            'rotationAxis': new THREE.Vector3( 0, 1, 0 ),
+            'rotationAngle': Math.PI/2.
+        }
+        configs['skyDome'] = phongSkyDome();
+    }
     if (mode == 'complex') {     // this is what you get by default if no mode specifed.
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [-20,-10,0.];     // expected by trackerUtils.
@@ -396,13 +415,16 @@ function getCannedConfigs(mode, generalSettings) {
     }
 
     if (mode == 'flower') {
+        generalSettings.videoReloadDelayInSeconds = -1;
         generalSettings.cameraPosition = [10.6,5.4,0];
-        generalSettings.videoReloadDelayInSeconds = 1;
         generalSettings.rotateYAmount = 0.;
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        // uniforms.textureUAdjustment.value = 0.5;
         uniforms.geometryTiming.value = 0;         // apply geometry before or after mobius xforms.
         uniforms.uSyntheticTexture.value = 1;
+        uniforms.uSyntheticTextureQuadrant.value = 0.;
+        uniforms.flipTexture.value = 1;
         configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'video',

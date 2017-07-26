@@ -27,6 +27,19 @@ function getGeometryForName(geoName) {
         var geo = new THREE.SphereGeometry(sphereRadius,segment,segment, 0., 2.*Math.PI, 
                         thetaStart, 2*Math.PI-thetaStart);
     }
+    if (geoName == "tetrahedron") {
+        var geo = new THREE.TetrahedronGeometry(sphereRadius, 0);
+        for ( var i = 0; i < geo.faces.length; i ++ ) {
+            geo.faces[ i ].color.setHex( Math.random() * 0xffffff );
+        }
+    }
+    if (geoName == "box") {
+        var geo = new THREE.BoxGeometry(
+            sphereRadius,
+            sphereRadius,
+            sphereRadius
+        );
+    }
     if (geoName == "cylinder") {
         var geo = new THREE.CylinderGeometry(
             sphereRadius,       // radius top
@@ -192,6 +205,21 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
                 msh.material = newMaterial;
             });
         }
+        if (that.geoName == "box") {
+            mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            // mesh.rotateX(Math.PI/2);
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+            });
+        }
+        if (that.geoName == "tetrahedron") {
+            mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            that._addMesh( mesh, function(msh, newMaterial) {
+                newMaterial.side = THREE.DoubleSide;
+                msh.material = newMaterial;
+            });
+        }
         if (that.geoName == "rotatedFatTorus") {
             mesh = new THREE.Mesh( geo, that.materialGenerator() );
 //            mesh.rotateX(Math.PI/2);
@@ -241,7 +269,7 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
                 if (newMaterial.type != 'MeshNormalMaterial') {
                     newMaterial.morphTargets = true;
                     var myMorphFunction = function(animationFrame) {
-                        msh.morphTargetInfluences[0] = (animationFrame%2000.0)/2000.0;
+                        // msh.morphTargetInfluences[0] = 1. - (animationFrame%100.0)/100.0;
                         // console.log(msh.morphTargetInfluences[0]*10.);
                     }
                     TRANSFORM.meshInventory.listOfMorphFunctions.push(myMorphFunction);
