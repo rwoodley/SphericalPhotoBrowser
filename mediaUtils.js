@@ -216,21 +216,19 @@ function mediaUtils(canned, scene, camera,
         var pid = event.target.id.replace('textureSelector_','');
         that.updateReimannDomeForFileName(that.activeMeshName, pid, undefined);
     }
-    this.initializeReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale, rotationAxis, rotationAngle, callback) {
+    this.initializeReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
         if (this.activeMeshName == undefined)
             this.activeMeshName = meshName;
         TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann', rotationAxis, rotationAngle);
-        this.updateReimannDomeForFileName(meshName, filename, callback);
+        this.updateReimannDomeForFileName(meshName, filename);
     }
-    this.updateReimannDomeForFileName = function(meshName, filename, callback) {
+    this.updateReimannDomeForFileName = function(meshName, filename) {
         that.videoManager.unloadVideo();
         that.toggleVideoControls();
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
             TRANSFORM.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
-            if (callback != undefined)
-                callback();
         });
     }
     this.toggleView = function(desiredGeoName) {

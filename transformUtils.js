@@ -15,7 +15,9 @@ function transformUtils(camera,
         if (e.keyCode == 77) {  // 'm'
             that.useGreenMask();
         }
-
+        if (e.keyCode == 70 && extraKey == 16) {    // shift-f - flight. 
+            _flightControl.toggleStartStop();
+        }
         if (e.keyCode == 88 && extraKey == 16) {  // shift-X - start/stop recording
             if (!that.recording) {
                     console.log("Start recording");

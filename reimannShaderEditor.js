@@ -291,8 +291,12 @@ this.reimannUniformsEditor = function(
     this.setFixedPoint2 = function() {that.setFixedPoint(2); }
     this.setFixedPoint = function(pointNumber, cameraLookAtComplexX, cameraLookAtComplexY) {
     	that.currentUniforms.mobiusEffectsOnOff.value = 1;
-    	var x = that.detailsObject.cameraLookAtComplexX;
-    	var y = that.detailsObject.cameraLookAtComplexY;
+        if (cameraLookAtComplexX == undefined)
+            cameraLookAtComplexX = that.detailsObject.cameraLookAtComplexX;
+        if (cameraLookAtComplexY == undefined)
+            cameraLookAtComplexY = that.detailsObject.cameraLookAtComplexY;
+        var x = cameraLookAtComplexX;
+    	var y = cameraLookAtComplexY;
     	if (pointNumber == 1) {
         	that.currentUniforms.e1x.value = x;
         	that.currentUniforms.e1y.value = y;

@@ -20,9 +20,10 @@ function getNoMaterialMesh(meshName, meshSpecs) {
         );
     return mesh;
 }
-function cannedRun(scene) {
+function cannedRun(scene, flightControl) {
     var that = this;
     this.scene = scene;
+    this.flightControl = flightControl;
     this.configs = {};
     this.generalSettings = function() {
         this.cameraPosition = undefined;
@@ -48,7 +49,7 @@ function cannedRun(scene) {
         // Initial Y rotation is determined entirely by cameraPosition. 
         this.generalSettings.rotateYAmount = 0.0005;    // additional rotation on each call to animate().
         this.generalSettings.videoReloadDelayInSeconds = 30;
-        var retdic = getCannedConfigs(mode, that.generalSettings);
+        var retdic = getCannedConfigs(mode, that.generalSettings, that.flightControl);
         that.configs = retdic['configs'];
         that.keyControls = retdic['keyControls'];
     }
@@ -63,7 +64,7 @@ function cannedRun(scene) {
             that.scene.fog = new THREE.Fog( 0xaaaaaa, 1, 1000);
         }
     }
-    this.setup = function (mediaUtils, transformUtils, renderer, completionCallback) {
+    this.setup = function (mediaUtils, transformUtils, renderer) {
         mediaUtils.toggleControlPanel();
         this._initMediaUtils(mediaUtils);                   // setup camera
 
@@ -81,7 +82,6 @@ function cannedRun(scene) {
                     meshSpecs['scale'],
                     meshSpecs['rotationAxis'],
                     meshSpecs['rotationAngle'],
-                    completionCallback
                     );
             else if (meshSpecs['textureType'] == 'basic') {
                 var basicmesh = TRANSFORM.meshInventory.newMesh(

@@ -32,7 +32,7 @@ function normalSkyDome() {
             'scale': [50,50,50],
         };    
 }
-function getCannedConfigs(mode, generalSettings) {
+function getCannedConfigs(mode, generalSettings, flightControl) {
     configs = {};
     keycontrols = undefined;
     if (mode == 'uv') {     // this is what you get by default if no mode specifed.
@@ -98,11 +98,14 @@ function getCannedConfigs(mode, generalSettings) {
     if (mode == 'rootFindingBot') {
         generalSettings.videoReloadDelayInSeconds = -1;
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
+        generalSettings.cameraPosition = [0,39,0.];     // expected by trackerUtils.
         uniforms.complexEffect3OnOff.value = 0;
+        uniforms.uNadirMask.value = 1;
         generalSettings.rotateYAmount = 0.;
          configs['default'] = {
             'uniforms': uniforms,
+            // 'textureType': 'still',
+            // 'textureName': 'C.png',
             'textureType': 'video',
             'textureName': 'octagon',
             'geometry': 'sphere',
@@ -117,6 +120,38 @@ function getCannedConfigs(mode, generalSettings) {
             'scale': [.7,.7,.7],
         };
         configs['skyDome'] = phongSkyDome();
+        var step2 = false;
+        var step3 = false;
+        flightControl.flight1 = function(elapsed, mu, tu) {
+            if (elapsed < 0.25) {
+                console.log("I'm alive.");
+                return;
+            }
+            if (elapsed < 1.) {
+                uniforms.uPolygonalGroups.value = 1;
+                return;
+            }
+            if (elapsed < 4.) {
+                if (!step3) {
+                    step3 = true;
+                    uniforms.showFixedPoints.value = 0;
+                    tu.reimannShaderEditor.setFixedPoint(1,1,1);    // one fixed point is at (1,i)
+                    tu.reimannShaderEditor.rotateLeft();
+                    tu.reimannShaderEditor.rotateLeft();
+                    tu.reimannShaderEditor.rotateLeft();
+                }
+                return;
+            }
+            if (elapsed < 6) {
+                mu.cameraZoom(1.01);
+                return;
+            }
+            if (elapsed < 8) {
+                mu.cameraZoom(1.0);
+                return;
+            }
+            
+        }
     }
     if (mode == 'trianglesWithSomeReflectionPlanes') {
         generalSettings.rotateYAmount = 0.;

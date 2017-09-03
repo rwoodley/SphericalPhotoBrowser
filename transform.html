@@ -42,8 +42,9 @@
         <script src="mediaUtils.js"></script>
         <script src="transformUtils.js"></script>
         <script src="keyControls.js"></script>
+        <script src="fly.js"></script>
         <script src="utils.js"></script>
-
+        
         
         <script src="media/files.js"></script>
         <script src="media/videos.js"></script>
@@ -59,7 +60,7 @@ ga('send', 'pageview');
 </script>
 
 <script>
-var _container, _stats, _canned;
+var _container, _stats, _canned, _flightControl;
 var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
 
 var _mirrorSphere, _mirrorSphereCamera; // globals for managing a single mirror ball.
@@ -99,7 +100,8 @@ function init() {
     document.getElementById( 'container' ).innerHTML = "";
     _container.appendChild( _renderer.domElement );
 
-    _canned = new cannedRun(_scene);
+    _flightControl = new flight(_clock);
+    _canned = new cannedRun(_scene,_flightControl);
 
     var skyMaterialOld = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
 
@@ -135,13 +137,10 @@ function init() {
         "transformControls2ContainerId",
         "textureControlsContainerId",
         _mediaUtils);
+    _flightControl.shareGlobalObjects(_mediaUtils, _transformUtils);
+    _canned.setup(_mediaUtils, _transformUtils, _renderer);     // if this is a canned run, configure.
 
-    _canned.setup(_mediaUtils, _transformUtils, _renderer, 
-        function() { 
-            animate() 
-        });     // if this is a canned run, configure.
-
-    // animate();
+    animate();  // not all textures may be loaded here. oh well.
 }
 
 function animate() {
@@ -152,10 +151,11 @@ function animate() {
 
     if (_mirrorSphereCamera != undefined) {
         _mirrorSphere.visible = false;
-        _mirrorSphereCamera.updateCubeMap( _renderer, _scene );
+        _mirrorSphereCamera.update( _renderer, _scene );
         _mirrorSphere.visible = true;
     }
     _stats.update();
+    _flightControl.update();
 }
 $().ready(function() {
     init();
