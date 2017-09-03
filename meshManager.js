@@ -148,12 +148,12 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
             // order is important, see esp: https://github.com/mrdoob/three.js/issues/2476#issuecomment-9078548
             mesh = new THREE.Mesh( geo, that.materialGenerator() );
             that._addMesh(mesh, function(msh, mat) {
-                mat.side = THREE.BackSide;
+                mat.side = THREE.FrontSide;
                 msh.material = mat;
             });
             var mesh2 = new THREE.Mesh( geo, that.materialGenerator() );
             that._addMesh(mesh2, function(msh, mat) {
-                mat.side = THREE.FrontSide;
+                mat.side = THREE.BackSide;
                 msh.material = mat;
             });
         }

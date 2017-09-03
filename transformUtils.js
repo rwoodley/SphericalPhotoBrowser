@@ -16,22 +16,18 @@ function transformUtils(camera,
             that.useGreenMask();
         }
 
-        if (e.keyCode == 81 && extraKey == 16) {  // shift-Q - start/stop recording
+        if (e.keyCode == 88 && extraKey == 16) {  // shift-X - start/stop recording
             if (!that.recording) {
-                //that.mediaUtils.video_restart();
-                console.log("Start recording");
-                that.recording = true;
-                that.capturer = new CCapture({
-                    // framerate: 20,
-                    // verbose: true,
-                    format: 'webm'
-                });
-                // that.capturer = new CCapture( { format: 'webm' } );
-                //            that.capturer = new CCapture( { format: 'gif', workersPath: 'lib/' } );
-                that.capturer.start();
-                that.lasttiming = that.capturer.getTiming();
-                // that.mediaUtils.video.play();
-                document.getElementById('video').playbackRate = 60 / 25
+                    console.log("Start recording");
+                    that.recording = true;
+                    that.capturer = new CCapture({
+                        framerate: 60,
+                        verbose: true,
+                        format: 'webm'
+                    });
+                    that.mediaUtils.videoManager.video_play(function() {
+                    });
+                    that.capturer.start();                        
             }
             else {
                 console.log("Stop recording");
@@ -68,8 +64,9 @@ function transformUtils(camera,
         if (that.mediaUtils.videoManager.videoDisplayed) {
             if (that.capturer == undefined)
                 videoCurrentTime = that.mediaUtils.videoManager.video.currentTime;
-            else
-                videoCurrentTime = that.capturer.getTiming().performancetime;
+            else {
+                that.capturer.capture( that.canvas );
+            }
         }
         TRANSFORM.reimannShaderList.animate(
             that.mediaUtils.animationFrame,

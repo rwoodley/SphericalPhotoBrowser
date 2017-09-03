@@ -5,7 +5,7 @@ showToast = function(message, ms) {
             duration: ms
         }
     };        
- //   new iqwerty.toast.Toast(message, options);
+    new iqwerty.toast.Toast(message, options);
 }
 function appendSingleIcon(containerEl, style, png, title, callback) {
     var el;
