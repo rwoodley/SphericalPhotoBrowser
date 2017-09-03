@@ -1,4 +1,5 @@
 // This is broken out so key controls can work with multiple meshes
+// In other words, if you press an arrow key, all meshes will rotate.
 function keyControls(inMeshNames, e1x, e1y, e2x, e2y) {
     var that = this;
     this.meshNames = inMeshNames;
@@ -12,7 +13,7 @@ function keyControls(inMeshNames, e1x, e1y, e2x, e2y) {
                 that.rotationOff();
         }
         if (e.keyCode == 84) {  // t - tetrahedral symmetry.
-            this.iterateOverMeshes(
+            that.iterateOverMeshes(
                 {},
                 function(unused, meshName, detailsObject, uniforms) {
                     // TODO

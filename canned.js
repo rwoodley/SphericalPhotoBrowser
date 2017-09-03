@@ -63,7 +63,7 @@ function cannedRun(scene) {
             that.scene.fog = new THREE.Fog( 0xaaaaaa, 1, 1000);
         }
     }
-    this.setup = function (mediaUtils, transformUtils, renderer) {
+    this.setup = function (mediaUtils, transformUtils, renderer, completionCallback) {
         mediaUtils.toggleControlPanel();
         this._initMediaUtils(mediaUtils);                   // setup camera
 
@@ -80,7 +80,8 @@ function cannedRun(scene) {
                     meshSpecs['position'],
                     meshSpecs['scale'],
                     meshSpecs['rotationAxis'],
-                    meshSpecs['rotationAngle']
+                    meshSpecs['rotationAngle'],
+                    completionCallback
                     );
             else if (meshSpecs['textureType'] == 'basic') {
                 var basicmesh = TRANSFORM.meshInventory.newMesh(
@@ -98,6 +99,7 @@ function cannedRun(scene) {
             }
             else if (meshSpecs['textureType'] == 'outerShaderMaterial') {
                 var mesh = getNoMaterialMesh(meshName, meshSpecs);
+                console.log(">>>>>>>>>>>>>>>>>>>Create shader material");
                 var skyMaterial = new THREE.ShaderMaterial( {
                     uniforms: meshSpecs['uniforms'],
                     vertexShader: SHADERCODE.mainShader_vs(),
@@ -114,6 +116,14 @@ function cannedRun(scene) {
                     color: 0x255c78,
                     emissive: 0x51252,
                     shininess: 100,
+                });
+                mesh.mesh.material = skyMaterial;
+            }
+            else if (meshSpecs['textureType'] == 'transparent') {
+                var mesh = getNoMaterialMesh(meshName, meshSpecs);
+                var skyMaterial =  new THREE.MeshLambertMaterial({ 
+                    side: THREE.DoubleSide,
+                    color: 0x00000000,
                 });
                 mesh.mesh.material = skyMaterial;
             }

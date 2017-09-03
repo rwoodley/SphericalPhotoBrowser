@@ -161,6 +161,7 @@ function getReimannShaderMaterial(texture, uniforms) {
         + SHADERCODE.schottkyUtils()
         + SHADERCODE.mainShader_fs()
     ;
+    console.log(">>>>>>>>>>>>>>>>>>>Create shader material");
     var newMaterial = new THREE.ShaderMaterial( {
         uniforms: uniforms,
         vertexShader: SHADERCODE.mainShader_vs(),

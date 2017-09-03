@@ -16,6 +16,14 @@ function phongSkyDome() {
             'scale': [50,50,50],
         };    
 }
+function transparentSkyDome() {
+       return {
+            'textureType': 'transparent',
+            'geometry': 'sphere',
+            'position': [0,0,0],
+            'scale': [50,50,50],
+        };    
+}
 function normalSkyDome() {
        return {
             'textureType': 'normal',
@@ -40,7 +48,8 @@ function getCannedConfigs(mode, generalSettings) {
             'position': [0,0,0],
             'scale': [1,1,-1],
         }
-        configs['skyDome'] = phongSkyDome();
+        // configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
+        configs['skyDome'] = transparentSkyDome();
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'tothTetrahedron') {
@@ -507,7 +516,7 @@ function getCannedConfigs(mode, generalSettings) {
         generalSettings.videoReloadDelayInSeconds = -1;
 
         // configs['skyDome'] = phongSkyDome();
-        configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+        configs['skyDome'] = simpleSkyDome('Rookery.jpg');
 
         var obj = TRANSFORM.reimannShaderList.createShader2('default');
         obj.rotateDirection = 10;

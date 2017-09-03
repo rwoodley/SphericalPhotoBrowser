@@ -26023,7 +26023,9 @@ THREE.WebGLProgram = ( function () {
 		var vertexGlsl = prefixVertex + vertexShader;
 		var fragmentGlsl = prefixFragment + fragmentShader;
 
+		console.log("Compile vertex shader: " + vertexGlsl.length);
 		var glVertexShader = THREE.WebGLShader( gl, gl.VERTEX_SHADER, vertexGlsl );
+		console.log("Compile fragme shader: " + fragmentGlsl.length);
 		var glFragmentShader = THREE.WebGLShader( gl, gl.FRAGMENT_SHADER, fragmentGlsl );
 
 		gl.attachShader( program, glVertexShader );
@@ -26538,10 +26540,19 @@ THREE.WebGLShader = ( function () {
 		gl.shaderSource( shader, string );
 		gl.compileShader( shader );
 
+		var t0 = performance.now();
 		if ( gl.getShaderParameter( shader, gl.COMPILE_STATUS ) === false ) {
 
 			console.error( 'THREE.WebGLShader: Shader couldn\'t compile.' );
 
+		}
+		var t1 = performance.now();
+		if (string.length < 2000) 
+			console.log("here");
+		
+		if ((t1 - t0) > 1000) {
+			console.log("------------------Slow compile.----------------");
+			// console.log(string);
 		}
 
 		if ( gl.getShaderInfoLog( shader ) !== '' ) {
