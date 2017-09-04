@@ -34,4 +34,23 @@ function flight(clock) {
             return;
         }
     }
+    this.runCounters = {};
+    this.runAt = function(elapsed, runtime, numTimes) {
+        if (elapsed < runtime) return false;
+        if (that.runCounters.hasOwnProperty(runtime)) {
+            var obj = that.runCounters[runtime];
+            if (obj.counter >= obj.numTimes)
+                return false;
+        }
+        else {
+            obj = {
+                'numTimes': numTimes,
+                'counter': 0
+            };
+            that.runCounters[runtime] = obj;                
+        }
+        obj.counter++;
+        console.log("Running task scheduled for after " + runtime);
+        return true;
+    }
 }

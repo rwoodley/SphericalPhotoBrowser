@@ -1,5 +1,6 @@
 SHADERCODE.mainShader_vs = function() {
 var x = `  
+// ---- mainShader_vs ----
 varying vec2 vUv; 
 uniform float morphTargetInfluences[ 4 ];
 void main()

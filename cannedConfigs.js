@@ -120,37 +120,46 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'scale': [.7,.7,.7],
         };
         configs['skyDome'] = phongSkyDome();
-        var step2 = false;
-        var step3 = false;
         flightControl.flight1 = function(elapsed, mu, tu) {
-            if (elapsed < 0.25) {
+            if (flightControl.runAt(elapsed, 0.25,1)) {
+                uniforms.uPolygonalGroups.value = 0;
+                generalSettings.cameraPosition = [0,39,0.];     // expected by trackerUtils.
                 console.log("I'm alive.");
+                document.getElementsByTagName( 'canvas' )[0].style.width = "1920px";
+                document.getElementsByTagName( 'canvas' )[0].style.height = "1080px";
+                mu.videoManager.video_restart();
+                mu.videoManager.video.playbackRate = .125;     // this has to be found by trial and error. :(
+                return;
+            };
+            if (flightControl.runAt(elapsed, 1.0,1)) {
+                // the vide_restart above has a timeout, so we need to delay before starting recording.
+                tu.startRecording();
+            }
+            if (flightControl.runAt(elapsed, 5.0,1)) {
+                uniforms.uPolygonalGroups.value = 2;
                 return;
             }
-            if (elapsed < 1.) {
-                uniforms.uPolygonalGroups.value = 1;
+            if (flightControl.runAt(elapsed, 10.,1)) {
+                uniforms.showFixedPoints.value = 0;
+                tu.reimannShaderEditor.setFixedPoint(1,1,1);    // one fixed point is at (1,i)
+                tu.reimannShaderEditor.rotateLeft();
+                tu.reimannShaderEditor.rotateLeft();
+                tu.reimannShaderEditor.rotateLeft();
                 return;
             }
-            if (elapsed < 4.) {
-                if (!step3) {
-                    step3 = true;
-                    uniforms.showFixedPoints.value = 0;
-                    tu.reimannShaderEditor.setFixedPoint(1,1,1);    // one fixed point is at (1,i)
-                    tu.reimannShaderEditor.rotateLeft();
-                    tu.reimannShaderEditor.rotateLeft();
-                    tu.reimannShaderEditor.rotateLeft();
-                }
-                return;
-            }
-            if (elapsed < 6) {
+            if (flightControl.runAt(elapsed, 25.,5)) {
                 mu.cameraZoom(1.01);
                 return;
             }
-            if (elapsed < 8) {
+            if (flightControl.runAt(elapsed, 27.,1)) {
                 mu.cameraZoom(1.0);
                 return;
             }
-            
+            if (flightControl.runAt(elapsed, 40.,1)) {
+                tu.stopRecording();
+                flightControl.stop();
+                return;
+            }
         }
     }
     if (mode == 'trianglesWithSomeReflectionPlanes') {

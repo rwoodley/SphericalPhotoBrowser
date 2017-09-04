@@ -1,5 +1,7 @@
 SHADERCODE.mainShader_fs = function() {
 var x = `  
+// ---- mainShader_fs ----
+
 vec2 getNewUVForWrappedTexture(vec2 inUV) {
     vec2 uv = vec2( mod(inUV.x + textureUAdjustment, 1.), 
                     mod(inUV.y + textureVAdjustment, 1.));

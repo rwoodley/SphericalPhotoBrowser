@@ -20,27 +20,33 @@ function transformUtils(camera,
         }
         if (e.keyCode == 88 && extraKey == 16) {  // shift-X - start/stop recording
             if (!that.recording) {
-                    console.log("Start recording");
-                    that.recording = true;
-                    that.capturer = new CCapture({
-                        framerate: 60,
-                        verbose: true,
-                        format: 'webm'
-                    });
-                    that.mediaUtils.videoManager.video_play(function() {
-                    });
-                    that.capturer.start();                        
+                that.startRecording();
             }
             else {
-                console.log("Stop recording");
-                that.recording = false;
-                that.capturer.stop();
-                that.capturer.save();
-                that.capturer = undefined;
+                that.stopRecording();
             }
         }
         that.reimannShaderEditor.onkeydown(e, extraKey);
         e.preventDefault();
+    }
+    this.startRecording = function() {
+        console.log("Start recording");
+        that.recording = true;
+        that.capturer = new CCapture({
+            framerate: 30,
+            verbose: true,
+            format: 'webm'
+        });
+        that.mediaUtils.videoManager.video_play(function() {
+        });
+        that.capturer.start();
+    }
+    this.stopRecording = function() {
+        console.log("Stop recording");
+        that.recording = false;
+        that.capturer.stop();
+        that.capturer.save();
+        that.capturer = undefined;
     }
 
     this.cameraVectorLength = 1;    // by default, unit vector.
@@ -67,6 +73,7 @@ function transformUtils(camera,
             if (that.capturer == undefined)
                 videoCurrentTime = that.mediaUtils.videoManager.video.currentTime;
             else {
+                
                 that.capturer.capture( that.canvas );
             }
         }
