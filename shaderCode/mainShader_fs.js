@@ -482,6 +482,15 @@ void main() {
     if (uPolygonalGroups == 3) {
         result = polygonalGroup_Icosahedron(result);
     } 
+    if (uPolygonalGroups == 4) {
+        result = adhocTransformZPlusOneOverZ(result);
+    }
+    if (uPolygonalGroups == 5) {
+        result = adhocTransform_z3(result);
+    }
+    if (uPolygonalGroups == 6) {
+        result = adhocTransform3(result);
+    }
     if (uApplyMobiusTransform > 0) {
         result = applyInverseMobiusTransformation(result, 
             xformCtor(uXformA, uXformB, uXformC, uXformD));

@@ -120,7 +120,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'scale': [.7,.7,.7],
         };
         configs['skyDome'] = phongSkyDome();
-        flightControl.flight1 = function(elapsed, mu, tu) {
+        flightControl.flight1 = function(elapsed, mu, tu, shouldWeRecord) {
             if (flightControl.runAt(elapsed, 0.25,1)) {
                 uniforms.uPolygonalGroups.value = 0;
                 generalSettings.cameraPosition = [0,39,0.];     // expected by trackerUtils.
@@ -128,35 +128,38 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
                 document.getElementsByTagName( 'canvas' )[0].style.width = "1920px";
                 document.getElementsByTagName( 'canvas' )[0].style.height = "1080px";
                 mu.videoManager.video_restart();
-                mu.videoManager.video.playbackRate = .125;     // this has to be found by trial and error. :(
+                if (shouldWeRecord)
+                    mu.videoManager.video.playbackRate = .125;     // this has to be found by trial and error. :(
                 return;
             };
             if (flightControl.runAt(elapsed, 1.0,1)) {
                 // the vide_restart above has a timeout, so we need to delay before starting recording.
-                tu.startRecording();
+                if (shouldWeRecord)
+                    tu.startRecording();
             }
             if (flightControl.runAt(elapsed, 5.0,1)) {
-                uniforms.uPolygonalGroups.value = 2;
+                uniforms.uPolygonalGroups.value = 6;
                 return;
             }
             if (flightControl.runAt(elapsed, 10.,1)) {
                 uniforms.showFixedPoints.value = 0;
-                tu.reimannShaderEditor.setFixedPoint(1,1,1);    // one fixed point is at (1,i)
+                tu.reimannShaderEditor.setFixedPoint(1,1,-1);
                 tu.reimannShaderEditor.rotateLeft();
                 tu.reimannShaderEditor.rotateLeft();
                 tu.reimannShaderEditor.rotateLeft();
                 return;
             }
-            if (flightControl.runAt(elapsed, 25.,5)) {
+            if (flightControl.runAt(elapsed, 30.,5)) {
                 mu.cameraZoom(1.01);
                 return;
             }
-            if (flightControl.runAt(elapsed, 27.,1)) {
+            if (flightControl.runAt(elapsed, 32.,1)) {
                 mu.cameraZoom(1.0);
                 return;
             }
-            if (flightControl.runAt(elapsed, 40.,1)) {
-                tu.stopRecording();
+            if (flightControl.runAt(elapsed, 45.,1)) {
+                if (shouldWeRecord)
+                    tu.stopRecording();
                 flightControl.stop();
                 return;
             }

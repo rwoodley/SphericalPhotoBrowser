@@ -3,11 +3,11 @@ function flight(clock) {
     var that = this;
     this.startDelta = clock.getElapsedTime();
     this.started = false;
-    this.uniforms = null;
-    this.start = function(uniforms) {
+    this.shouldWeRecord = false;
+    this.start = function(shouldWeRecord) {
         that.startDelta = that.clock.getElapsedTime();
         that.started = true;
-        that.uniforms = uniforms;
+        that.shouldWeRecord = shouldWeRecord;
     }
     this.shareGlobalObjects = function(mediaUtils, transformUtils) {
         this.mediaUtils = mediaUtils;
@@ -17,18 +17,18 @@ function flight(clock) {
         if (!that.started) return;
         var delta = that.clock.getElapsedTime();
         var elapsed = delta - that.startDelta;
-        that.flight1(elapsed, that.mediaUtils, that.transformUtils);
+        that.flight1(elapsed, that.mediaUtils, that.transformUtils, that.shouldWeRecord);
     }
     this.stop = function() {
         that.started = false;
     }
-    this.toggleStartStop = function() {
+    this.toggleStartStop = function(shouldWeRecord) {
         if (this.started)
             this.stop();
         else
-            this.start();
+            this.start(shouldWeRecord);
     }
-    this.flight1 = function(elapsed, mu, tu) {
+    this.flight1 = function(elapsed, mu, tu, shouldWeRecord) {
         if (elapsed < 1.) {
             console.log("No flight defined. doing nothing");
             return;
