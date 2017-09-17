@@ -55,6 +55,8 @@ var x = `
     uniform int uHighPassFilter;
     uniform vec3 uHighPassFilterThreshold;
     uniform vec3 uLowPassFilterThreshold;
+    uniform vec3 uHighPassFilterThreshold2;
+    uniform vec3 uLowPassFilterThreshold2;
     uniform int  uNadirMask;
     uniform int uApplyMobiusTransform;
     uniform vec2 uXformA;

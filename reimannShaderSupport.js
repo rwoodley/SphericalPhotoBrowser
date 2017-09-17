@@ -101,6 +101,8 @@ reimannShaderDetailsObject = function(name) {
         u3r2: { type: "v2", value: new THREE.Vector2(0,0) },
         uHighPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.5,.5,.5) },
         uLowPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.05,.05,.05) },
+        uHighPassFilterThreshold2: { type: "v3", value: new THREE.Vector3(.3,.3,.3) },
+        uLowPassFilterThreshold2: { type: "v3", value: new THREE.Vector3(.25,.25,.25) },
         uThreePointMappingOn: { type: 'i', value: 0 }
     };
     this.setDefaults = function() {

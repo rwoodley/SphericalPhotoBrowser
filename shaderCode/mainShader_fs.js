@@ -37,9 +37,10 @@ bool checkMaskPoint(vec2 uv) {
         t2 = wrappedTexture2D( iChannelDelayMask,  uv);
         t3 = t2;
     }
-    else {
+    if (uMaskType == 3) {
         t2 = wrappedTexture2D( iChannelStillMask1,  uv);
-        t3 = wrappedTexture2D( iChannelStillMask2,  uv);        
+        t3 = t2;
+        // t3 = wrappedTexture2D( iChannelStillMask2,  uv);        
     }
     vec4 clr = abs(t1-t2);
     vec4 clr2 = abs(t1-t3);
@@ -73,9 +74,27 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     if (uHighPassFilter == 2) { 
         vec4 t1 = wrappedTexture2D( iChannel0,  uv);
         if (
+        t1.r > uHighPassFilterThreshold2.r &&
+        t1.g > uHighPassFilterThreshold2.g &&
+        t1.b > uHighPassFilterThreshold2.b
+         )
+            return vec4(0.,0.,0.,0.);
+    }
+    if (uHighPassFilter == 3) { 
+        vec4 t1 = wrappedTexture2D( iChannel0,  uv);
+        if (
         t1.r < uLowPassFilterThreshold.r &&
         t1.g < uLowPassFilterThreshold.g &&
         t1.b < uLowPassFilterThreshold.b
+         )
+            return vec4(0.,0.,0.,0.);
+    }
+    if (uHighPassFilter == 4) { 
+        vec4 t1 = wrappedTexture2D( iChannel0,  uv);
+        if (
+        t1.r < uLowPassFilterThreshold2.r &&
+        t1.g < uLowPassFilterThreshold2.g &&
+        t1.b < uLowPassFilterThreshold2.b
          )
             return vec4(0.,0.,0.,0.);
     }
@@ -88,10 +107,18 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         textureValue = wrappedTexture2D( iChannelStillMask1,  uv);
     
     if (uMaskType == 0) {
-        if (textureValue.a == 0.)
+        if (textureValue.a == 0.) {
             return textureValue;
-        else
-            return vec4(vec3(textureValue),uAlpha);
+        }
+        else {
+            vec4 clr;
+            // return vec4(vec3(textureValue),uAlpha);
+            if (uBlackMask == 1)
+                clr = vec4(0.,1.,1.,1.);
+            else
+                clr = vec4(vec3(textureValue),uAlpha);
+            return clr;
+        }
     }
 
     vec4 clr;
@@ -109,7 +136,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
             clr = vec4(0.,0.,0.,0.);
         else {
             if (uBlackMask == 1)
-                clr = vec4(0.,0.,0.,1.);
+                clr = vec4(0.,1.,1.,1.);
             else
                 clr = textureValue;
         }

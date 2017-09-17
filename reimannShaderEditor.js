@@ -271,11 +271,10 @@ this.reimannUniformsEditor = function(
             that.currentUniforms.uBlackMask.value = that.currentUniforms.uBlackMask.value == 1 ? 0 : 1;
     }
     this.beigeMask = function() {
-            that.currentUniforms.uHighPassFilter.value = 
-            that.currentUniforms.uHighPassFilter.value == 1 ? 2 :
-            that.currentUniforms.uHighPassFilter.value == 2 ? 0 :
-             1;
-    }
+            that.currentUniforms.uHighPassFilter.value++;
+            that.currentUniforms.uHighPassFilter.value = that.currentUniforms.uHighPassFilter.value%5;            
+            showToast('uHighPassFilter = ' + that.currentUniforms.uHighPassFilter.value, 500);
+        }
     this.nadirMask = function() {
             that.currentUniforms.uNadirMask.value = that.currentUniforms.uNadirMask.value == 1 ? 0 : 1;
     }

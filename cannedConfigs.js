@@ -138,7 +138,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
                     tu.startRecording();
             }
             if (flightControl.runAt(elapsed, 5.0,1)) {
-                uniforms.uPolygonalGroups.value = 6;
+                uniforms.uPolygonalGroups.value = 5;
                 return;
             }
             if (flightControl.runAt(elapsed, 10.,1)) {
@@ -157,7 +157,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
                 mu.cameraZoom(1.0);
                 return;
             }
-            if (flightControl.runAt(elapsed, 45.,1)) {
+            if (flightControl.runAt(elapsed, 54.,1)) {
                 if (shouldWeRecord)
                     tu.stopRecording();
                 flightControl.stop();

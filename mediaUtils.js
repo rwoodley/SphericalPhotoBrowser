@@ -241,6 +241,7 @@ function mediaUtils(canned, scene, camera,
     }
 	this.updateVideo = function(event) {
     	var pid = event.target.id.replace('textureSelector_','');
+        showToast("Loading Video '" + pid + "'.", 2000);
         that.updateReimannDomeForVideoName(that.activeMeshName, pid);
     }
     this.changeMeshBeingEditedOverridable = function(meshName) {    }    
