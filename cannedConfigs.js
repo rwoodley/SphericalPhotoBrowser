@@ -49,8 +49,8 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'scale': [1,1,-1],
         }
         // configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
-        // configs['skyDome'] = transparentSkyDome();
-         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+        configs['skyDome'] = transparentSkyDome();
+        // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'tothTetrahedron') {
         // aligned as per Toth, page 27.

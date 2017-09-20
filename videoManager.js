@@ -15,7 +15,10 @@ function videoManager() {
             pathToTexture = 'media/' + pid + '.mp4';
         console.log('loading: ' + pathToTexture);
         that.videoFileName = pid;
-        that.videoSource.setAttribute('src', pathToTexture);
+        if (pid == 'MCA')
+            that.videoSource.setAttribute('src', window.URL.createObjectURL(_cameraStream));
+        else
+            that.videoSource.setAttribute('src', pathToTexture);
         that.video.load();
         that.video.pause();     
         that.video.play();

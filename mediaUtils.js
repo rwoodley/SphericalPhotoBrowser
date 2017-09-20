@@ -8,6 +8,7 @@ User might want to:
 - add their own icons
 
 **/ 
+var _cameraStream;
 function mediaUtils(canned, scene, camera,  
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
        rightClickHandler, addEffects) {
@@ -241,7 +242,7 @@ function mediaUtils(canned, scene, camera,
         if (statusString != undefined)
             document.getElementById('videoClock').innerHTML = statusString;
 	}
-    this.updateSkyDome = function(event) {
+    this.updateSkyDome = function(event) {  // this should be called updateTextureForActiveMesh
         var pid;
         if (event.target.id.indexOf('textureSelector_') > -1) {
             var pid = event.target.id.replace('textureSelector_','');
@@ -298,15 +299,38 @@ function mediaUtils(canned, scene, camera,
         this.updateReimannDomeForVideoName(meshName, pid);
     }
     this.updateReimannDomeForVideoName = function(meshName, pid) {
-        that.videoManager.registerTextureConsumer(
-            meshName, 
-            function(videoTexture) {
-                TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
-                    that.buildMaterialForTexture);
-            }
-        );
-        that.videoManager.newVideo(pid);
-        that.toggleVideoControls();        
+        if (pid == 'MCA') {
+            navigator.mediaDevices.enumerateDevices().then((devices) => {
+                // find the theta uvc blender device
+                let theta = devices.find(device => device.label.match(/THETA UVC Blender/));
+                return theta ? { optional: [{ sourceId: theta.deviceId }] } : true
+              }).then((video) => {
+                // get the camera
+                return navigator.mediaDevices.getUserMedia({ video })
+              }).then((stream) => {
+                _cameraStream = stream;     // yuck! global variable. fix!
+                that.videoManager.registerTextureConsumer(
+                    meshName, 
+                    function(videoTexture) {
+                        TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
+                            that.buildMaterialForTexture);
+                    }
+                );
+                that.videoManager.newVideo(pid);
+                that.toggleVideoControls();        
+            });
+        }
+        else {
+            that.videoManager.registerTextureConsumer(
+                meshName, 
+                function(videoTexture) {
+                    TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
+                        that.buildMaterialForTexture);
+                }
+            );
+            that.videoManager.newVideo(pid);
+            that.toggleVideoControls();            
+        }
 	}
     this.cameraLeft = function() {
         that.rotateYAmount -= 0.0005;
