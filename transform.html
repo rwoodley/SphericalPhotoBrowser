@@ -44,6 +44,7 @@
         <script src="keyControls.js"></script>
         <script src="fly.js"></script>
         <script src="utils.js"></script>
+        <script src="variousMaterials.js"></script>
         
         
         <script src="media/files.js"></script>
@@ -109,14 +110,30 @@ function init() {
 
     _stats = new Stats();
     document.getElementById('statsDivInner').appendChild( _stats.domElement );    
-
     var rightClickHandler = function(event) {
-        // var pid;
-        // if (event.target.id.indexOf('textureSelector_') > -1)
-        //     pid = 'media/' + event.target.id.replace('textureSelector_','');
-        // else
-        //     pid = event.target.id.replace('effectSelector_','');
-        // _canned.changeSkyDome(_scene, pid);
+        if (event.target.id.indexOf('textureSelector_') > -1) {
+            pid = 'media/' + event.target.id.replace('textureSelector_','');
+            console.log(pid);
+            (new THREE.TextureLoader()).load(pid, function ( texture ) {
+                // setMipMapOptions(texture);
+                // material.map = texture;
+                // var material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide, shading: THREE.FlatShading});
+                var material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });            
+                material.map = texture;
+                TRANSFORM.meshInventory.meshes['skyDome'].material = material;  // do we really need this twice?
+                TRANSFORM.meshInventory.meshes['skyDome'].mesh.material = material;
+                TRANSFORM.meshInventory.meshes['skyDome'].mesh.needsUpdate = true;
+                TRANSFORM.meshInventory.meshes['skyDome'].mesh.geometry.uvsNeedUpdate = true;
+                });
+        }
+        else {
+            pid = event.target.id.replace('effectSelector_','');
+            var material = getMaterialForName(pid);
+            TRANSFORM.meshInventory.meshes['skyDome'].material = material;  // do we really need this twice?
+            TRANSFORM.meshInventory.meshes['skyDome'].mesh.material = material;
+            TRANSFORM.meshInventory.meshes['skyDome'].mesh.needsUpdate = true;
+            TRANSFORM.meshInventory.meshes['skyDome'].mesh.geometry.uvsNeedUpdate = true;
+        }
     }
 
     // render inner objects

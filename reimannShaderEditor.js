@@ -110,7 +110,7 @@ this.reimannUniformsEditor = function(
         }
 
         var textureNumber = e.keyCode - 48;
-        if (textureNumber < 10 && textureNumber >= 0)
+        if ((extraKey == 17) && (textureNumber < 10 && textureNumber >= 0))
             that.currentUniforms.uTextureNumber.value = textureNumber;        
     }
     this.setupTransformControlIcons = function() {

@@ -46,6 +46,14 @@ function mediaUtils(canned, scene, camera,
             if(e.keyCode == 32) {
                 that.toggleControlPanel();
             }
+            if (that.extraKey == 0) {
+                if (e.keyCode == 49)     // '1'
+                    that.toggleShowPanel('.tselector');
+                if (e.keyCode == 50)     // '2'
+                    that.toggleShowPanel('.vselector');
+                if (e.keyCode == 51)     // '3'
+                    that.toggleShowPanel('.eselector');
+} 
             if (that.onkeydown != undefined) that.onkeydown(e, this.extraKey);
         }
     };
@@ -79,14 +87,16 @@ function mediaUtils(canned, scene, camera,
             textureListHTML += "<span id='textureSelector_xxx' class='showhide vselector'>xxx</span>".replace(/xxx/g, myVideos[i]);
 
         if (that.addEffects) {
-            var myEffects = ['fractalDome', 'greyOutline', 'studioOutline', 'normal','shiny','black','white'];
+            var myEffects = ['greyOutline', 'normal','transparent','phong'];
             for (var i = 0; i < myEffects.length; i++)
-                textureListHTML += "<span id='effectSelector_xxx' class='showhide tselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
+                textureListHTML += "<span id='effectSelector_xxx' class='showhide eselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
         }
         document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 
         $('.tselector').click(that.updateSkyDome);
+        $('.eselector').click(that.updateSkyDome);
         $('.tselector').contextmenu(that.rightClickHandler);
+        $('.eselector').contextmenu(that.rightClickHandler);
         $('.vselector').click(that.updateVideo);
     };
     this.setupVideoControlIcons = function() {
@@ -166,7 +176,26 @@ function mediaUtils(canned, scene, camera,
 		else {
             $('.showhide').show();
 		}
-	}
+    }
+    this.toggleMap = {};
+    this.toggleShowPanel = function(panelName) {
+        var isVisible;
+        if (!that.toggleMap.hasOwnProperty(panelName)) {
+            isVisible = that.toggleMap[panelName] = true;
+        }
+        else {
+            isVisible = that.toggleMap[panelName];
+            that.toggleMap[panelName] = !isVisible;
+            isVisible = that.toggleMap[panelName];
+        }
+        if (isVisible) {
+            $(panelName).hide();
+        }
+        else {
+            $(panelName).show();
+        }
+    
+    }
 	this.toggleVideoControls = function() {
 		if (that.videoManager.videoDisplayed)
 			$('#' + that.videoControlsContainerId).show();
@@ -213,8 +242,20 @@ function mediaUtils(canned, scene, camera,
             document.getElementById('videoClock').innerHTML = statusString;
 	}
     this.updateSkyDome = function(event) {
-        var pid = event.target.id.replace('textureSelector_','');
-        that.updateReimannDomeForFileName(that.activeMeshName, pid, undefined);
+        var pid;
+        if (event.target.id.indexOf('textureSelector_') > -1) {
+            var pid = event.target.id.replace('textureSelector_','');
+            that.updateReimannDomeForFileName(that.activeMeshName, pid, undefined);
+        }
+        else {
+            pid = event.target.id.replace('effectSelector_','');
+            var mesh = TRANSFORM.meshInventory.meshes[that.activeMeshName];
+            // #TODO: more effects. 
+            mesh.setMaterial(function(texture, meshName) { 
+                return getMaterialForName(pid);
+            });
+        
+        }
     }
     this.initializeReimannDomeForFileName = function(meshName, filename, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
         if (this.activeMeshName == undefined)

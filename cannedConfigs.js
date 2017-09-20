@@ -5,7 +5,7 @@ function simpleSkyDome(fileContainingStill) {
             'geometry': 'sphere',
             'material': 'texture',
             'position': [0,0,0],
-            'scale': [50,50,50],
+            'scale': [51,51,51],
         };
 }
 function phongSkyDome() {
@@ -49,8 +49,8 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'scale': [1,1,-1],
         }
         // configs['skyDome'] = simpleSkyDome('eso_dark.jpg');
-        configs['skyDome'] = transparentSkyDome();
-         // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+        // configs['skyDome'] = transparentSkyDome();
+         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'tothTetrahedron') {
         // aligned as per Toth, page 27.
@@ -695,10 +695,10 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'scale': [1,-1,1],
         };
 
-        var uniforms = TRANSFORM.reimannShaderList.createShader('default2');
+        var uniforms = TRANSFORM.reimannShaderList.createShader('plane');
         uniforms.textureScaleY.value = .6;
         uniforms.flipTexture.value = 1;
-        configs['default2'] = {
+        configs['plane'] = {
             'uniforms': uniforms,
             'textureType': 'still',
             'textureName': 'uv.jpg',
@@ -707,7 +707,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'scale': [9,-9,9],
         };
         configs['skyDome'] = phongSkyDome();
-        keycontrols = new keyControls(['default', 'default2'], 1,0,-1,0);
+        keycontrols = new keyControls(['default', 'plane'], 1,0,-1,0);
     }
     if (mode == 'flockingMirrors') {
         generalSettings.cameraPosition = [1.7,-.7,-1.4];     // expected by trackerUtils.

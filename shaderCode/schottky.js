@@ -122,7 +122,7 @@ void defineInitialCircles3() {   // indra's necklace page 165, 170
     initialCircles.B.center = vec2(-x/y,0.);
     initialCircles.B.radius = 1./y;
 }
-void defineInitialCircles4old() {   // indra's necklace page 201. apollonian gasket.
+void defineInitialCirclesApollonianGasket() {   // indra's necklace page 201. apollonian gasket.
 
     group_a = xformCtor(vec2(1.,0.), vec2(0.,0.), vec2(0.,-2.), vec2(1.,0.));
     group_b = xformCtor(vec2(1.,-1.), vec2(1.,0.), vec2(1.,0.), vec2(1.,1.));
@@ -162,7 +162,7 @@ void defineInitialCircles() {
     if (schottkyEffectOnOff == 2)
         defineInitialCircles3();
     if (schottkyEffectOnOff == 3)
-        defineInitialCircles4();
+    defineInitialCirclesApollonianGasket();
 }
 bool insideCircleOld(circle a, vec2 z) {
     return distance(z,a.center) < a.radius;
