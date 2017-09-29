@@ -92,7 +92,9 @@ reimannShaderDetailsObject = function(name) {
         iChannel0:  { type: 't', value: 0 },
         iChannelStillMask1:  { type: 't', value: 0 },
         iChannelStillMask2:  { type: 't', value: 0 },
-        iChannelDelayMask:  { type: 't', value: 0 },
+        iChannelDelayMask1:  { type: 't', value: 0 },
+        iChannelDelayMask2:  { type: 't', value: 0 },
+        iChannelDelayMask3:  { type: 't', value: 0 },
         u3p1: { type: "v2", value: new THREE.Vector2(0,0) },
         u3q1: { type: "v2", value: new THREE.Vector2(0,0) },
         u3r1: { type: "v2", value: new THREE.Vector2(0,0) },
@@ -108,6 +110,7 @@ reimannShaderDetailsObject = function(name) {
     this.setDefaults = function() {
         // Initialize the masks to something so everything comes up.
         // These will be changed later as needed.
+        // we have to keep loading the texture otherwise the channels all point to the same texture.
         var pathToSubtractionTexture = 'media/placeholderStill.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
             setMipMapOptions(texture);
@@ -115,8 +118,16 @@ reimannShaderDetailsObject = function(name) {
         });
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
             setMipMapOptions(texture);
+            that.currentUniforms.iChannelDelayMask1.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
+        });
+        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask2.value =  texture; 
-            that.currentUniforms.iChannelDelayMask.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
+            that.currentUniforms.iChannelDelayMask2.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
+        });
+        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            setMipMapOptions(texture);
+            that.currentUniforms.iChannelDelayMask3.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
         });
         
     }
@@ -143,9 +154,19 @@ reimannShaderDetailsObject = function(name) {
                 that.threePointTracker.getXY(videoCurrentTime, that.currentUniforms);
             }
         }
-        if (animationFrame%120 == 0) {
-            that.currentUniforms.iChannelDelayMask.value.image = that.currentUniforms.iChannel0.value.image;
-            that.currentUniforms.iChannelDelayMask.value.needsUpdate = true;
+        if (that.currentUniforms.uMaskType.value == 1 || that.currentUniforms.uMaskType.value == 4) {
+            if (animationFrame%160 == 0) {
+                that.currentUniforms.iChannelDelayMask1.value.image = that.currentUniforms.iChannel0.value.image;
+                that.currentUniforms.iChannelDelayMask1.value.needsUpdate = true;
+            }
+            if (animationFrame%120 == 0) {
+                that.currentUniforms.iChannelDelayMask2.value.image = that.currentUniforms.iChannel0.value.image;
+                that.currentUniforms.iChannelDelayMask2.value.needsUpdate = true;
+            }
+            if (animationFrame%180 == 0) {
+                that.currentUniforms.iChannelDelayMask3.value.image = that.currentUniforms.iChannel0.value.image;
+                that.currentUniforms.iChannelDelayMask3.value.needsUpdate = true;
+            }
         }
     }
 };

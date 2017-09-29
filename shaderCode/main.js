@@ -10,7 +10,9 @@ var x = `
 
     // ===== shader control variables
     uniform sampler2D iChannel0;
-    uniform sampler2D iChannelDelayMask;
+    uniform sampler2D iChannelDelayMask1;
+    uniform sampler2D iChannelDelayMask2;
+    uniform sampler2D iChannelDelayMask3;
     uniform sampler2D iChannelStillMask1;
     uniform sampler2D iChannelStillMask2;
     varying vec2 vUv;  

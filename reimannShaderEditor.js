@@ -256,9 +256,11 @@ this.reimannUniformsEditor = function(
     	}
     }
     this.useDelayMask = function() {
-            that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 1 ? 0 : 1;
-            showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
+        that.currentUniforms.uMaskType.value++;
+        that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value%5;
+        showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
+    // these can be deleted:
     this.useGreenMask = function() {
             that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 2 ? 0 : 2;
             showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
