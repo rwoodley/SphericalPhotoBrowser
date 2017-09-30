@@ -82,6 +82,11 @@ var x = `
     vec2 one = vec2(1.0, 0.0);
     vec2 zero = vec2(0.0, 0.0);
     vec2 i = vec2(0., 1.);
-`;
+    uniform vec4 uColor0;
+    uniform vec4 uColor1;
+    uniform vec4 uColor2;
+    uniform vec4 uColor3;
+    uniform vec4 uColor4;
+    `;
 return x;
 }

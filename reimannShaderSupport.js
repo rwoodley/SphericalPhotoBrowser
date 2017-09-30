@@ -101,6 +101,11 @@ reimannShaderDetailsObject = function(name) {
         u3p2: { type: "v2", value: new THREE.Vector2(0,0) },
         u3q2: { type: "v2", value: new THREE.Vector2(0,0) },
         u3r2: { type: "v2", value: new THREE.Vector2(0,0) },
+        uColor0: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
+        uColor1: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
+        uColor2: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
+        uColor3: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
+        uColor4: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uHighPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.5,.5,.5) },
         uLowPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.05,.05,.05) },
         uHighPassFilterThreshold2: { type: "v3", value: new THREE.Vector3(.3,.3,.3) },
@@ -138,6 +143,36 @@ reimannShaderDetailsObject = function(name) {
         that.firstTime = false;
         that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .05*that.rotateDirection;
         that.currentUniforms.iGlobalTime.value = that.currentUniforms.iGlobalTime.value  + 1;
+        that.currentUniforms.uColor0.value = new THREE.Vector4(
+            _params.color0[0]/255.,
+            _params.color0[1]/255.,
+            _params.color0[2]/255.,
+            _params.color0[3],
+        )
+        that.currentUniforms.uColor1.value = new THREE.Vector4(
+            _params.color1[0]/255.,
+            _params.color1[1]/255.,
+            _params.color1[2]/255.,
+            _params.color1[3],
+        )
+        that.currentUniforms.uColor2.value = new THREE.Vector4(
+            _params.color2[0]/255.,
+            _params.color2[1]/255.,
+            _params.color2[2]/255.,
+            _params.color2[3],
+        )
+        that.currentUniforms.uColor3.value = new THREE.Vector4(
+            _params.color3[0]/255.,
+            _params.color3[1]/255.,
+            _params.color3[2]/255.,
+            _params.color3[3],
+        )
+        that.currentUniforms.uColor4.value = new THREE.Vector4(
+            _params.color4[0]/255.,
+            _params.color4[1]/255.,
+            _params.color4[2]/255.,
+            _params.color4[3],
+        )
 
         if (videoDisplayed) {
             if (that.currentUniforms.enableTracking.value == 1) {

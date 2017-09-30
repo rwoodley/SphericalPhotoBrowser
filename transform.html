@@ -18,6 +18,7 @@
         <script src="lib/CubemapToEquirectangular.js"></script>
         <script src="lib/Whammy.js"></script>
         <script src="lib/download.js"></script>
+        <script src="lib/dat.gui.min.js"></script>
         <script src="myGeometries.js"></script>
         <script src="trackerUtils.js"></script>
 
@@ -63,7 +64,26 @@ ga('send', 'pageview');
 <script>
 var _container, _stats, _canned, _flightControl;
 var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
-
+var _datgui;
+var Params  = function() {
+    this.color1 = 0;
+    this.threshold1 = 0;
+    this.color0 = [ 0, 128, 255, 1.0 ]; // RGB with alpha
+    this.color1 = [ 128, 0, 0, 1.0 ]; // RGB with alpha
+    this.color2 = [ 0, 128, 0, 1.0 ]; // RGB with alpha
+    this.color3 = [ 128, 0, 255, 1.0 ]; // RGB with alpha
+    this.color4 = [ 128, 255, 128, 1.0 ]; // RGB with alpha
+}
+var _params = new Params();
+window.onload = function() {
+  _datgui = new dat.GUI();
+  _datgui.add(_params, 'threshold1', 0, 1);
+  _datgui.addColor(_params, 'color0');
+  _datgui.addColor(_params, 'color1');
+  _datgui.addColor(_params, 'color2');
+  _datgui.addColor(_params, 'color3');
+  _datgui.addColor(_params, 'color4');
+};
 var _mirrorSphere, _mirrorSphereCamera; // globals for managing a single mirror ball.
 
 var myMesh;

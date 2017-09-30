@@ -95,6 +95,11 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         }
          // configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
+    if (mode == 'simple') {     // no riemann surface. fast startup.
+        generalSettings.cameraPosition = [-20,-10,0.];     // expected by trackerUtils.
+        generalSettings.rotateYAmount = 0.;
+         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+    }
     if (mode == 'rootFindingBot') {
         generalSettings.videoReloadDelayInSeconds = -1;
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
@@ -551,7 +556,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         configs['default2'] = {
             'uniforms': uniforms,
             'textureType': 'video',
-            'textureName': 'flockingCropped',
+            'textureName': 'rosie',
             'geometry': 'tsphere',
             'position': [15,0,0],
             'scale': [1,1,1],

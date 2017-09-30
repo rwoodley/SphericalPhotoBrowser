@@ -141,14 +141,14 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         bool checkMask3 = checkMaskPointNew(t3, t4);
         
         if (checkMaskS)
-            return vec4(0.,0.,1.,1.);
+            return uColor0;
         if (checkMask1)
-            return vec4(1.,0.,0.5,1.);
+            return uColor1;
         if (checkMask2)
-            return vec4(0.,0.5,0.5,1.);
+            return uColor2;
         if (checkMask3)
-            return vec4(0.5,1.,0.5,1.);
-        return vec4(0.,1.,1.,1.);           // cyan
+            return uColor4;
+        return uColor3;           // cyan
     }
     if (uMaskType == 3) {   // still mask (3)
         t2 = wrappedTexture2D( iChannelStillMask1,  uv);
@@ -158,7 +158,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
             clr = vec4(0.,0.,0.,0.);
         else {
             if (uBlackMask == 1)
-                clr = vec4(0.5,.0,1.,1.);
+                clr = uColor0;  //vec4(0.5,.0,1.,1.);
             else
                 clr = textureValue;
         }
