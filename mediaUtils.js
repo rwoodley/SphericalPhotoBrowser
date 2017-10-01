@@ -60,7 +60,7 @@ function mediaUtils(canned, scene, camera,
     };
 
     this.initMediaUtils = function() {
-	    that.videoManager = new videoManager();
+	    that.videoManager = new videoManager(that);
 	    that.setupMediaIcons();
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
@@ -102,13 +102,19 @@ function mediaUtils(canned, scene, camera,
     };
     this.setupVideoControlIcons = function() {
     	var container = document.getElementById(that.videoControlsContainerId);
+    	el = document.createElement('span');
+        el.id = 'videoMeshName';
+        el.style='width: 130px; height: 30px;';
+        el.className='showhide videoControlIcon';
+        container.appendChild(el);
+
     	appendSingleIcon(container, 'videoControlIcon', 'rewind', 'Video Back', that.videoManager.video_rewind);
     	appendSingleIcon(container, 'videoControlIcon', 'play', 'Video Play', that.videoManager.video_play);
     	appendSingleIcon(container, 'videoControlIcon', 'stop', 'Video Stop', that.videoManager.video_stop);
     	appendSingleIcon(container, 'videoControlIcon', 'ff', 'Video Forward', that.videoManager.video_ff);
     	appendSingleIcon(container, 'videoControlIcon', 'replay', 'Video Restart', that.videoManager.video_restart);
 
-    	el = document.createElement('span');
+        el = document.createElement('span');
         el.id = 'videoClock';
         el.style='width: 30px; height: 30px;';
         el.className='showhide videoControlIcon';
@@ -202,7 +208,7 @@ function mediaUtils(canned, scene, camera,
 			$('#' + that.videoControlsContainerId).show();
 		else {
 			$('#' + that.videoControlsContainerId).hide();
-			that.videoManager.video_stop();
+			// that.videoManager.video_stop();
 		}
 	}
     this.animationFrame = 0;
@@ -238,10 +244,12 @@ function mediaUtils(canned, scene, camera,
             that.camera.position.z = that.cameraZoomAmount*that.camera.position.z;
             
         }
-        var statusString = that.videoManager.animate();
-        if (statusString != undefined)
-            document.getElementById('videoClock').innerHTML = statusString;
-	}
+        var obj = that.videoManager.animate(that.activeMeshName);
+        if (obj.str != undefined)
+            document.getElementById('videoClock').innerHTML = obj.str;
+        if (obj.meshName != undefined)
+            document.getElementById('videoMeshName').innerHTML = obj.meshName;
+}
     this.updateSkyDome = function(event) {  // this should be called updateTextureForActiveMesh
         var pid;
         if (event.target.id.indexOf('textureSelector_') > -1) {
@@ -265,7 +273,7 @@ function mediaUtils(canned, scene, camera,
         this.updateReimannDomeForFileName(meshName, filename);
     }
     this.updateReimannDomeForFileName = function(meshName, filename) {
-        that.videoManager.unloadVideo();
+        that.videoManager.unloadVideos();
         that.toggleVideoControls();
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
@@ -310,7 +318,7 @@ function mediaUtils(canned, scene, camera,
               }).then((stream) => {
                 _cameraStream = stream;     // yuck! global variable. fix!
                 that.videoManager.registerTextureConsumer(
-                    meshName, 
+                    pid, 
                     function(videoTexture) {
                         TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
                             that.buildMaterialForTexture);
@@ -321,14 +329,11 @@ function mediaUtils(canned, scene, camera,
             });
         }
         else {
-            that.videoManager.registerTextureConsumer(
-                meshName, 
-                function(videoTexture) {
-                    TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
-                        that.buildMaterialForTexture);
-                }
+            that.videoManager.addVideo(meshName, pid, [function(videoTexture) {
+                TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
+                    that.buildMaterialForTexture);
+            }]
             );
-            that.videoManager.newVideo(pid);
             that.toggleVideoControls();            
         }
 	}

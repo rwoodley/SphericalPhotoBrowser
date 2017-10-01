@@ -69,14 +69,14 @@ function transformUtils(camera,
     this.animate = function() {
 
         var videoCurrentTime = 0;
-        if (that.mediaUtils.videoManager.videoDisplayed) {
-            if (that.capturer == undefined)
-                videoCurrentTime = that.mediaUtils.videoManager.video.currentTime;
-            else {
+        // if (that.mediaUtils.videoManager.videoDisplayed) {
+        //     if (that.capturer == undefined)
+        //         videoCurrentTime = that.mediaUtils.videoManager.getCurrentTime(that.mediaUtils.activeMeshName);
+        //     else {
                 
-                that.capturer.capture( that.canvas );
-            }
-        }
+        //         that.capturer.capture( that.canvas );
+        //     }
+        // }
         TRANSFORM.reimannShaderList.animate(
             that.mediaUtils.animationFrame,
             that.mediaUtils.videoManager.videoDisplayed,

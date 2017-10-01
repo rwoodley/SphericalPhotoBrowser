@@ -134,7 +134,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
                 document.getElementsByTagName( 'canvas' )[0].style.height = "1080px";
                 mu.videoManager.video_restart();
                 if (shouldWeRecord)
-                    mu.videoManager.video.playbackRate = .125;     // this has to be found by trial and error. :(
+                    mu.videoManager.videos['default'].playbackRate = .125;     // this has to be found by trial and error. :(
                 return;
             };
             if (flightControl.runAt(elapsed, 1.0,1)) {
@@ -556,7 +556,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         configs['default2'] = {
             'uniforms': uniforms,
             'textureType': 'video',
-            'textureName': 'rosie',
+            'textureName': 'LakeStreet',
             'geometry': 'tsphere',
             'position': [15,0,0],
             'scale': [1,1,1],
