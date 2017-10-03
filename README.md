@@ -11,13 +11,15 @@ And browse to http://0.0.0.0:8000
 
 That's it.
 
-Hit the space bar to toggle visbility of icons.
+Hit the space bar to toggle visbility of icons. The Help page has other short-cuts.
 
-Mouse over the icons at the top to view different images.
+Click on the icons at the top to view different stills or videos.
 
-You can view a demo here: http://rwoodleymedia.org/SphericalPhotoBrowser/
+You can view some demos here: http://rwoodleymedia.org/Portfolio/index.html
 
 References:   
+- Squares that Look Round: Transforming Spherical Images, by Saul Schleimer, Henry Segerman
+https://arxiv.org/abs/1605.01396
 
 - Needham's "Visual Complex Analysis":   
 https://www.amazon.com/Visual-Complex-Analysis-Tristan-Needham/dp/0198534469   
