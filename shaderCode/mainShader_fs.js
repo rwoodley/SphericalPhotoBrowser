@@ -102,7 +102,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
             vec4 clr;
             // return vec4(vec3(textureValue),uAlpha);
             if (uBlackMask == 1)
-                clr = vec4(0.,1.,1.,1.);
+                clr = uColorBlack;   // vec4(0.,1.,1.,1.);
             else
                 clr = vec4(vec3(textureValue),uAlpha);
             return clr;
@@ -123,7 +123,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
             clr = vec4(0.,0.,0.,0.);
         else {
             if (uBlackMask == 1)
-                clr = vec4(0.5,.5,1.,1.);
+                clr = uColorBlack; // vec4(0.5,.5,1.,1.);
             else
                 clr = textureValue;
         }
@@ -135,13 +135,13 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         t2 = wrappedTexture2D( iChannelDelayMask1,  uv);
         t3 = wrappedTexture2D( iChannelDelayMask2,  uv);
         t4 = wrappedTexture2D( iChannelDelayMask3,  uv);
-        bool checkMaskS = checkMaskPointNew(ts, t1);
+        // bool checkMaskS = checkMaskPointNew(ts, t1);
         bool checkMask1 = checkMaskPointNew(t1, t2);
         bool checkMask2 = checkMaskPointNew(t2, t3);
         bool checkMask3 = checkMaskPointNew(t3, t4);
         
-        if (checkMaskS)
-            return uColor0;
+        // if (checkMaskS)
+        //     return uColor0;
         if (checkMask1)
             return uColor1;
         if (checkMask2)
@@ -158,7 +158,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
             clr = vec4(0.,0.,0.,0.);
         else {
             if (uBlackMask == 1)
-                clr = uColor0;  //vec4(0.5,.0,1.,1.);
+                clr = uColorBlack;  //vec4(0.5,.0,1.,1.);
             else
                 clr = textureValue;
         }
@@ -169,7 +169,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         vec4 t1 = wrappedTexture2D( iChannel0,  uv);
 
         if (uBlackMask == 1)
-            clr = vec4(0.,0.,0.,1.);
+            clr = uColorBlack;      // vec4(0.,0.,0.,1.);
         else
             clr = textureValue;
 

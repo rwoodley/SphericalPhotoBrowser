@@ -106,6 +106,7 @@ reimannShaderDetailsObject = function(name) {
         uColor2: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uColor3: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uColor4: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
+        uColorBlack: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uHighPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.5,.5,.5) },
         uLowPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.05,.05,.05) },
         uHighPassFilterThreshold2: { type: "v3", value: new THREE.Vector3(.3,.3,.3) },
@@ -172,6 +173,12 @@ reimannShaderDetailsObject = function(name) {
             _params.color4[1]/255.,
             _params.color4[2]/255.,
             _params.color4[3],
+        )
+        that.currentUniforms.uColorBlack.value = new THREE.Vector4(
+            _params.colorBlack[0]/255.,
+            _params.colorBlack[1]/255.,
+            _params.colorBlack[2]/255.,
+            _params.colorBlack[3],
         )
 
         if (videoDisplayed) {

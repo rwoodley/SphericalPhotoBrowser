@@ -73,6 +73,7 @@ var Params  = function() {
     this.color2 = [ 0, 128, 0, 1.0 ]; // RGB with alpha
     this.color3 = [ 128, 0, 255, 1.0 ]; // RGB with alpha
     this.color4 = [ 128, 255, 128, 1.0 ]; // RGB with alpha
+    this.colorBlack = [ 0, 0, 0, 1.0 ]; // RGB with alpha
 }
 var _params = new Params();
 window.onload = function() {
@@ -83,6 +84,7 @@ window.onload = function() {
   _datgui.addColor(_params, 'color2');
   _datgui.addColor(_params, 'color3');
   _datgui.addColor(_params, 'color4');
+  _datgui.addColor(_params, 'colorBlack');
 };
 var _mirrorSphere, _mirrorSphereCamera; // globals for managing a single mirror ball.
 

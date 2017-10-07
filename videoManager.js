@@ -72,9 +72,10 @@ function singleVideo(meshName, pid, textureConsumers) {
     this.animate = function() {
 		if (that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
             if (that.videoTexture) that.videoTexture.needsUpdate = true; 
-            var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
-            var statusString = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
-            return statusString;
+            // var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
+            // var statusString = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
+            // return statusString;
+            return 'blah';
 		}
     }
     this.init(meshName, pid, textureConsumers);
@@ -107,13 +108,6 @@ function videoManager(mu) {
             if (key === meshName)
                 str = telemetry;
         });
-        // this is just to update the timer on the screen. maybe move some into videoManager?
-		// if (that.videoDisplayed &&  that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
-        //     if (that.videoTexture) that.videoTexture.needsUpdate = true; 
-        //     var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
-        //     var statusString = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
-        //     return statusString;
-		// }
         return { meshName, str} ;
     }
     this.getCurrentTime = function(meshName) { return that.videos[meshName].currentTime; }
@@ -127,6 +121,9 @@ function videoManager(mu) {
     this.video_play = function(i,val) {
         that.videos[that.mediaUtils.activeMeshName].video_play();
         // $.map(that.videos, function(val,key){val.video_play()});
+    }
+    this.video_play_all = function(i,val) {
+        $.map(that.videos, function(val,key){val.video_play()});
     }
     this.video_restart = function(i,val) {
         that.videos[that.mediaUtils.activeMeshName].video_restart();

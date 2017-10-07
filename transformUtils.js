@@ -37,8 +37,7 @@ function transformUtils(camera,
             verbose: true,
             format: 'webm'
         });
-        that.mediaUtils.videoManager.video_play(function() {
-        });
+        that.mediaUtils.videoManager.video_play_all();
         that.capturer.start();
     }
     this.stopRecording = function() {
@@ -69,14 +68,14 @@ function transformUtils(camera,
     this.animate = function() {
 
         var videoCurrentTime = 0;
-        // if (that.mediaUtils.videoManager.videoDisplayed) {
-        //     if (that.capturer == undefined)
-        //         videoCurrentTime = that.mediaUtils.videoManager.getCurrentTime(that.mediaUtils.activeMeshName);
-        //     else {
-                
-        //         that.capturer.capture( that.canvas );
-        //     }
-        // }
+        if (that.mediaUtils.videoManager.videoDisplayed) {
+            if (that.capturer == undefined) {
+                //videoCurrentTime = that.mediaUtils.videoManager.getCurrentTime(that.mediaUtils.activeMeshName);
+            }
+            else {                
+                that.capturer.capture( that.canvas );
+            }
+        }
         TRANSFORM.reimannShaderList.animate(
             that.mediaUtils.animationFrame,
             that.mediaUtils.videoManager.videoDisplayed,
