@@ -8,7 +8,6 @@ User might want to:
 - add their own icons
 
 **/ 
-var _cameraStream;
 function mediaUtils(canned, scene, camera,  
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
        rightClickHandler, addEffects) {
@@ -19,6 +18,7 @@ function mediaUtils(canned, scene, camera,
 	this.cameraControlsContainerId = cameraControlsContainerId;
 	this.videoControlsContainerId = videoControlsContainerId;
     this.rightClickHandler = rightClickHandler;
+    this.deviceList = {};
 
 	this.camera = camera;
 	this.scene = scene;
@@ -92,13 +92,33 @@ function mediaUtils(canned, scene, camera,
             for (var i = 0; i < myEffects.length; i++)
                 textureListHTML += "<span id='effectSelector_xxx' class='showhide eselector'>xxx</span>".replace(/xxx/g, myEffects[i]);
         }
-        document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
 
-        $('.tselector').click(that.updateSkyDome);
-        $('.eselector').click(that.updateSkyDome);
-        $('.tselector').contextmenu(that.rightClickHandler);
-        $('.eselector').contextmenu(that.rightClickHandler);
-        $('.vselector').click(that.updateVideo);
+        // add streams.
+        navigator.mediaDevices.enumerateDevices().then((devices) => {
+            // find the theta uvc blender device
+            for (var i in devices) {
+                // console.log(devices[i]);
+                var device = devices[i];
+                if (device.kind === "videoinput") {
+                    that.deviceList[i] = device;
+                    textureListHTML += "<span id='streamSelector_$1' class='showhide sselector'>xxx</span>"
+                    .replace('$1', i)
+                    .replace(/xxx/, device.label);
+                    console.log(device.label);
+                }
+            }
+
+            // and... finish setup.
+            document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
+            
+            $('.tselector').click(that.updateSkyDome);
+            $('.eselector').click(that.updateSkyDome);
+            $('.tselector').contextmenu(that.rightClickHandler);
+            $('.eselector').contextmenu(that.rightClickHandler);
+            $('.sselector').click(that.updateVideo);
+            $('.vselector').click(that.updateVideo);
+        });
+
     };
     this.setupVideoControlIcons = function() {
     	var container = document.getElementById(that.videoControlsContainerId);
@@ -249,7 +269,7 @@ function mediaUtils(canned, scene, camera,
             document.getElementById('videoClock').innerHTML = obj.str;
         if (obj.meshName != undefined)
             document.getElementById('videoMeshName').innerHTML = obj.meshName;
-}
+    }
     this.updateSkyDome = function(event) {  // this should be called updateTextureForActiveMesh
         var pid;
         if (event.target.id.indexOf('textureSelector_') > -1) {
@@ -290,9 +310,17 @@ function mediaUtils(canned, scene, camera,
         return new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide });            
     }
 	this.updateVideo = function(event) {
-    	var pid = event.target.id.replace('textureSelector_','');
-        showToast("Loading Video '" + pid + "'.", 2000);
-        that.updateReimannDomeForVideoName(that.activeMeshName, pid);
+        if (event.target.id.indexOf('textureSelector_') > -1) {
+            var pid = event.target.id.replace('textureSelector_','');
+            showToast("Loading Video '" + pid + "'.", 2000);
+            that.updateReimannDomeForVideoName(that.activeMeshName, pid, "video");
+        }
+        else if (event.target.id.indexOf('streamSelector_') > -1) {
+            var id = event.target.id.replace('streamSelector_','');
+            var pid = that.deviceList[id].label;
+            showToast("Loading Stream '" + pid + "'.", 2000);
+            that.updateReimannDomeForVideoName(that.activeMeshName, pid, "stream");
+        }
     }
     this.changeMeshBeingEditedOverridable = function(meshName) {    }    
     this.changeMeshBeingEdited = function(event) {
@@ -306,34 +334,17 @@ function mediaUtils(canned, scene, camera,
         TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann', rotationAxis, rotationAngle);
         this.updateReimannDomeForVideoName(meshName, pid);
     }
-    this.updateReimannDomeForVideoName = function(meshName, pid) {
-        if (pid == 'MCA') {
-            navigator.mediaDevices.enumerateDevices().then((devices) => {
-                // find the theta uvc blender device
-                let theta = devices.find(device => device.label.match(/THETA UVC Blender/));
-                return theta ? { optional: [{ sourceId: theta.deviceId }] } : true
-              }).then((video) => {
-                // get the camera
-                return navigator.mediaDevices.getUserMedia({ video })
-              }).then((stream) => {
-                _cameraStream = stream;     // yuck! global variable. fix!
-                that.videoManager.registerTextureConsumer(
-                    pid, 
-                    function(videoTexture) {
-                        TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
-                            that.buildMaterialForTexture);
-                    }
-                );
-                that.videoManager.newVideo(pid);
-                that.toggleVideoControls();        
-            });
+    this.updateReimannDomeForVideoName = function(meshName, pid, pidType) {
+        var textureConsumers = [function(videoTexture) {
+            TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
+                that.buildMaterialForTexture);
+        }];
+        if (pidType == 'stream') {
+            that.videoManager.makeStream(meshName, pid, textureConsumers,
+        "stream");
         }
         else {
-            that.videoManager.addVideo(meshName, pid, [function(videoTexture) {
-                TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
-                    that.buildMaterialForTexture);
-            }]
-            );
+            that.videoManager.addVideo(meshName, pid, textureConsumers, "video");
             that.toggleVideoControls();            
         }
 	}

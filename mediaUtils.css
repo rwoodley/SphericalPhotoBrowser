@@ -43,6 +43,18 @@
     vertical-align: middle;
     margin-left: 20px;
 }
+.sselector { 
+    font-size: 8pt;
+    border: 2px solid; 
+    border-color: rgb(22, 226, 233); margin: 5px; padding: 5px; 
+    color: #FFF; 
+    background-color: rgb(22, 226, 233);
+    width: 160px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
 .vselector { 
     font-size: 8pt;
     border: 2px solid; 

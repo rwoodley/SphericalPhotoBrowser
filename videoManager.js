@@ -1,42 +1,47 @@
 var _videoUUID = 0;
-function singleVideo(meshName, pid, textureConsumers) {
+function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
     var that = this;
-    this.init = function(meshName, pid, textureConsumers) {
+    this.init = function(meshName, pid, textureConsumers, pidType, streams) {
         // this.textureConsumers = [];
         _videoUUID++;
+        that.streams = streams;
         that.video  = document.createElement('video');
         // that.video  = document.getElementById('video'+_videoUUID);
         that.video.id = 'video_____' + meshName
         that.videoSource = document.createElement('source');
         that.video.appendChild(that.videoSource);
         that.video.addEventListener('ended', function() { that.onVideoEnded() } );
-        this.setVideoSourceFromPid(pid);
+        this.setVideoSourceFromPid(pid, pidType);
 
         that.videoTexture = new THREE.Texture(that.video);
         for (var index in textureConsumers) {
             textureConsumers[index](that.videoTexture);
         }
     }
-    this.setVideoSourceFromPid = function(pid) {
-        var pathToTexture = 'media/' + pid;
-        if (pid.indexOf('.') == -1)
-            pathToTexture = 'media/' + pid + '.mp4';
-        console.log('loading: ' + pathToTexture);
-        that.videoFileName = pid;
-        if (pid == 'MCA')
-            that.videoSource.setAttribute('src', window.URL.createObjectURL(_cameraStream));
-        else
+    this.setVideoSourceFromPid = function(pid, pidType) {
+        if (pidType === 'stream') {
+            that.video.pause();     // this line is necessary if you're switch from video to stream, it seems.
+            that.videoSource.setAttribute('src', window.URL.createObjectURL(that.streams[pid]));            
+            that.video.load();     // this line is necessary if you're switch from video to stream, it seems.
+        }
+        else {
+            var pathToTexture = 'media/' + pid;
+            if (pid.indexOf('.') == -1)
+                pathToTexture = 'media/' + pid + '.mp4';
+            console.log('loading: ' + pathToTexture);
+            that.videoFileName = pid;
             that.videoSource.setAttribute('src', pathToTexture);
-        that.video.load();
-        // that.video.pause();     
-        that.video.play();    
+            that.video.load();
+            // that.video.pause();     
+            that.video.play();
+        }
     }
     this.onVideoEnded = function() {
         console.log("The video ended. I have nothing to do so I'm doing nothing. Over-ride this to do something.")
     }
-    this.loadNewVideo = function(pid) {
+    this.loadNewVideo = function(pid, pidType) {
         that.unloadVideo();
-        this.setVideoSourceFromPid(pid);
+        this.setVideoSourceFromPid(pid, pidType);
     }
     this.unloadVideo = function() {
         that.video.pause();
@@ -78,25 +83,35 @@ function singleVideo(meshName, pid, textureConsumers) {
             return 'blah';
 		}
     }
-    this.init(meshName, pid, textureConsumers);
+    this.init(meshName, pid, textureConsumers, pidType, streams);
 }
-function videoManager(mu) {
+function videoManager(mu) { // handles streams too.
     var that = this;
     this.mediaUtils = mu;
-    this.textureConsumers = [];
-    // that.video  = document.getElementById('video');
-    // that.videoSource = document.createElement('source');
-    // that.video.appendChild(that.videoSource);
-    // that.video.addEventListener('ended', function() { that.onVideoEnded() } );
-    // this.videoDisplayed = false;
 
     this.videos = {};
-    this.addVideo = function(meshName, pid, textureConsumers) {
+    this.streams = {};
+    this.makeStream = function(meshName, pid, textureConsumers) {
+        navigator.mediaDevices.enumerateDevices().then((devices) => {
+            // find the theta uvc blender device
+            let theta = devices.find(device => device.label === pid);
+            // let theta = devices.find(device => device.label.match(/THETA UVC Blender/));
+            return theta ? { optional: [{ sourceId: theta.deviceId }] } : true
+          }).then((video) => {
+            // get the camera
+            return navigator.mediaDevices.getUserMedia({ video })
+          }).then((stream) => {
+                that.streams[pid] = stream;
+                that.addVideo(meshName, pid, textureConsumers, "stream" );
+        });
+
+    }
+    this.addVideo = function(meshName, pid, textureConsumers, pidType) {
         if (meshName in this.videos) {
-            this.videos[meshName].loadNewVideo(pid);
+            this.videos[meshName].loadNewVideo(pid, pidType);
         }
         else {
-            this.videos[meshName] = new singleVideo(meshName, pid, textureConsumers);
+            this.videos[meshName] = new VideoSource(meshName, pid, textureConsumers, pidType, that.streams);
         }
         that.videoDisplayed = true;
     }

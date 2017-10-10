@@ -98,7 +98,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
     if (mode == 'simple') {     // no riemann surface. fast startup.
         generalSettings.cameraPosition = [-20,-10,0.];     // expected by trackerUtils.
         generalSettings.rotateYAmount = 0.;
-         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
+        configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
     if (mode == 'rootFindingBot') {
         generalSettings.videoReloadDelayInSeconds = -1;
