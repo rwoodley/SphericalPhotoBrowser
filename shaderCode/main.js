@@ -87,6 +87,7 @@ var x = `
     uniform vec4 uColor2;
     uniform vec4 uColor3;
     uniform vec4 uColor4;
+    uniform vec4 uColorScale;
     uniform vec4 uColorBlack;
     `;
 return x;

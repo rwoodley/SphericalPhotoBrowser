@@ -16,7 +16,7 @@ function managedMesh(mesh, updateMaterialCallback) {
 function getGeometryForName(geoName) {
     var sphereRadius = 10;
     var segment = 256.;
-    if (geoName == "sphere") {
+    if (geoName == "sphere" || geoName == "notSelfTransparentSphere") {
         var geo = new THREE.SphereGeometry(sphereRadius,segment,segment);
     }
     if (geoName == "box") {
@@ -157,6 +157,13 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
                 msh.material = mat;
             });
         }
+        if (that.geoName == "notSelfTransparentSphere" ) {
+            mesh = new THREE.Mesh( geo, that.materialGenerator() );
+            that._addMesh(mesh, function(msh, mat) {
+                mat.side = THREE.DoubleSide;
+                msh.material = mat;
+            });
+        }
         if (that.geoName == "tsphere") {
             mesh = new THREE.Mesh( geo, that.materialGenerator() );
             // mesh.rotateX(Math.PI/2. );
@@ -188,7 +195,7 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
                 newMaterial.side = THREE.DoubleSide;
                 msh.material = newMaterial;
             });
-        }
+        } 
         if (that.geoName == "torus") {
             mesh = new THREE.Mesh( geo, that.materialGenerator() );
             mesh.rotateX(Math.PI/2);
@@ -198,14 +205,6 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
             });
         }
         if (that.geoName == "cylinder") {
-            mesh = new THREE.Mesh( geo, that.materialGenerator() );
-            // mesh.rotateX(Math.PI/2);
-            that._addMesh( mesh, function(msh, newMaterial) {
-                newMaterial.side = THREE.DoubleSide;
-                msh.material = newMaterial;
-            });
-        }
-        if (that.geoName == "box") {
             mesh = new THREE.Mesh( geo, that.materialGenerator() );
             // mesh.rotateX(Math.PI/2);
             that._addMesh( mesh, function(msh, newMaterial) {

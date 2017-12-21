@@ -43,7 +43,8 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     // uMaskType == 1 - delay mask, uses iChannelDelayMask1
     // uMaskType == 2 - green mask, makes green transparent.
     // uMaskType == 3 - still mask, uses iChannelStillMask1
-    // uMaskType == 4 - double delay mask, uses iChannelDelayMask1 & iChannelDelayMask2
+    // uMaskType == 4 - triple delay mask, uses iChannelDelayMask1 & iChannelDelayMask2 & iChannelDelayMask3
+    // uMaskType == 5 - single delay mask, uses iChannelDelayMask1. super-imposed on starting pic.
     // uBlackMask == 1 - black mask
     vec4 textureValue;
     if (uNadirMask == 1) {
@@ -114,7 +115,6 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     vec4 t2;
     vec4 t3;
     vec4 t4;
-    vec4 ts = wrappedTexture2D(iChannelStillMask1, uv);
     if (uMaskType == 1) {   // delay mask (1) 
         t2 = wrappedTexture2D( iChannelDelayMask1,  uv);
         if (
@@ -130,12 +130,25 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         return clr;
 
     }
+    if (uMaskType == 5) {   // delay mask (5) 
+        // t2 = wrappedTexture2D( iChannelDelayMask1,  uv);
+        vec4 stillTexture = wrappedTexture2D( iChannelStillMask1,  uv);
+        if (
+            !checkMaskPointNew(stillTexture, t1)
+        ) {
+            clr =  uColorScale;
+        }
+        else {
+            clr = textureValue;
+        }
+        return clr;
+
+    }
     if (uMaskType == 4) {   // double delay mask (4) 
         clr = textureValue;
         t2 = wrappedTexture2D( iChannelDelayMask1,  uv);
         t3 = wrappedTexture2D( iChannelDelayMask2,  uv);
         t4 = wrappedTexture2D( iChannelDelayMask3,  uv);
-        // bool checkMaskS = checkMaskPointNew(ts, t1);
         bool checkMask1 = checkMaskPointNew(t1, t2);
         bool checkMask2 = checkMaskPointNew(t2, t3);
         bool checkMask3 = checkMaskPointNew(t3, t4);

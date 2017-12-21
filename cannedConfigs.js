@@ -100,19 +100,35 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         generalSettings.rotateYAmount = 0.;
         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
+    if (mode == 'debug') {     // no self-transparent sphere. fast startup.
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
+        uniforms.complexEffect3OnOff.value = 0;
+        generalSettings.rotateYAmount = 0.;
+         configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'notSelfTransparentSphere',
+            'position': [0,0,0],
+            'scale': [1,1,-1],
+        }
+        configs['skyDome'] = phongSkyDome();
+    }
     if (mode == 'rootFindingBot') {
         generalSettings.videoReloadDelayInSeconds = -1;
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [0,39,0.];     // expected by trackerUtils.
         uniforms.complexEffect3OnOff.value = 0;
         uniforms.uNadirMask.value = 1;
+        uniforms.uMaskType.value = 5;
         generalSettings.rotateYAmount = 0.;
          configs['default'] = {
             'uniforms': uniforms,
             // 'textureType': 'still',
             // 'textureName': 'C.png',
             'textureType': 'video',
-            'textureName': 'octagon',
+            'textureName': 'immortals',
             'geometry': 'sphere',
             'position': [0,0,0],
             'scale': [4,4,-4],
@@ -143,7 +159,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
                     tu.startRecording();
             }
             if (flightControl.runAt(elapsed, 5.0,1)) {
-                uniforms.uPolygonalGroups.value = 5;
+                uniforms.uPolygonalGroups.value = 4;
                 return;
             }
             if (flightControl.runAt(elapsed, 10.,1)) {
@@ -154,15 +170,23 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
                 tu.reimannShaderEditor.rotateLeft();
                 return;
             }
-            if (flightControl.runAt(elapsed, 30.,5)) {
+            if (flightControl.runAt(elapsed, 40.,5)) {
                 mu.cameraZoom(1.01);
                 return;
             }
-            if (flightControl.runAt(elapsed, 32.,1)) {
+            if (flightControl.runAt(elapsed, 42.,1)) {
                 mu.cameraZoom(1.0);
                 return;
             }
-            if (flightControl.runAt(elapsed, 54.,1)) {
+            if (flightControl.runAt(elapsed, 50.,5)) {
+                mu.cameraZoom(1/1.01);
+                return;
+            }
+            if (flightControl.runAt(elapsed, 52.,1)) {
+                mu.cameraZoom(1.0);
+                return;
+            }
+            if (flightControl.runAt(elapsed, 70.,1)) {
                 if (shouldWeRecord)
                     tu.stopRecording();
                 flightControl.stop();

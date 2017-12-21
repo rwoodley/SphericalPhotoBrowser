@@ -38,7 +38,8 @@ reimannShaderDetailsObject = function(name) {
     that.cameraLookAtComplexY = 0;
     that.point1Defined = false;
     that.point2Defined = false;
-
+    that.colorGen = new colorGen('FF0000', '0000FF', 1000);
+    
     this.currentUniforms = {
         iRotationAmount:    { type: 'f', value: 0.0 },
         startTime:    { type: 'f', value: 0.0 },
@@ -106,6 +107,7 @@ reimannShaderDetailsObject = function(name) {
         uColor2: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uColor3: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uColor4: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
+        uColorScale: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uColorBlack: { type: "v4", value: new THREE.Vector4(0,0,1,1) },
         uHighPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.5,.5,.5) },
         uLowPassFilterThreshold: { type: "v3", value: new THREE.Vector3(.05,.05,.05) },
@@ -149,38 +151,45 @@ reimannShaderDetailsObject = function(name) {
             _params.color0[1]/255.,
             _params.color0[2]/255.,
             _params.color0[3],
-        )
+        );
         that.currentUniforms.uColor1.value = new THREE.Vector4(
             _params.color1[0]/255.,
             _params.color1[1]/255.,
             _params.color1[2]/255.,
             _params.color1[3],
-        )
+        );
         that.currentUniforms.uColor2.value = new THREE.Vector4(
             _params.color2[0]/255.,
             _params.color2[1]/255.,
             _params.color2[2]/255.,
             _params.color2[3],
-        )
+        );
         that.currentUniforms.uColor3.value = new THREE.Vector4(
             _params.color3[0]/255.,
             _params.color3[1]/255.,
             _params.color3[2]/255.,
             _params.color3[3],
-        )
+        );
         that.currentUniforms.uColor4.value = new THREE.Vector4(
             _params.color4[0]/255.,
             _params.color4[1]/255.,
             _params.color4[2]/255.,
             _params.color4[3],
-        )
+        );
         that.currentUniforms.uColorBlack.value = new THREE.Vector4(
             _params.colorBlack[0]/255.,
             _params.colorBlack[1]/255.,
             _params.colorBlack[2]/255.,
             _params.colorBlack[3],
-        )
-
+        );
+        var rgb = that.colorGen.nextColor();
+        that.currentUniforms.uColorScale.value = 
+        new THREE.Vector4(
+            rgb[0]/255.,
+            rgb[1]/255.,
+            rgb[2]/255.,
+            1.0,
+        )        
         if (videoDisplayed) {
             if (that.currentUniforms.enableTracking.value == 1) {
                 if (that.trackerUtils == undefined) 
@@ -196,7 +205,9 @@ reimannShaderDetailsObject = function(name) {
                 that.threePointTracker.getXY(videoCurrentTime, that.currentUniforms);
             }
         }
-        if (that.currentUniforms.uMaskType.value == 1 || that.currentUniforms.uMaskType.value == 4) {
+        if (that.currentUniforms.uMaskType.value == 1 || 
+            that.currentUniforms.uMaskType.value == 4 || 
+            that.currentUniforms.uMaskType.value == 5) {
             if (animationFrame%160 == 0) {
                 that.currentUniforms.iChannelDelayMask1.value.image = that.currentUniforms.iChannel0.value.image;
                 that.currentUniforms.iChannelDelayMask1.value.needsUpdate = true;
@@ -205,7 +216,7 @@ reimannShaderDetailsObject = function(name) {
                 that.currentUniforms.iChannelDelayMask2.value.image = that.currentUniforms.iChannel0.value.image;
                 that.currentUniforms.iChannelDelayMask2.value.needsUpdate = true;
             }
-            if (animationFrame%180 == 0) {
+            if (animationFrame%180 == 0 && that.currentUniforms.uMaskType.value == 4) {
                 that.currentUniforms.iChannelDelayMask3.value.image = that.currentUniforms.iChannel0.value.image;
                 that.currentUniforms.iChannelDelayMask3.value.needsUpdate = true;
             }

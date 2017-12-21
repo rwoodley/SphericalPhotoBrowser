@@ -26,7 +26,10 @@ vec2 adhocTransform3(vec2 z) {
     // vec2 n = cx_exp(i*z)+cx_exp(-i*z);
     // n = cx_divide(n,vec2(2.0,0.));
     // return cx_exp(cx_divide(vec2(1.,0.),cx_exp(cx_pow(z,vec2(0.5,0.)))));
-    return (cx_exp(cx_product(i,z)) + cx_exp(cx_product(-i,z)))/2.;
+
+    // return (cx_exp(cx_product(i,z)) + cx_exp(cx_product(-i,z)))/2.;
+
+    return cx_tan(z);
 }
 vec2 spow(vec2 z, float r) {
     return cx_pow(z,vec2(r,0.));

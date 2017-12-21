@@ -7,6 +7,7 @@ function transformUtils(camera,
 	var that = this;
     this.mediaUtils = mediaUtils;
     that.recording = false;
+    
     this.mediaUtils.onkeydown = function(e, extraKey){
         if(e.keyCode == 32) {
             //that.currentUniforms.showFixedPoints.value = 0;
@@ -37,7 +38,7 @@ function transformUtils(camera,
             verbose: true,
             format: 'webm'
         });
-        that.mediaUtils.videoManager.video_play_all();
+        that.mediaUtils.videoManager.video_play_all_for_recording();
         that.capturer.start();
     }
     this.stopRecording = function() {
@@ -46,6 +47,7 @@ function transformUtils(camera,
         that.capturer.stop();
         that.capturer.save();
         that.capturer = undefined;
+        that.mediaUtils.videoManager.video_stop();
     }
 
     this.cameraVectorLength = 1;    // by default, unit vector.
@@ -66,15 +68,14 @@ function transformUtils(camera,
         that.reimannShaderEditor.setShaderDetails(details);
     }
     this.animate = function() {
-
         var videoCurrentTime = 0;
         if (that.mediaUtils.videoManager.videoDisplayed) {
             if (that.capturer == undefined) {
-                //videoCurrentTime = that.mediaUtils.videoManager.getCurrentTime(that.mediaUtils.activeMeshName);
+                videoCurrentTime = that.mediaUtils.videoManager.getCurrentTime(that.mediaUtils.activeMeshName);
             }
-            else {                
-                that.capturer.capture( that.canvas );
-            }
+        }
+        if (that.capturer != undefined) {
+            that.capturer.capture( that.canvas );
         }
         TRANSFORM.reimannShaderList.animate(
             that.mediaUtils.animationFrame,

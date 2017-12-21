@@ -1,6 +1,7 @@
 var _videoUUID = 0;
 function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
     var that = this;
+    that.recordingUnderway = false;
     this.init = function(meshName, pid, textureConsumers, pidType, streams) {
         // this.textureConsumers = [];
         _videoUUID++;
@@ -58,6 +59,14 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
         // }, 150);        
         that.video.play();
     }
+    this.start_recording = function() {
+        that.video.play();
+        that.video.playbackRate = .125/2.;     // this has to be found by trial and error. :(
+        that.recordingUnderway = true;
+    }
+    this.stop_recording = function() {
+        that.recordingUnderway = false;
+    }
     this.video_restart = function() {
         that.video.currentTime = 0;
         that.video_play();
@@ -77,10 +86,12 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
     this.animate = function() {
 		if (that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
             if (that.videoTexture) that.videoTexture.needsUpdate = true; 
-            // var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
-            // var statusString = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
-            // return statusString;
-            return 'blah';
+            if (that.recordingUnderway)
+                return 'recording';
+            var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
+            var statusString = that.video.currentTime.toFixed(0) + '<br/>' + timeRemaining;
+            // console.log(statusString);
+            return statusString;
 		}
     }
     this.init(meshName, pid, textureConsumers, pidType, streams);
@@ -137,8 +148,15 @@ function videoManager(mu) { // handles streams too.
         that.videos[that.mediaUtils.activeMeshName].video_play();
         // $.map(that.videos, function(val,key){val.video_play()});
     }
-    this.video_play_all = function(i,val) {
-        $.map(that.videos, function(val,key){val.video_play()});
+    this.video_play_all_for_recording = function(i,val) {
+        $.map(that.videos, function(val,key){
+            val.start_recording();
+        });
+    }
+    this.stop_recording = function() {
+        $.map(that.videos, function(val,key){
+            val.stop_recording();
+        });        
     }
     this.video_restart = function(i,val) {
         that.videos[that.mediaUtils.activeMeshName].video_restart();

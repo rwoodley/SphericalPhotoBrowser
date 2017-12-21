@@ -40,7 +40,21 @@ var x = `
     vec2 cx_exp(vec2 z) {
         return vec2(exp(z.x) * cos(z.y), exp(z.x) * sin(z.y));
     }
-    vec2 cx_pow(vec2 z, vec2 y) {
+    vec2 cx_sin(vec2 z) {
+        vec2 n = cx_exp(cx_product(z,i)) -  cx_exp(cx_product(z,-i));
+        return cx_divide(n,2.0*i);
+     }
+     vec2 cx_cos(vec2 z) {
+        vec2 n = cx_exp(cx_product(z,i)) +  cx_exp(cx_product(z,-i));
+        return n/2.;
+     }
+     vec2 cx_tan(vec2 z) {
+        return cx_divide(cx_sin(z),cx_cos(z));
+     }
+     vec2 cx_cot(vec2 z) {
+        return cx_divide(cx_cos(z),cx_sin(z));
+     }
+     vec2 cx_pow(vec2 z, vec2 y) {
         return  cx_exp(cx_product(y, cx_log(z)));
 
     }

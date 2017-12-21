@@ -94,13 +94,13 @@ this.reimannUniformsEditor = function(
         if (e.keyCode == 85) {  // u - take a snap.
 
             var cubeCamera = new THREE.CubeCamera( .1, 1000, 4096 );
-            var mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
-                { color: 0xccccff, envMap: cubeCamera.renderTarget, side: THREE.DoubleSide } );
+            // var mirrorSphereMaterial = new THREE.MeshBasicMaterial( 
+            //     { color: 0xccccff, envMap: cubeCamera.renderTarget, side: THREE.DoubleSide } );
 
-            var sphereGeom =  new THREE.SphereGeometry( 5, 32, 16 ); // radius, segmentsWidth, segmentsHeight
-            var mirrorSphere = new THREE.Mesh( sphereGeom, mirrorSphereMaterial );
-            _scene.add(mirrorSphere);
-            _renderer.render( _scene, _camera );
+            // var sphereGeom =  new THREE.SphereGeometry( 5, 32, 16 ); // radius, segmentsWidth, segmentsHeight
+            // var mirrorSphere = new THREE.Mesh( sphereGeom, mirrorSphereMaterial );
+            // _scene.add(mirrorSphere);
+            // _renderer.render( _scene, _camera );
 
 
             var equiUnmanaged = new CubemapToEquirectangular( _renderer, false );
@@ -226,7 +226,7 @@ this.reimannUniformsEditor = function(
     this.polygonalGroups = function() { 
         that.currentUniforms.uPolygonalGroups.value++;
         console.log(that.currentUniforms.uPolygonalGroups.value);
-        that.currentUniforms.uPolygonalGroups.value = that.currentUniforms.uPolygonalGroups.value%4;
+        that.currentUniforms.uPolygonalGroups.value = that.currentUniforms.uPolygonalGroups.value%7;
     }
     this.schottkyEffect1 = function() { 
         that.currentUniforms.schottkyEffectOnOff.value = that.currentUniforms.schottkyEffectOnOff.value == 0 ? 1 : 0;
@@ -257,7 +257,7 @@ this.reimannUniformsEditor = function(
     }
     this.useDelayMask = function() {
         that.currentUniforms.uMaskType.value++;
-        that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value%5;
+        that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value%6;
         showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     // these can be deleted:
