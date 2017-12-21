@@ -1,0 +1,71 @@
+<style>
+    body { margin: 0 }
+    video { display: none }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.min.js"></script>
+  <script src="https://cdn.rawgit.com/mrdoob/three.js/r75/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    'use strict'
+  
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      // find the theta uvc blender device
+      let theta = devices.find(device => device.label.match(/THETA UVC Blender/));
+      return theta ? { optional: [{ sourceId: theta.deviceId }] } : true
+    }).then((video) => {
+      // get the camera
+      return navigator.mediaDevices.getUserMedia({ video })
+    }).then((stream) => {
+      // create the video tag
+      let video = document.body.appendChild(document.createElement('video'))
+      video.src = window.URL.createObjectURL(stream)
+  
+      // create a scene
+      let scene = new THREE.Scene()
+  
+      // attach the video to a texture
+      let videoTexture = new THREE.Texture(video)
+      videoTexture.minFilter = THREE.NearestFilter
+  
+      // create a sphere at the origin textured on the inside by the video
+      let sphere = new THREE.SphereGeometry(50, 16, 16),
+          material = new THREE.MeshBasicMaterial({ map: videoTexture })
+      material.side = THREE.BackSide
+      scene.add(new THREE.Mesh(sphere, material))
+  
+      // setup a light and camera inside the sphere
+      let { width, height } = document.body.getBoundingClientRect()
+      let light = new THREE.AmbientLight(0xFFFFFF),
+          camera = new THREE.PerspectiveCamera(85, width / height, 1, 1000)
+  
+      scene.add(light)
+      scene.add(camera)
+  
+      // controls for rotating around the origin
+      let controls = new THREE.OrbitControls(camera)
+      controls.autoRotate = true
+      // invert rotation because we're inside the sphere
+      controls.rotateSpeed = -1.0
+      // camera needs to move off origin to see panning effect
+      camera.position.z = 1
+  
+      // render
+      let renderer = new THREE.WebGLRenderer()
+      renderer.setSize(width, height, true)
+      document.body.appendChild(renderer.domElement)
+  
+      ;(function render() {
+        requestAnimationFrame(render)
+  
+        controls.update()
+  
+        // update the video texture
+        if (video.readyState === video.HAVE_ENOUGH_DATA)
+          videoTexture.needsUpdate = true
+  
+        renderer.render(scene, camera)
+      })()
+    }).catch((err) => {
+      console.error(err)
+    })
+  </script>
+  
