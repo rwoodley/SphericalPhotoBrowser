@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<script src="r73/three.js"></script>
+        <script src="r73/OrbitControls.js"></script>
+		<script src="r73/Detector.js"></script>
+ 		<script src="r73/stats.min.js"></script>
+		<script src="lib/jquery-3.1.0.min.js"></script>
+        <script src="myGeometries.js"></script>
+
+		<script>
+			var _container;
+			var _camera, _controls, _scene, _renderer, _uniforms, _clock, _mediaUtils, cube;
+			var myMesh;
+			function init() {
+
+                _clock = new THREE.Clock();
+                _container = document.getElementById( 'container' );
+
+                _camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+                _camera.position.x = -30;
+                _camera.position.y = 40;
+                _camera.position.z = 30;
+                _camera.lookAt(new THREE.Vector3(0,0,0));
+ 
+
+                _scene = new THREE.Scene();
+                _controls = new THREE.OrbitControls( _camera, _container.domElement );
+                _axes = new THREE.AxisHelper( 15000 );
+                _scene.add(_axes);
+                _renderer =  new THREE.WebGLRenderer( );
+                _renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+                _renderer.setSize( window.innerWidth, window.innerHeight );
+
+                // ----------
+                // create a cube
+                var cubeGeometry = new THREE.ParametricGeometry( klein, 90, 90 );
+                var cubeMaterial = new THREE.MeshLambertMaterial({morphTargets: true, color: 0xff00ff});
+
+                // // define morphtargets, we'll use the vertices from these geometries
+                var cubeTarget1 = new THREE.CubeGeometry(2, 10, 2);
+                var cubeTarget2 = new THREE.CubeGeometry(8, 2, 8);
+                var kgeo = new THREE.ParametricGeometry( klein, 90, 90 );
+                var flatDumpling = function(u,v) { return dumpling(u, v, -1, 0, 0, 0, 8, 8); }
+                var funcCup = function(u,v) { return      dumpling(u, v, 1, 1, 3, 1.7, 8, 4); }
+                var funcLeaves = function(u,v) { return   dumpling(u, v, -1, .5, .5, .2, 16, 7); }
+                var func1Geo = new THREE.ParametricGeometry(funcLeaves, 90, 90, false);
+                var func2Geo = new THREE.ParametricGeometry(funcCup, 90, 90, false);
+
+                // define morphtargets and compute the morphnormal
+                // cubeGeometry.morphTargets[0] = {name: 't1', vertices: func1Geo.vertices};
+                func1Geo.morphTargets[0] = {name: 't2', vertices: func2Geo.vertices};
+                func1Geo.computeMorphNormals();
+
+                cube = new THREE.Mesh(func1Geo, cubeMaterial);
+                _scene.add(cube);
+                // ----------
+                // add subtle ambient lighting
+                var ambientLight = new THREE.AmbientLight(0xcccccc);
+                _scene.add(ambientLight);
+
+                document.getElementById( 'container' ).innerHTML = "";
+                _container.appendChild( _renderer.domElement );
+                _stats = new Stats();
+                document.getElementById('statsDivInner').appendChild( _stats.domElement );    
+				// _renderer.render( _scene, _camera );
+                animate();
+			}
+
+			function animate(animationFrame) {
+				requestAnimationFrame( animate );
+				// _controls.update( _clock.getDelta() );
+				_renderer.render( _scene, _camera );
+                cube.morphTargetInfluences[0] = (animationFrame%2000.0)/2000.0;
+                _stats.update();
+			}
+            $().ready(function() {
+                init();
+            });
+</script>
+</head>
+	<body>
+		<div id="container"><br /><br /><br /><br /><br />Generating...</div>
+                    <span id="statsDivInner" >
+	</body>
+</html>
