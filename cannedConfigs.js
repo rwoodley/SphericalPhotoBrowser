@@ -104,12 +104,13 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [-1,0,0.];     // expected by trackerUtils.
         uniforms.complexEffect3OnOff.value = 0;
+        uniforms.proximityEffect.value = 2;
         generalSettings.rotateYAmount = 0.;
          configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'still',
             'textureName': 'uv.jpg',
-            'geometry': 'notSelfTransparentSphere',
+            'geometry': 'sphere',
             'position': [0,0,0],
             'scale': [1,1,-1],
         }

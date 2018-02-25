@@ -64,6 +64,7 @@ reimannShaderDetailsObject = function(name) {
         uPolygonalGroups: { type: 'i', value: 0 },
         schottkyEffectOnOff: { type: 'i', value: 0 },
         fractalEffectOnOff: { type: 'i', value: 0 },
+        proximityEffect:  { type: 'i', value: 0 },
         geometryTiming: { type: 'i', value: 0 },
         hyperbolicTilingEffectOnOff: { type: 'i', value: 0},
         showFixedPoints: { type: 'i', value: 1 },

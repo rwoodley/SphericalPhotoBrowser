@@ -46,6 +46,7 @@ var x = `
     uniform int uPolygonalGroups;
     uniform int schottkyEffectOnOff;
     uniform int fractalEffectOnOff;
+    uniform int proximityEffect;
     uniform int geometryTiming;
     uniform int hyperbolicTilingEffectOnOff;
     uniform int drosteType;

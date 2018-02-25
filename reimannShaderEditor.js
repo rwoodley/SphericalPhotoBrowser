@@ -165,6 +165,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'F.png', 'Fractal', that.fractalEffect);
         appendSingleIcon(container, 'transformControlIcon', 'triangles.png', 'Hyperbolic Triangles', that.hyperbolicTilingEffect);
         appendSingleIcon(container, 'transformControlIcon', 'beforeOrAfter.png', 'Toggle: apply Geometry first/last', that.toggleGeometryTiming);
+        appendSingleIcon(container, 'transformControlIcon', 'P.png', 'Proximities', that.proximityEffect);        
     }
     
     this.textureLeft = function() { that.currentUniforms.textureUAdjustment.value += .1; }
@@ -232,6 +233,11 @@ this.reimannUniformsEditor = function(
     }
     this.fractalEffect = function() { 
         that.currentUniforms.fractalEffectOnOff.value = that.currentUniforms.fractalEffectOnOff.value == 0 ? 1 : 0;
+    }
+    this.proximityEffect = function() { 
+        that.currentUniforms.proximityEffect.value++;
+        that.currentUniforms.proximityEffect.value = (that.currentUniforms.proximityEffect.value)%3;
+        console.log("prox effect = " + that.currentUniforms.proximityEffect.value )
     }
     this.toggleGeometryTiming = function() { 
         that.currentUniforms.geometryTiming.value = that.currentUniforms.geometryTiming.value == 0 ? 1 : 0;

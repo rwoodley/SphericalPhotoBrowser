@@ -437,6 +437,10 @@ void handleSyntheticTexture(vec2 result) {
     // }
 
 }
+float epsilon = .1;
+bool isInt(float x) {
+    return abs(float(int(x)) - x) < epsilon;
+}
 void main() {
 
     vec2 uv = vUv;
@@ -444,6 +448,33 @@ void main() {
     if (tesselate == 1.) {
         a.x = my_mod(a.x, 1.);
         a.y = my_mod(a.y, 1.);
+    }
+
+    if (proximityEffect == 1) { // gaussian integers
+        bool cond1 = isInt(a.x);
+        bool cond2 = isInt(a.y);
+        if (cond1 && cond2) {
+            gl_FragColor = vec4(0.,1.,1.,1.);
+            return;
+        }
+        // if (cond1) {
+        //     gl_FragColor = vec4(1.,1.,0.,1.);
+        //     return;
+        // }
+        // if (cond2) {
+        //     gl_FragColor = vec4(0.,1.,0.,1.);
+        //     return;
+        // }
+    }
+    if (proximityEffect == 2) { // eisenstein integers
+        float b =2.*a.y/sqrt(3.0);
+        if (isInt(b)) {
+            if (isInt(a.x+b/2.) || isInt(a.x-b/2.)) {
+                gl_FragColor = vec4(0.,1.,1.,1.);
+                return;
+    
+            }
+        }
     }
 
     // ========================
