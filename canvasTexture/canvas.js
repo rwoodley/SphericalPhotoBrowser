@@ -108,7 +108,10 @@ generator = function(onReadyCB) {
     this.uvToCanvas = function(pt) {
         // for canvas (0,0) is on upper left
         // for texture uv (0,0) is lower left
-        return [pt[0]*_canvasWidth, (1-pt[1])*_canvasHeight];
+        return [
+            Math.round(pt[0]*_canvasWidth), 
+            Math.round((1-pt[1])*_canvasHeight)
+            ];
     }
     this.drawCline = function(x1,y1,x2,y2, color) {
         // self.ctx.fillStyle = 'Green';
@@ -150,6 +153,11 @@ generator = function(onReadyCB) {
         }
     }
     var img = new Image;
+    function clamp(x) {
+        if (x < 0.0001) x = 0.0001;
+        if (x > 0.9999) x = 0.9999;
+        return x;
+    }
     img.onload = function() {
         var tmpCanvas = document.createElement("canvas");
         tmpCanvas.width = self.canvas.width;
@@ -167,7 +175,34 @@ generator = function(onReadyCB) {
         var radians = -Math.PI/2.;
         var scalar = new complex(Math.cos(radians), Math.sin(radians));
         self.xform = new xform(_one,_zero,_zero,_one);
-        self.xform.rotate(5);
+        self.xform.zoom(new complex(5,0));
+
+        for(var i=0; i<data.length; i+=4) {
+            var red = data[i];
+            var green = data[i+1];
+            var blue = data[i+2];
+            var alpha = data[i+3];
+            var pixel = i/4;
+            var row = Math.floor(pixel/canvas.width);
+            var col = pixel%canvas.width;
+            var u = clamp(col/canvas.width);
+            var v = clamp(1.0-row/canvas.height);
+            var complexNumber = self.uvToComplex(u, v);
+            var newNumber = self.xform.doit(complexNumber);
+            var uv = self.complexToUV(newNumber.x, newNumber.y);
+            var uvPixels = self.uvToCanvas(uv);
+            // var uvPixels = [
+            //     Math.round((1-uv[0])*canvas.height),
+            //     Math.round(uv[1]*canvas.width) ];
+            var index = 4*(uvPixels[0] + uvPixels[1]*canvas.width);
+            if (row%100 == 0 && col == 100)
+                console.log(i, index, row,col, uvPixels[0], uvPixels[1]);
+            odata[index] = red;
+            odata[index+1] = green;
+            odata[index+2] = blue;
+            odata[index+3] = alpha;
+        }
+        self.ctx.putImageData(oimgData, 0, 0);
         // self.drawCline(0,0.,5.,0.00);
         self.drawCline(1.0,0.,0.,1.0, 'blue');
         self.drawCline(0.0,1.,-1,0.0, 'green');
@@ -183,37 +218,10 @@ generator = function(onReadyCB) {
         self.drawCPoint(0, -.1, 'green');
         self.drawCPoint(-.1,0, 'green');
 
-        self.drawCPoint(0, 10, 'yellow');
-        self.drawCPoint(10, 0, 'yellow');
-        self.drawCPoint(0, -10, 'yellow');
-        self.drawCPoint(-10,0, 'yellow');
-
-        return;
-        for(var i=0; i<data.length; i+=4) {
-            var red = data[i];
-            var green = data[i+1];
-            var blue = data[i+2];
-            var alpha = data[i+3];
-            var pixel = i/4;
-            var row = Math.floor(pixel/canvas.width);
-            var col = pixel%canvas.width;
-            var u = (1.0-row/canvas.height);
-            var v = col/canvas.width;
-            var complexNumber = self.uvToComplex(u, v);
-            var newNumber = self.xform.doit(complexNumber);
-            var uv = self.complexToUV(newNumber.x, newNumber.y);
-            var uvPixels = [
-                Math.round((1-uv[0])*canvas.height),
-                Math.round(uv[1]*canvas.width) ];
-            var index = 4*(uvPixels[0]*canvas.width + uvPixels[1]);
-            if (row%100 == 0 && col == 100)
-                console.log(i, index, row,col, uvPixels[0], uvPixels[1]);
-            odata[index] = red;
-            odata[index+1] = green;
-            odata[index+2] = blue;
-            odata[index+3] = alpha;
-        }
-        self.ctx.putImageData(oimgData, 0, 0);
+        self.drawCPoint(0, 10, 'blue');
+        self.drawCPoint(10, 0, 'blue');
+        self.drawCPoint(0, -10, 'blue');
+        self.drawCPoint(-10,0, 'blue');
 
         // self.drawGrid();
         //self.drawCLines();
