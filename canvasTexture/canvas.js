@@ -93,43 +93,43 @@ generator = function(onReadyCB) {
         // console.log(i);
         }
     }
-    this.drawCPoint = function(x,y) {
-        var xpt = this.xform(new complex(x,y));
-        var pt = self.complexToUV(xpt.x,xpt.y);
+    this.drawCPoint = function(x,y, color) {
+        var xpt = self.xform.doit(new complex(x,y));
+        var pt = self.uvToCanvas( self.complexToUV(xpt.x,xpt.y));
         self.ctx.beginPath();
         // console.log(pt[0],pt[1]);
         self.ctx.arc(
-        pt[0]*_canvasWidth, 
-        pt[1]*_canvasHeight,
+        pt[0], 
+        pt[1],
         10,2*Math.PI, false);
+        self.ctx.fillStyle = color;
         self.ctx.fill();
     }
     this.uvToCanvas = function(pt) {
-        return [pt[0]*_canvasWidth, pt[1]*_canvasHeight];
+        // for canvas (0,0) is on upper left
+        // for texture uv (0,0) is lower left
+        return [pt[0]*_canvasWidth, (1-pt[1])*_canvasHeight];
     }
-    this.drawCline = function(x1,y1,x2,y2) {
-        self.ctx.fillStyle = 'Green';
+    this.drawCline = function(x1,y1,x2,y2, color) {
+        // self.ctx.fillStyle = 'Green';
         var m = (y2-y1)/(x2-x1);
-        var iter=200
-        self.ctx.strokeStyle = 'Red';
+        var iter=10
+        self.ctx.strokeStyle = color;
         self.ctx.beginPath();
         var incr = (x2-x1)/iter;
         var nx = x1;
         for (var i = 0; i <= iter; i++) {
-        nx = nx + incr;
-        // var nx = nx + Math.max(0.01,Math.abs(nx)*incr/5);
-        if (nx > x2) break;
-        var ny = m*nx+y1;
-        // nx = Math.log(Math.abs(nx))*Math.sign(nx);
-        // ny = Math.log(Math.abs(ny))*Math.sign(ny);
-        var xpt = this.xform.doit(new complex(nx,ny));
-        var pt = self.uvToCanvas( self.complexToUV(xpt.x,xpt.y));
-        if (i == 0)
-            self.ctx.moveTo(pt[0], pt[1]);
-        else
-            self.ctx.lineTo(pt[0], pt[1]);
-        // this.drawCPoint(nx, ny);
-        // console.log('--->',nx,ny);
+            var ny = m*(nx-x1)+y1;
+            var xpt = this.xform.doit(new complex(nx,ny));
+            var pt = self.uvToCanvas( self.complexToUV(xpt.x,xpt.y));
+            // var pt = self.uvToCanvas( self.complexToUV(nx,ny));
+            if (i == 0)
+                self.ctx.moveTo(pt[0], pt[1]);
+            else
+                self.ctx.lineTo(pt[0], pt[1]);
+            // this.drawCPoint(nx, ny);
+            console.log('--->',nx,ny,color);
+            nx = nx + incr;
         }
         self.ctx.stroke();
         self.ctx.strokeStyle = 'Black';
@@ -164,7 +164,31 @@ generator = function(onReadyCB) {
         
         var oimgData = self.ctx.createImageData(imgData);
         var odata = oimgData.data;
-        self.xform = new xform(_i,_zero,_i,_one);
+        var radians = -Math.PI/2.;
+        var scalar = new complex(Math.cos(radians), Math.sin(radians));
+        self.xform = new xform(_one,_zero,_zero,_one);
+        self.xform.rotate(5);
+        // self.drawCline(0,0.,5.,0.00);
+        self.drawCline(1.0,0.,0.,1.0, 'blue');
+        self.drawCline(0.0,1.,-1,0.0, 'green');
+        self.drawCline(-1,0.0,0,-1, 'red');
+        self.drawCline(0,-1,1,0, 'black');
+        self.drawCPoint(0, 1, 'red');
+        self.drawCPoint(1, 0, 'red');
+        self.drawCPoint(0, -1, 'red');
+        self.drawCPoint(-1,0, 'red');
+
+        self.drawCPoint(0, .1, 'green');
+        self.drawCPoint(.1, 0, 'green');
+        self.drawCPoint(0, -.1, 'green');
+        self.drawCPoint(-.1,0, 'green');
+
+        self.drawCPoint(0, 10, 'yellow');
+        self.drawCPoint(10, 0, 'yellow');
+        self.drawCPoint(0, -10, 'yellow');
+        self.drawCPoint(-10,0, 'yellow');
+
+        return;
         for(var i=0; i<data.length; i+=4) {
             var red = data[i];
             var green = data[i+1];

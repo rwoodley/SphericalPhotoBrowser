@@ -40,5 +40,14 @@ this.complex = function(x,y) {
       var den = self.c.mult(z).add(self.d);
       return num.divide(den);
     }
+    this.zoom = function(f) {
+      self.a = self.a.mult(f);
+    }
+    this.rotate = function(radians) {
+      self.a = self.a.mult(new complex(
+        Math.cos(radians),
+        Math.sin(radians)
+      ));
+    }
   }
   
