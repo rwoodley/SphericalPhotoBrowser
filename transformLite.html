@@ -24,13 +24,13 @@
         <script src="trackerUtils.js"></script>
 
         <script src="shaderCode/main.js"></script>
-        <script src="shaderCode/droste.js"></script>
+        <script src="shaderCode/drosteLite.js"></script>
         <script src="shaderCode/schottkyCommon.js"></script>
         <script src="shaderCode/schottky.js"></script>
         <script src="shaderCode/mathUtils.js"></script>
         <script src="shaderCode/symmetryUtils.js"></script>
         <script src="shaderCode/mobiusTransformUtils.js"></script>
-        <script src="shaderCode/polygonalGroups.js"></script>
+        <script src="shaderCode/polygonalGroupsLite.js"></script>
         <script src="shaderCode/mainShader_fs.js"></script>
         <script src="shaderCode/outerShader_fs.js"></script>
         <script src="shaderCode/mainShader_vs.js"></script>
@@ -68,8 +68,7 @@ ga('send', 'pageview');
 var _container, _stats, _canned, _flightControl;
 var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
 var _datgui;
-var _liteVersion = false;
-
+var _liteVersion = true;
 var Params  = function() {
     this.color1 = 0;
     this.threshold1 = 0;

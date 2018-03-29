@@ -1,5 +1,5 @@
 SHADERCODE.schottkyUtils = function() {
-var x = `  
+    var x = `  
 
 struct circle {
     vec2 center;
@@ -252,11 +252,6 @@ xform xformForIndex(xform[6] xforms, int i) {
     if (i == 4) return xforms[4];
     return xforms[5];
 }
-struct schottkyResult {
-    int iter;
-    vec2 inverseZ;
-    vec2 glitchZ;   // just a pretty effect i got by doing something wrong.
-};
 circle applyTransformsToCircle(circle c, xform[6] xforms, int n) {
     circle res = c;
     for (int i = 6; i >= 0; i--) {

@@ -93,17 +93,13 @@ generator = function(onReadyCB) {
         // console.log(i);
         }
     }
+    self.points = [];
+    self.pointColors = [];
     this.drawCPoint = function(x,y, color) {
         var xpt = self.xform.doit(new complex(x,y));
         var pt = self.uvToCanvas( self.complexToUV(xpt.x,xpt.y));
-        self.ctx.beginPath();
-        // console.log(pt[0],pt[1]);
-        self.ctx.arc(
-        pt[0], 
-        pt[1],
-        10,2*Math.PI, false);
-        self.ctx.fillStyle = color;
-        self.ctx.fill();
+        self.points.push(pt);
+        self.pointColors.push(color);
     }
     this.uvToCanvas = function(pt) {
         // for canvas (0,0) is on upper left
@@ -158,6 +154,37 @@ generator = function(onReadyCB) {
         if (x > 0.9999) x = 0.9999;
         return x;
     }
+    this.drawReferencePoints2 = function() {
+        self.drawCPoint(0, 1, 'blue');
+        self.drawCPoint(1, 0, 'purple');
+        self.drawCPoint(0, -1, 'lightblue');
+        self.drawCPoint(-1,0, 'magenta');
+    }
+    this.drawReferencePoints = function() {
+        // // self.drawCline(0,0.,5.,0.00);
+        // self.drawCline(1.0,0.,0.,1.0, 'blue');
+        // self.drawCline(0.0,1.,-1,0.0, 'green');
+        // self.drawCline(-1,0.0,0,-1, 'red');
+        // self.drawCline(0,-1,1,0, 'black');
+        self.drawCPoint(0, 1, 'black');
+        self.drawCPoint(1, 0, 'red');
+        self.drawCPoint(0, -1, 'grey');
+        self.drawCPoint(-1,0, 'pink');
+
+        // self.drawCPoint(0, .1, 'green');
+        // self.drawCPoint(.1, 0, 'green');
+        // self.drawCPoint(0, -.1, 'green');
+        // self.drawCPoint(-.1,0, 'green');
+
+        // self.drawCPoint(0, 10, 'blue');
+        // self.drawCPoint(10, 0, 'blue');
+        // self.drawCPoint(0, -10, 'blue');
+        // self.drawCPoint(-10,0, 'blue');
+
+        // self.drawGrid();
+        //self.drawCLines();
+
+    }
     img.onload = function() {
         var tmpCanvas = document.createElement("canvas");
         tmpCanvas.width = self.canvas.width;
@@ -175,8 +202,15 @@ generator = function(onReadyCB) {
         var radians = -Math.PI/2.;
         var scalar = new complex(Math.cos(radians), Math.sin(radians));
         self.xform = new xform(_one,_zero,_zero,_one);
-        self.xform.zoom(new complex(5,0));
-
+        // self.drawReferencePoints2();
+        // self.xform.zoom(new complex(5,0));
+        for(var i=0; i<data.length; i+=4) {
+            var index = i;
+            odata[index] = 0;
+            odata[index+1] = 0;
+            odata[index+2] = 0;
+            odata[index+3] = 255;
+}
         for(var i=0; i<data.length; i+=4) {
             var red = data[i];
             var green = data[i+1];
@@ -188,43 +222,52 @@ generator = function(onReadyCB) {
             var u = clamp(col/canvas.width);
             var v = clamp(1.0-row/canvas.height);
             var complexNumber = self.uvToComplex(u, v);
-            var newNumber = self.xform.doit(complexNumber);
-            var uv = self.complexToUV(newNumber.x, newNumber.y);
-            var uvPixels = self.uvToCanvas(uv);
-            // var uvPixels = [
-            //     Math.round((1-uv[0])*canvas.height),
-            //     Math.round(uv[1]*canvas.width) ];
-            var index = 4*(uvPixels[0] + uvPixels[1]*canvas.width);
-            if (row%100 == 0 && col == 100)
-                console.log(i, index, row,col, uvPixels[0], uvPixels[1]);
-            odata[index] = red;
-            odata[index+1] = green;
-            odata[index+2] = blue;
-            odata[index+3] = alpha;
+            // real number line only.
+            var cxabssquared = complexNumber.x*complexNumber.x + complexNumber.y*complexNumber.y;
+            var epsilon = .1*Math.sqrt(cxabssquared);  ///complexNumber.x;
+            if (Math.abs(complexNumber.x)> epsilon) continue;
+            var nI = 5;
+            var nJ = 5;
+            var scale = chroma.scale('Spectral');
+            for (ni = 0; ni < nI; ni++) {
+                for (nj = 0; nj < nJ; nj++) {
+                    var newA = new complex(ni-2, nj-2);
+                    // var newA = new complex(0.,(ni*nJ)+nj);
+                    self.xform.a = newA;
+                    self.xform.b = newA;
+                    self.xform.c = newA;
+                    // self.xform.d = newA;
+                    // var newNumber = complexNumber;
+                    var newNumber = self.xform.doit(complexNumber);
+                    var uv = self.complexToUV(newNumber.x, newNumber.y);
+                    var uvPixels = self.uvToCanvas(uv);
+                    var index = 4*(uvPixels[0] + uvPixels[1]*canvas.width);
+                    if (row%100 == 0 && col == 100)
+                        console.log(i, index, row,col, uvPixels[0], uvPixels[1]);
+                    var col = scale(((ni*nJ)+nj)/(nI*nJ)).rgb();
+
+                    odata[index] = col[0];
+                    odata[index+1] = col[1];
+                    odata[index+2] = col[2];
+                    odata[index+3] = 255;
+                    // self.drawReferencePoints();
+                }
+            }
         }
         self.ctx.putImageData(oimgData, 0, 0);
-        // self.drawCline(0,0.,5.,0.00);
-        self.drawCline(1.0,0.,0.,1.0, 'blue');
-        self.drawCline(0.0,1.,-1,0.0, 'green');
-        self.drawCline(-1,0.0,0,-1, 'red');
-        self.drawCline(0,-1,1,0, 'black');
-        self.drawCPoint(0, 1, 'red');
-        self.drawCPoint(1, 0, 'red');
-        self.drawCPoint(0, -1, 'red');
-        self.drawCPoint(-1,0, 'red');
 
-        self.drawCPoint(0, .1, 'green');
-        self.drawCPoint(.1, 0, 'green');
-        self.drawCPoint(0, -.1, 'green');
-        self.drawCPoint(-.1,0, 'green');
+        for (var i = 0; i < self.points.length; i++) {
+            self.ctx.beginPath();
+            // console.log(pt[0],pt[1]);
+            self.ctx.arc(
+                self.points[i][0], 
+                self.points[i][1], 
+            10,2*Math.PI, false);
+            self.ctx.fillStyle = self.pointColors[i];
+            self.ctx.fill();
+        }
 
-        self.drawCPoint(0, 10, 'blue');
-        self.drawCPoint(10, 0, 'blue');
-        self.drawCPoint(0, -10, 'blue');
-        self.drawCPoint(-10,0, 'blue');
-
-        // self.drawGrid();
-        //self.drawCLines();
+ 
         console.log("done drawing");
         self.onReadyCB();
     }

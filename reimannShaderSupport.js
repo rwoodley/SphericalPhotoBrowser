@@ -235,6 +235,7 @@ function getReimannShaderMaterial(texture, uniforms) {
         + SHADERCODE.polygonalGroupsCode()
         + SHADERCODE.drosteUtils()
         + SHADERCODE.symmetryUtils()
+        + SHADERCODE.schottkyUtilsCommon()
         + SHADERCODE.schottkyUtils()
         + SHADERCODE.mainShader_fs()
     ;
