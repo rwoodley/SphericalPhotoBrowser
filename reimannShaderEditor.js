@@ -147,6 +147,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'cameraControlIcon', 'fovWide.png', 'Scale Factor', that.textureLarger);
         appendSingleIcon(container, 'cameraControlIcon', 'tesselate.png', 'Tesselate', that.tesselate);
         appendSingleIcon(container, 'cameraControlIcon', 'crosshairs.png', 'Track', that.textureTrack);
+        appendSingleIcon(container, 'cameraControlIcon', 'crosshairs.png', 'Animation Track', that.animationTrack);
         appendSingleIcon(container, 'cameraControlIcon', 'three.png', 'Track', that.threePoint);
         appendSingleIcon(container, 'cameraControlIcon', 'alpha.png', 'Change Alpha', that.changeAlpha);
         appendSingleIcon(container, 'cameraControlIcon', 'colorWheel.png', 
@@ -187,6 +188,9 @@ this.reimannUniformsEditor = function(
     this.textureTrack = function() { 
         that.currentUniforms.enableTracking.value = that.currentUniforms.enableTracking.value == 1 ? 0 : 1; 
     }
+    this.animationTrack = function() { 
+        that.currentUniforms.enableAnimationTracking.value = that.currentUniforms.enableAnimationTracking.value == 1 ? 0 : 1; 
+    }
     this.threePoint = function() { 
         that.currentUniforms.uThreePointMappingOn.value = that.currentUniforms.uThreePointMappingOn.value == 1 ? 0 : 1; 
     }
@@ -205,11 +209,9 @@ this.reimannUniformsEditor = function(
     this.tesselate = function() { that.currentUniforms.tesselate.value = that.currentUniforms.tesselate.value == 0 ? 1 : 0; }
     this.complexEffect1 = function() { 
         that.currentUniforms.complexEffect1OnOff.value += 1;
-        // showToast("n = " + that.currentUniforms.complexEffect1OnOff.value, 1000);
     }
     this.complexEffect2 = function() { 
         that.currentUniforms.complexEffect1OnOff.value -= 1;
-        // showToast("n = " + that.currentUniforms.complexEffect1OnOff.value, 1000);
     }
     this.complexEffect3 = function() { 
         that.currentUniforms.complexEffect3OnOff.value = that.currentUniforms.complexEffect3OnOff.value == 0 ? 1 : 0;
@@ -422,9 +424,12 @@ this.reimannUniformsEditor = function(
     	that.currentUniforms.mobiusEffectsOnOff.value = 0;
         that.currentUniforms.textureScaleX.value = 1;
         that.currentUniforms.textureScaleY.value = 1;
-        // that.currentUniforms.enableTracking.value = 0;
         if (that.currentUniforms.enableTracking.value == 1) {
             that.detailsObject.trackerUtils.reset();
+        }
+        if (that.currentUniforms.enableAnimationTracking.value == 1) {
+            console.log("noop");
+            // that.detailsObject.trackerUtils.reset();
         }
         if (that.currentUniforms.uThreePointMappingOn.value == 1) {
             that.detailsObject.threePointTracker.reset();
@@ -432,6 +437,7 @@ this.reimannUniformsEditor = function(
         that.currentUniforms.textureUAdjustment.value = 0; 
         that.currentUniforms.textureVAdjustment.value = 0; 
         that.currentUniforms.complexEffect1OnOff.value = 1;
+        that.currentUniforms.uAnimationEffect.value = 0;
         // that.currentUniforms.complexEffect2OnOff.value = 0;
         that.currentUniforms.complexEffect3OnOff.value = 0;
         that.currentUniforms.complexEffect4OnOff.value = 0;

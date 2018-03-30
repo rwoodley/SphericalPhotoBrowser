@@ -13,6 +13,11 @@ reimannShaderListObject = function() {
         return obj;
     }
     this.createShader = function(name) {
+        var obj = this.createShader2(name);
+        obj.loadDefaultTextures();
+        return obj.currentUniforms;
+    }
+    this.createShaderFewerTextures = function(name) {   // maybe this is faster.
         return this.createShader2(name).currentUniforms;
     }
     this.animate = function(animationFrame, videoDisplayed, videoCurrentTime, videoFileName) {
@@ -28,7 +33,9 @@ reimannShaderListObject = function() {
 }
 
 // Functions specific to doing mobius transforms on videos or stills.
-// this must be paired with the appropriate shaders of course.
+// this must be paired with the appropriate shaders of course, 
+// which happens in getReimannShaderMaterial <- called eventually by updateReimannDomeForVideoName() or
+// called in updateReimannDomeForFileName().
 reimannShaderDetailsObject = function(name) {
     var that = this;
     that.firstTime = true;
@@ -39,7 +46,7 @@ reimannShaderDetailsObject = function(name) {
     that.point1Defined = false;
     that.point2Defined = false;
     that.colorGen = new colorGen('FF0000', '0000FF', 1000);
-    
+
     this.currentUniforms = {
         iRotationAmount:    { type: 'f', value: 0.0 },
         startTime:    { type: 'f', value: 0.0 },
@@ -51,6 +58,7 @@ reimannShaderDetailsObject = function(name) {
         uAlpha: { type: 'f', value: 1. },
         uColorVideoMode: { type: 'f', value: 0. },  // need value = 1 for outer texture.
         enableTracking: { type: 'i', value: 0 },
+        enableAnimationTracking: { type: 'i', value: 0},
         textureX: { type: 'f', value: 0. },
         textureY: { type: 'f', value: 0. },
         flipTexture: { type: 'i', value: 0 },
@@ -58,6 +66,7 @@ reimannShaderDetailsObject = function(name) {
         textureVAdjustment: { type: 'f', value: 0 },
         uSyntheticTexture: { type: 'i', value: 0 },
         uSyntheticTextureQuadrant: { type: 'f', value: -1 },
+        uAnimationEffect: { type: 'i', value: 0},
         complexEffect1OnOff: { type: 'i', value: 1 },
         complexEffect3OnOff: { type: 'i', value: 0 },
         complexEffect4OnOff: { type: 'i', value: 0 },
@@ -97,6 +106,7 @@ reimannShaderDetailsObject = function(name) {
         iChannelDelayMask1:  { type: 't', value: 0 },
         iChannelDelayMask2:  { type: 't', value: 0 },
         iChannelDelayMask3:  { type: 't', value: 0 },
+        iChannelAnimation: { type: 't', value: 0 },
         u3p1: { type: "v2", value: new THREE.Vector2(0,0) },
         u3q1: { type: "v2", value: new THREE.Vector2(0,0) },
         u3r1: { type: "v2", value: new THREE.Vector2(0,0) },
@@ -116,34 +126,38 @@ reimannShaderDetailsObject = function(name) {
         uLowPassFilterThreshold2: { type: "v3", value: new THREE.Vector3(.25,.25,.25) },
         uThreePointMappingOn: { type: 'i', value: 0 }
     };
-    this.setDefaults = function() {
+    this.loadDefaultTextures = function() {
         // Initialize the masks to something so everything comes up.
         // These will be changed later as needed.
         // we have to keep loading the texture otherwise the channels all point to the same texture.
         var pathToSubtractionTexture = 'media/placeholderStill.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("reimannShaderSupport.setDefaults(): loading texture for iChannelDelayMask");
             setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask1.value =  texture; 
         });
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("reimannShaderSupport.setDefaults(): loading texture for iChannelDelayMask1");
             setMipMapOptions(texture);
             that.currentUniforms.iChannelDelayMask1.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
         });
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("reimannShaderSupport.setDefaults(): loading texture for iChannelDelayMask2");
             setMipMapOptions(texture);
             that.currentUniforms.iChannelStillMask2.value =  texture; 
             that.currentUniforms.iChannelDelayMask2.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
         });
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("reimannShaderSupport.setDefaults(): loading texture for iChannelDelayMask3");
             setMipMapOptions(texture);
             that.currentUniforms.iChannelDelayMask3.value =  texture;       // the delay mask needs to be initialized to a still for this to work.
         });
         
-    }
+    }    
     this.animate = function(animationFrame, videoDisplayed, videoCurrentTime, videoFileName) {
-        if (that.firstTime) {
-            that.setDefaults();
-        }
+        // if (that.firstTime) {
+        //     that.setDefaults();
+        // }
         that.firstTime = false;
         that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .05*that.rotateDirection;
         that.currentUniforms.iGlobalTime.value = that.currentUniforms.iGlobalTime.value  + 1;
@@ -192,6 +206,9 @@ reimannShaderDetailsObject = function(name) {
             1.0,
         )        
         if (videoDisplayed) {
+            if (that.currentUniforms.enableAnimationTracking.value == 1) {
+                console.log("noop")
+            }
             if (that.currentUniforms.enableTracking.value == 1) {
                 if (that.trackerUtils == undefined) 
                     that.trackerUtils = new trackerUtils(_trackerUtilsFileName); // happens w canned mode sometimes.

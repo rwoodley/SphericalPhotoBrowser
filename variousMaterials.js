@@ -6,11 +6,13 @@ function getMaterialForName(name) {
         };
         var pathToSubtractionTexture = 'media/stillMask2.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("getMaterialForName(): loading texture into iChannelStillMask1");
             setMipMapOptions(texture);
             uniforms.iChannelStillMask1.value =  texture; 
         });
         var pathToSubtractionTexture = 'media/stillMask3.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("getMaterialForName(): loading texture into iChannelStillMask2");
             setMipMapOptions(texture);
             uniforms.iChannelStillMask2.value =  texture; 
         });

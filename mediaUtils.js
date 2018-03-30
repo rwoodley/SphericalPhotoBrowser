@@ -298,6 +298,7 @@ function mediaUtils(canned, scene, camera,
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
+            console.log("updateReimannDomeForFileName: loading texture");
             TRANSFORM.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
         });
     }

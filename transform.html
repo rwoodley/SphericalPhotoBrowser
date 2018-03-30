@@ -142,9 +142,6 @@ function init() {
             pid = 'media/' + event.target.id.replace('textureSelector_','');
             console.log(pid);
             (new THREE.TextureLoader()).load(pid, function ( texture ) {
-                // setMipMapOptions(texture);
-                // material.map = texture;
-                // var material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide, shading: THREE.FlatShading});
                 var material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });            
                 material.map = texture;
                 TRANSFORM.meshInventory.meshes['skyDome'].material = material;  // do we really need this twice?

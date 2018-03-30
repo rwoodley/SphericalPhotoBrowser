@@ -329,11 +329,13 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         };
         var pathToSubtractionTexture = 'media/stillMask2.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("cannedConfig: loading texture stillMask2");
             setMipMapOptions(texture);
             uniforms.iChannelStillMask1.value =  texture; 
         });
         var pathToSubtractionTexture = 'media/stillMask3.png';
         (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+            console.log("cannedConfig: loading texture stillMask3");
             setMipMapOptions(texture);
             uniforms.iChannelStillMask2.value =  texture; 
         });
@@ -366,7 +368,37 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'scale': [.7,.7,.7],
         };
     }
-    if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
+    // ****************************************
+    if (mode == 'nyanCat') {
+        generalSettings.cameraPosition = [-8.4,3.6,10.1];
+          //generalSettings.videoReloadDelayInSeconds = -1;
+          var uniforms = {
+              iChannelStillMask1:  { type: 't', value: 0 },
+              iChannelStillMask2:  { type: 't', value: 0 },
+          };
+          // this must go after sky dome so transparency works.
+          var pathToTexture = 'media/nyanCat.png';
+          (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
+              console.log("cannedConfig: loading texture nyanCat");
+              setMipMapOptions(texture);
+              uniforms.iChannelAnimation.value =  texture; 
+          });
+    
+          var uniforms = TRANSFORM.reimannShaderList.createShaderFewerTextures('default');
+          uniforms.uAnimationEffect.value = 1;
+          uniforms.complexEffect3OnOff.value = 0;
+          uniforms.enableAnimationTracking.value = 1;
+          generalSettings.rotateYAmount = 0.01;
+           configs['default'] = {
+              'uniforms': uniforms,
+              'textureType': 'still',
+              'textureName': 'uv.jpg',
+              'geometry': 'sphere',
+              'position': [0,0,0],
+              'scale': [1,1,-1],
+          }
+      }
+      if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2' ) {
        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
         generalSettings.cameraPosition = [-10.8,0,0.];
         uniforms.hyperbolicTilingEffectOnOff.value = mode == 'hyperbolicTessellation' ? 2 : 3;

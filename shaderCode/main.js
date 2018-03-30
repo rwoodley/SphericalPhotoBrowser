@@ -15,6 +15,7 @@ var x = `
     uniform sampler2D iChannelDelayMask3;
     uniform sampler2D iChannelStillMask1;
     uniform sampler2D iChannelStillMask2;
+    uniform sampler2D iChannelAnimation;
     varying vec2 vUv;  
     uniform float iRotationAmount;
     uniform float iGlobalTime;
@@ -39,6 +40,7 @@ var x = `
     uniform float textureVAdjustment;
     uniform bool uSyntheticTexture;
     uniform float uSyntheticTextureQuadrant;
+    uniform int uAnimationEffect;
     uniform int complexEffect1OnOff;
     uniform int complexEffect2OnOff;
     uniform int complexEffect3OnOff;

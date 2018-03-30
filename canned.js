@@ -94,6 +94,7 @@ function cannedRun(scene, flightControl) {
                     meshSpecs['rotationAngle']
                     );
                 (new THREE.TextureLoader()).load("media/" + meshSpecs['textureName'], function ( texture ) {
+                    console.log("setup(): loading texture");
                     basicmesh.setTexture(texture,null, null);
                 });
             }
