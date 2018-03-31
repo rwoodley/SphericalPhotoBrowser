@@ -1,10 +1,12 @@
-// trackerUtils is to track a single person
-function threePointTracker(videoFileName) {
+// ========
+// Track 3 points simulataneously. For use with Segerman's dolly zoom effect.
+// ========
+function threePointTrackerFromFiles(fileWithCoordinates) {
     var that = this;
     this.tracker = [];
-    this.tracker[0] = new trackerUtils("trackerData/" + videoFileName + "/1.json");
-    this.tracker[1] = new trackerUtils("trackerData/" + videoFileName + "/2.json");
-    this.tracker[2] = new trackerUtils("trackerData/" + videoFileName + "/3.json");
+    this.tracker[0] = new trackerUtils("trackerData/" + fileWithCoordinates + "/1.json");
+    this.tracker[1] = new trackerUtils("trackerData/" + fileWithCoordinates + "/2.json");
+    this.tracker[2] = new trackerUtils("trackerData/" + fileWithCoordinates + "/3.json");
     this.startPoint = [];
     this.startPoint[0] = this.tracker[0].getXYAsVector2(0);
     this.startPoint[1] = this.tracker[1].getXYAsVector2(0);
@@ -26,6 +28,44 @@ function threePointTracker(videoFileName) {
         this.tracker[2].reset();        
     }
 }
+function threePointTrackerRandomWalk(fileWithCoordinates) {
+    var that = this;
+    this.startPoint = [];
+    this.startPoint[0] = new THREE.Vector2(0.5, 0.5);
+    this.startPoint[1] = new THREE.Vector2(0.25, 0.25);
+    this.startPoint[2] = new THREE.Vector2(0.75, 0.75);
+    this.firstTime = true;
+    this.getXY = function(currentTime, uniforms) {
+        uniforms.u3p1.value = that.startPoint[0];
+        uniforms.u3q1.value = that.startPoint[1];
+        uniforms.u3r1.value = that.startPoint[2];
+        if (that.firstTime) {
+            that.firstTime = false;
+            uniforms.u3p2.value = that.startPoint[0];
+            uniforms.u3q2.value = that.startPoint[1];
+            uniforms.u3r2.value = that.startPoint[2];        
+        }
+        else {
+            uniforms.u3p2.value = new THREE.Vector2(
+                (uniforms.u3p2.value.x + (Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3p2.value.y + (Math.random()-.25)/200.0)%1.0
+            );
+            uniforms.u3q2.value = new THREE.Vector2(
+                (uniforms.u3q2.value.x + (Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3q2.value.y + (Math.random()-.25)/200.0)%1.0
+            );
+            uniforms.u3r2.value = new THREE.Vector2(
+                (uniforms.u3r2.value.x + (Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3r2.value.y + (Math.random()-.25)/200.0)%1.0
+            );
+        }
+    }
+    this.reset = function() {
+    }
+}
+// ========
+// For tracking a single person
+// ========
 var _trackerUtilsFileName = "tubes/woman1WhiteShirt.json";
 function trackerUtils(filename) {
     var that = this;

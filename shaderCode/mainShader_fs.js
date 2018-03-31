@@ -96,20 +96,17 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     //     textureValue = wrappedTexture2D( iChannelStillMask1,  uv);
 
     if (uAnimationEffect == 1) {
-        vec4 animation = wrappedTexture2D(iChannelAnimation, uv);
-        // if (animation.r > 0.8)
-            // textureValue = animation;            
-        vec2 q = uv;
-        vec2 uvNyan = (q  - vec2(0.25, 0.15)) / (vec2(0.7,0.5) - vec2(0.5, 0.15));
-        uvNyan = clamp(uvNyan, 0.0, 1.0);
-        float ofx = floor( mod( floor(iGlobalTime/10.0), 6.0 ) );
-        float ww = 40.0/256.0;
-        uvNyan = vec2(clamp( uvNyan.x*ww + ofx*ww, 0.0, 1.0 ), 1.0-uvNyan.y);
-        vec4 temp = wrappedTexture2D( iChannelAnimation, uvNyan );
+        vec4 temp;
+        temp = drawNyanCat(uv, u3p2);
         if (temp.a > 0.0)
             textureValue = temp;
-        // textureValue.r = mod(iGlobalTime,200.0)/200.0; 
-    }    
+        temp = drawNyanCat(uv, u3q2);
+        if (temp.a > 0.0)
+            textureValue = temp;
+        temp = drawNyanCat(uv, u3r2);
+        if (temp.a > 0.0)
+            textureValue = temp;
+        }    
 
     
     if (uMaskType == 0) {

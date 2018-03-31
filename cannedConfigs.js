@@ -370,7 +370,8 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
     }
     // ****************************************
     if (mode == 'nyanCat') {
-        generalSettings.cameraPosition = [-8.4,3.6,10.1];
+        // generalSettings.cameraPosition = [-8.4,3.6,10.1];
+        generalSettings.cameraPosition = [2,0,0.];
           //generalSettings.videoReloadDelayInSeconds = -1;
           var uniforms = {
               iChannelStillMask1:  { type: 't', value: 0 },
@@ -385,15 +386,16 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
           });
     
           var uniforms = TRANSFORM.reimannShaderList.createShaderFewerTextures('default');
+          // so... to animate, set uAnimationEffect and iChannelAnimation.
           uniforms.uAnimationEffect.value = 1;
           uniforms.complexEffect3OnOff.value = 0;
           uniforms.enableAnimationTracking.value = 1;
-          generalSettings.rotateYAmount = 0.01;
+          generalSettings.rotateYAmount = 0.0;
            configs['default'] = {
               'uniforms': uniforms,
               'textureType': 'still',
               'textureName': 'uv.jpg',
-              'geometry': 'sphere',
+              'geometry': 'plane',
               'position': [0,0,0],
               'scale': [1,1,-1],
           }

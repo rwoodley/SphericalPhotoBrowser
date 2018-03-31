@@ -155,9 +155,6 @@ reimannShaderDetailsObject = function(name) {
         
     }    
     this.animate = function(animationFrame, videoDisplayed, videoCurrentTime, videoFileName) {
-        // if (that.firstTime) {
-        //     that.setDefaults();
-        // }
         that.firstTime = false;
         that.currentUniforms.iRotationAmount.value = that.currentUniforms.iRotationAmount.value  + .05*that.rotateDirection;
         that.currentUniforms.iGlobalTime.value = that.currentUniforms.iGlobalTime.value  + 1;
@@ -219,10 +216,17 @@ reimannShaderDetailsObject = function(name) {
             }
             if (that.currentUniforms.uThreePointMappingOn.value == 1) {
                 if (that.threePointTracker == undefined)
-                    that.threePointTracker = new threePointTracker(videoFileName);
+                    that.threePointTracker = new threePointTrackerFromFiles(videoFileName);
                 that.threePointTracker.getXY(videoCurrentTime, that.currentUniforms);
             }
         }
+
+        if (that.currentUniforms.uAnimationEffect.value == 1) {
+                if (that.threePointTracker == undefined)
+                    that.threePointTracker = new threePointTrackerRandomWalk(videoFileName);
+                that.threePointTracker.getXY(videoCurrentTime, that.currentUniforms);
+        }
+
         if (that.currentUniforms.uMaskType.value == 1 || 
             that.currentUniforms.uMaskType.value == 4 || 
             that.currentUniforms.uMaskType.value == 5) {
@@ -251,6 +255,7 @@ function getReimannShaderMaterial(texture, uniforms) {
         + SHADERCODE.mobiusTransformUtils()
         + SHADERCODE.polygonalGroupsCode()
         + SHADERCODE.drosteUtils()
+        + SHADERCODE.animationUtils()
         + SHADERCODE.symmetryUtils()
         + SHADERCODE.schottkyUtilsCommon()
         + SHADERCODE.schottkyUtils()
