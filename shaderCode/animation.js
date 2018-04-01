@@ -3,14 +3,24 @@ SHADERCODE.animationUtils = function() {
 vec4 drawNyanCat(in vec2 uv, in vec2 pos) {
     vec2 q;
     float sideLength = 0.4;
-    float offsetX = mod(uv.x - pos.x, 1.0);
-    float offsetY = mod(uv.y - pos.y, 1.0);
+    // for debugging...
+    if (
+        min(mod(uv.x - pos.x,1.0), mod(pos.x -  uv.x,1.0)) < 0.01 &&
+        min(mod(uv.y - pos.y,1.0), mod(pos.y -  uv.y,1.0)) < 0.01
+    ) {
+        return vec4(1.,0.,0.,1.);
+    }
+    // determined this offsetpos by trial and error. want the red dot in the middle of the cat
+    // because the mobius transform is going to work on the red dot.
+    vec2 offsetpos = vec2(pos.x-.13,pos.y-.28);
+    float offsetX = mod(uv.x - offsetpos.x, 1.0);
+    float offsetY = mod(uv.y - offsetpos.y, 1.0);
     if (
         offsetX < sideLength && offsetX > 0.0 &&
         offsetY < sideLength && offsetY > 0.0
     ) {
-        q.x = offsetX/sideLength;
-        q.y = 1. - offsetY/sideLength;
+        q.x = (offsetX)/sideLength;
+        q.y = 1. - (offsetY)/sideLength;
         // return texture2D(iChannelAnimation, q);
         // return vec4(1.,0.,0.,1.);
         // https://www.shadertoy.com/view/ltsGWn

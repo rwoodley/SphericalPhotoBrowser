@@ -28,12 +28,21 @@ function threePointTrackerFromFiles(fileWithCoordinates) {
         this.tracker[2].reset();        
     }
 }
+// from https://stackoverflow.com/a/36481059
+var _randn_bm_count = 0;
+function randn_bm() {
+    _randn_bm_count++;
+    if (_randn_bm_count%50 != 0) return 0;
+    var u = Math.random();
+    var v = Math.random();
+    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+}
 function threePointTrackerRandomWalk(fileWithCoordinates) {
     var that = this;
     this.startPoint = [];
-    this.startPoint[0] = new THREE.Vector2(0.5, 0.5);
-    this.startPoint[1] = new THREE.Vector2(0.25, 0.25);
-    this.startPoint[2] = new THREE.Vector2(0.75, 0.75);
+    this.startPoint[0] = new THREE.Vector2(0., 0.5);
+    this.startPoint[1] = new THREE.Vector2(0.33, 0.5);
+    this.startPoint[2] = new THREE.Vector2(0.66, 0.5);
     this.firstTime = true;
     this.getXY = function(currentTime, uniforms) {
         uniforms.u3p1.value = that.startPoint[0];
@@ -48,15 +57,15 @@ function threePointTrackerRandomWalk(fileWithCoordinates) {
         else {
             uniforms.u3p2.value = new THREE.Vector2(
                 (uniforms.u3p2.value.x + (Math.random()-.25)/200.0)%1.0,
-                (uniforms.u3p2.value.y + (Math.random()-.25)/200.0)%1.0
+                (uniforms.u3p2.value.y + randn_bm()/200.0)%1.0
             );
             uniforms.u3q2.value = new THREE.Vector2(
-                (uniforms.u3q2.value.x + (Math.random()-.25)/200.0)%1.0,
-                (uniforms.u3q2.value.y + (Math.random()-.25)/200.0)%1.0
+                (uniforms.u3q2.value.x - (Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3q2.value.y + randn_bm()/200.0)%1.0
             );
             uniforms.u3r2.value = new THREE.Vector2(
-                (uniforms.u3r2.value.x + (Math.random()-.25)/200.0)%1.0,
-                (uniforms.u3r2.value.y + (Math.random()-.25)/200.0)%1.0
+                (uniforms.u3r2.value.x + 3*(Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3r2.value.y + randn_bm()/200.0)%1.0
             );
         }
     }

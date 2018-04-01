@@ -390,11 +390,12 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
           uniforms.uAnimationEffect.value = 1;
           uniforms.complexEffect3OnOff.value = 0;
           uniforms.enableAnimationTracking.value = 1;
+          uniforms.uThreePointMappingOn.value = 1;
           generalSettings.rotateYAmount = 0.0;
            configs['default'] = {
               'uniforms': uniforms,
               'textureType': 'still',
-              'textureName': 'uv.jpg',
+              'textureName': 'tree3.hdr.jpg',
               'geometry': 'plane',
               'position': [0,0,0],
               'scale': [1,1,-1],
