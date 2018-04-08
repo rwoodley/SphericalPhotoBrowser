@@ -10,6 +10,16 @@ vec4 drawNyanCat(in vec2 uv, in vec2 pos) {
     ) {
         return vec4(1.,0.,0.,1.);
     }
+    if (
+        uv.y > 0.95
+    ) {
+        return vec4(1.,1.,0.,1.);
+    }
+    if (
+        uv.y < 0.05
+    ) {
+        return vec4(1.,0.,1.,1.);
+    }
     // determined this offsetpos by trial and error. want the red dot in the middle of the cat
     // because the mobius transform is going to work on the red dot.
     vec2 offsetpos = vec2(pos.x-.13,pos.y-.28);

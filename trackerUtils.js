@@ -40,9 +40,9 @@ function randn_bm() {
 function threePointTrackerRandomWalk(fileWithCoordinates) {
     var that = this;
     this.startPoint = [];
-    this.startPoint[0] = new THREE.Vector2(0., 0.5);
-    this.startPoint[1] = new THREE.Vector2(0.33, 0.5);
-    this.startPoint[2] = new THREE.Vector2(0.66, 0.5);
+    this.startPoint[0] = new THREE.Vector2(0., 0.75);
+    this.startPoint[1] = new THREE.Vector2(0.33, 0.65);
+    this.startPoint[2] = new THREE.Vector2(0.66, 0.85);
     this.firstTime = true;
     this.getXY = function(currentTime, uniforms) {
         uniforms.u3p1.value = that.startPoint[0];
@@ -56,16 +56,22 @@ function threePointTrackerRandomWalk(fileWithCoordinates) {
         }
         else {
             uniforms.u3p2.value = new THREE.Vector2(
-                (uniforms.u3p2.value.x + (Math.random()-.25)/200.0)%1.0,
-                (uniforms.u3p2.value.y + randn_bm()/200.0)%1.0
+                // (uniforms.u3p2.value.x + (Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3p2.value.x +.5/400.0)%1.0,
+                // (uniforms.u3p2.value.y + randn_bm()/200.0)%1.0
+                uniforms.u3p2.value.y%1.0
             );
             uniforms.u3q2.value = new THREE.Vector2(
-                (uniforms.u3q2.value.x - (Math.random()-.25)/200.0)%1.0,
-                (uniforms.u3q2.value.y + randn_bm()/200.0)%1.0
+                // (uniforms.u3q2.value.x - (Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3q2.value.x +.75/400.0)%1.0,
+                // (uniforms.u3q2.value.y + randn_bm()/200.0)%1.0
+                uniforms.u3q2.value.y%1.0
             );
             uniforms.u3r2.value = new THREE.Vector2(
-                (uniforms.u3r2.value.x + 3*(Math.random()-.25)/200.0)%1.0,
-                (uniforms.u3r2.value.y + randn_bm()/200.0)%1.0
+                // (uniforms.u3r2.value.x + 3*(Math.random()-.25)/200.0)%1.0,
+                (uniforms.u3r2.value.x -.5/400.0)%1.0,
+                uniforms.u3r2.value.y%1.0
+                // (uniforms.u3r2.value.y + randn_bm()/200.0)%1.0
             );
         }
     }

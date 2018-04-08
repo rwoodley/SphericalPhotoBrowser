@@ -53,23 +53,34 @@ vec2 threePointMapping(vec2 z, vec2 q1, vec2 r1, vec2 s1, vec2 q2, vec2 r2, vec2
     // convert Z cross ratio to mobius transform
     xform zXForm = xformCtor(
         r1 - s1,
-        cx_product(q1, vec2(s1 - r1)),
+        cx_product(q1, vec2(s1-r1)),
         r1 - q1,
-        cx_product(s1, vec2(q1 - r1))
+        cx_product(s1, vec2(q1-r1))
     );
-    // convert W cross ratio to mobius transform
+    // // convert W cross ratio to mobius transform
     xform wXForm = xformCtor(
         r2 - s2,
-        cx_product(q2, vec2(s2 - r2)),
+        cx_product(q2, vec2(s2-r2)),
         r2 - q2,
-        cx_product(s2, vec2(q2 - r2))
+        cx_product(s2, vec2(q2-r2))
     );
-    // evaluate zXform for z
+    // q1, r1, s1 are the initial locations.
+    // so first we send thos to 0,1, infinity.
     vec2 temp = applyMobiusTransformation(z, zXForm);
-    // now result
+
+    // q2, r2, s2 are the new locations.
+    // so now we send 0,1,infinity to the new locations.
     vec2 w = applyInverseMobiusTransformation(temp, wXForm);
+
+    // basically this seems completely backwards. You'd think we want to send
+    // q2,r2,s2 to 0,1,inf. and then from there to q1,r1, and s1.
+    // But we're dealing with shader so everything is backwards. We have a point
+    // that we need to color. So this point should be colored as if we had
+    // applied W then Z^-1. So by doing it backwards we get the point that would
+    // have been mapped to this point.
+
     return w;
-}
+} 
 
     `;
         return x;

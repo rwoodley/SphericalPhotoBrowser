@@ -39,7 +39,7 @@ bool checkMaskPointNew(vec4 t1, vec4 t2) {
         (clr.z < threshold)
         );
 }
-vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
+vec4 applyMask(vec2 uv, vec2 complexPoint) {        // subtracting t2 from t1.
     // uMaskType == 1 - delay mask, uses iChannelDelayMask1
     // uMaskType == 2 - green mask, makes green transparent.
     // uMaskType == 3 - still mask, uses iChannelStillMask1
@@ -96,6 +96,17 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
     //     textureValue = wrappedTexture2D( iChannelStillMask1,  uv);
 
     if (uAnimationEffect == 1) {
+        // if (uAnimationEffect == 1) {
+        //     vec2 rr = complexPoint;
+        //     if (
+        //         rr.y > 0. && rr.y < .5 && 
+        //         rr.x > 0. && rr.x < .5  
+        //         // abs(mod(rr.x,1.0)) < .5
+        //     ) {
+        //         textureValue.a = 0.;
+        //     }
+        // }
+
         vec4 temp;
         temp = drawNyanCat(uv, u3p2);
         if (temp.a > 0.0)
@@ -106,7 +117,7 @@ vec4 applyMask(vec2 uv) {        // subtracting t2 from t1.
         temp = drawNyanCat(uv, u3r2);
         if (temp.a > 0.0)
             textureValue = temp;
-        }    
+    }
 
     
     if (uMaskType == 0) {
@@ -278,25 +289,9 @@ vec2 uvToComplex(vec2 uv) {
     vec2 a = vec2(y/(1.0-z), x/(1.0-z));
     return a;
 }
-vec2 getNewTrackerUVForWrappedTexture(vec2 inUV) {
-    // this is almost an identical copy of getNewUVForWrappedTexture except for signs in next line:
-    vec2 uv = vec2( mod(inUV.x - textureUAdjustment, 1.), 
-                    mod(inUV.y - textureVAdjustment, 1.));
-    if (flipTexture)    // hack to flip texture upside down.
-        uv = vec2(uv.x, mod(1.0 - uv.y, 1.));
-
-    float widthx = 1.;
-    float minx = .5 - widthx/2.;
-    float maxx = .5 + widthx/2.;
-    if (uv.x < minx || uv.x > maxx || uv.y < minx || uv.y > maxx)
-        return vec2(0.,0.);
-    else {
-        return vec2((uv.x-minx)/widthx, (uv.y-minx)/widthx);
-    } 
-}
 vec2 trackerToComplex(vec2 pt) {
-    // not sure why these corrections are needed, maybe because of scale()
-    vec2 uv = getNewTrackerUVForWrappedTexture(vec2(mod(pt.x+.5,1.), 1.-pt.y));
+    // not sure why this correction to pt.x is needed...
+    vec2 uv = getNewUVForWrappedTexture(vec2(mod(pt.x+.5,1.), pt.y));
     return uvToComplex(uv);
 }
 vec2 complexToUV(vec2 result) {
@@ -586,9 +581,8 @@ void main() {
     else {
         vec2 newuv = complexToUV(result);
         // ============
-        gl_FragColor = applyMask(newuv);
+        gl_FragColor = applyMask(newuv, result);
     }
-
     if (geometryTiming == 1) {
         tesselationResult = doGeometry(result);
         int iter = tesselationResult.iter;
