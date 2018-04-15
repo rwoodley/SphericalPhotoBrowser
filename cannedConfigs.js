@@ -391,7 +391,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             // 'geometry': 'plane',
             // 'position': [0, 0, 1.5],
             'geometry': 'sphere',
-            'position': [0, 0, 14],
+            'position': [0, 0, 28],
             'scale': [1, 1, -1],
         }
         var uniforms2 = TRANSFORM.reimannShaderList.createShader('default2');
@@ -406,7 +406,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             // 'geometry': 'plane',
             // 'position': [0, 0, -1.5],
             'geometry': 'sphere',
-            'position': [0, 0, -14],
+            'position': [0, 0, 0],
             'scale': [1, 1, -1],
         };
         var pathToTexture = 'media/nyanCat.png';

@@ -405,8 +405,14 @@ void handleSyntheticTexture(vec2 result) {
 
 }
 float epsilon = .1;
-bool isInt(float x) {
-    return abs(float(int(x)) - x) < epsilon;
+bool isInt2(float inx, float iny, float epsilon) {
+    float x = abs(inx);
+    float y = abs(iny);
+    float ix = float(int(x+.5));
+    float iy = float(int(y+.5));
+    float dx = x - ix;
+    float dy = y - iy;
+    return (dx*dx+dy*dy) < epsilon;
 }
 void main() {
 
@@ -418,29 +424,16 @@ void main() {
     }
 
     if (proximityEffect == 1) { // gaussian integers
-        bool cond1 = isInt(a.x);
-        bool cond2 = isInt(a.y);
-        if (cond1 && cond2) {
+        if (isInt2(a.x, a.y, 0.03)) {
             gl_FragColor = vec4(0.,1.,1.,1.);
             return;
         }
-        // if (cond1) {
-        //     gl_FragColor = vec4(1.,1.,0.,1.);
-        //     return;
-        // }
-        // if (cond2) {
-        //     gl_FragColor = vec4(0.,1.,0.,1.);
-        //     return;
-        // }
     }
     if (proximityEffect == 2) { // eisenstein integers
         float b =2.*a.y/sqrt(3.0);
-        if (isInt(b)) {
-            if (isInt(a.x+b/2.) || isInt(a.x-b/2.)) {
+        if (isInt2(a.x+b/2., b, 0.01) || isInt2(a.x-b/2., b, 0.01)) {
                 gl_FragColor = vec4(0.,1.,1.,1.);
                 return;
-    
-            }
         }
     }
 

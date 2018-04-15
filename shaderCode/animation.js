@@ -4,22 +4,22 @@ vec4 drawNyanCat(in vec2 uv, in vec2 pos) {
     vec2 q;
     float sideLength = 0.4;
     // for debugging...
-    if (
-        min(mod(uv.x - pos.x,1.0), mod(pos.x -  uv.x,1.0)) < 0.01 &&
-        min(mod(uv.y - pos.y,1.0), mod(pos.y -  uv.y,1.0)) < 0.01
-    ) {
-        return vec4(1.,0.,0.,1.);
-    }
-    if (
-        uv.y > 0.95
-    ) {
-        return vec4(1.,1.,0.,1.);
-    }
-    if (
-        uv.y < 0.05
-    ) {
-        return vec4(1.,0.,1.,1.);
-    }
+    // if (
+    //     min(mod(uv.x - pos.x,1.0), mod(pos.x -  uv.x,1.0)) < 0.01 &&
+    //     min(mod(uv.y - pos.y,1.0), mod(pos.y -  uv.y,1.0)) < 0.01
+    // ) {
+    //     return vec4(1.,0.,0.,1.);
+    // }
+    // if (
+    //     uv.y > 0.95
+    // ) {
+    //     return vec4(1.,1.,0.,1.);
+    // }
+    // if (
+    //     uv.y < 0.05
+    // ) {
+    //     return vec4(1.,0.,1.,1.);
+    // }
     // determined this offsetpos by trial and error. want the red dot in the middle of the cat
     // because the mobius transform is going to work on the red dot.
     vec2 offsetpos = vec2(pos.x-.13,pos.y-.28);
