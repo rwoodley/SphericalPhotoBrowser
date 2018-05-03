@@ -315,37 +315,42 @@ schottkyResult applyHyperbolicTesselation(in vec2 z0) {
     const int MAX_ITER = 100;
 
     schottkyResult res;
-    for (int ilambda = 1; ilambda < 2; ilambda++) {
-        float lambda = float(1);
-        xform xf1 = xformCtor(zero, -one, one,one);   // S - inversion
-        xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
-        // xform xf2 = xformCtor(zero, -one, one, one);   // T - translation
+    xform sForm = xformCtor(zero, -one, one, zero);   // S - inversion
+    xform tForm = xformCtor(one, one, zero, one);   // T - translation
 
-        if (z.y <=0.) { // lower half-plane, ignore.
-            res.inverseZ = z;
-            res.iter = 0;
-            return res;
-            // z.y = z.y * -1.;
-        }
-
-        vec2 leftCenter = vec2(-.5,0);
-        vec2 rightCenter = vec2(.5,0);
-        for (int iter = 0; iter < MAX_ITER; iter++) {
-            float realBoundary = lambda/2.;
-            if (length(z) > 1. && abs(z.x) < realBoundary && z.y > 0.) {
-                res.inverseZ = z;
-                res.iter = iter+1;
-                return res;
-            }
-
-            if (length(z) < 1.)
-                z = applyInverseMobiusTransformation(z, xf1);
-            else if (z.x < -realBoundary)
-                z = applyMobiusTransformation(z, xf2);
-            else
-                z = applyInverseMobiusTransformation(z, xf2);
-        }
+    if (z.y <=0.) { // lower half-plane, ignore.
+        res.inverseZ = z;
+        res.iter = 0;
+        return res;
+        // z.y = z.y * -1.;
     }
+
+    vec2 leftCenter = vec2(-.5,0);
+    vec2 rightCenter = vec2(.5,0);
+
+    // z = applyInverseMobiusTransformation(z, tForm);
+    // z = applyInverseMobiusTransformation(z, tForm);
+    // z = applyInverseMobiusTransformation(z, tForm);
+    // z = applyInverseMobiusTransformation(z, tForm);
+    // z = applyInverseMobiusTransformation(z, tForm);
+    // z = applyInverseMobiusTransformation(z, sForm);
+    
+    for (int iter = 0; iter < MAX_ITER; iter++) {
+        float realBoundary = 0.5;
+        if (length(z) > 1. && abs(z.x) < realBoundary && z.y > 0.) {    // fundamental domain.
+            res.inverseZ = z;
+            res.iter = iter+1;
+            return res;
+        }
+
+        if (length(z) < 1.)
+            z = applyInverseMobiusTransformation(z, sForm);
+        else if (z.x < -realBoundary)
+            z = applyMobiusTransformation(z, tForm);
+        else
+            z = applyInverseMobiusTransformation(z, tForm);
+    }
+
     res.inverseZ = z;
     res.iter = MAX_ITER;
     return res;

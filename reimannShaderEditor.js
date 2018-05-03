@@ -16,6 +16,7 @@ this.reimannUniformsEditor = function(
     this.textureControlsContainerId = textureControlsContainerId;
     this.mediaUtils = mediaUtils;
     this.symmetryUtils = symmetryUtils;
+    this.aMobiusTransform = new xform()
 
 	this.initUniformsEditor = function() {
 		that.setupTransformControlIcons();
@@ -69,6 +70,28 @@ this.reimannUniformsEditor = function(
             if (e.keyCode == 40) {   // down arrow
                 that.mediaUtils.cameraDown();
                 console.log("move camera");
+            }
+            if (e.keyCode == 83) { // s - stop
+                that.mediaUtils.cameraStop();
+                console.log("move camera");
+            }
+        }
+        if (extraKey == 18) {       // alt
+            if (e.keyCode == 39) {   // right arrow
+                that.currentUniforms.xform1.value = that.currentUniforms.xform1.value + 1;
+                console.log("xform1 = " + that.currentUniforms.xform1.value);
+            }
+            if (e.keyCode == 37) {   // left arrow
+                that.currentUniforms.xform1.value = that.currentUniforms.xform1.value + 1;
+                console.log("xform1 = " + that.currentUniforms.xform1.value);
+            }
+            if (e.keyCode == 38) {   // up arrow
+                that.currentUniforms.xform1.value = that.currentUniforms.xform1.value + 1;
+                console.log("xform1 = " + that.currentUniforms.xform1.value);
+            }
+            if (e.keyCode == 40) {   // down arrow
+                that.currentUniforms.xform2.value = that.currentUniforms.xform2.value - 1;
+                console.log("xform2 = " + that.currentUniforms.xform2.value);
             }
             if (e.keyCode == 83) { // s - stop
                 that.mediaUtils.cameraStop();
