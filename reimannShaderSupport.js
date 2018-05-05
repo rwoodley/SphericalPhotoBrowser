@@ -46,6 +46,7 @@ reimannShaderDetailsObject = function(name) {
     that.point1Defined = false;
     that.point2Defined = false;
     that.colorGen = new colorGen('FF0000', '0000FF', 1000);
+    this.aMobiusTransform = new xform(_one, _zero, _zero, _one);
 
     this.currentUniforms = {
         iRotationAmount:    { type: 'f', value: 0.0 },
@@ -86,6 +87,10 @@ reimannShaderDetailsObject = function(name) {
         uXformB: { type: "v2", value: new THREE.Vector2(0,0) },
         uXformC: { type: "v2", value: new THREE.Vector2(0,0) },
         uXformD: { type: "v2", value: new THREE.Vector2(0,0) },
+        uXform2A: { type: "v2", value: new THREE.Vector2(0,0) },
+        uXform2B: { type: "v2", value: new THREE.Vector2(0,0) },
+        uXform2C: { type: "v2", value: new THREE.Vector2(0,0) },
+        uXform2D: { type: "v2", value: new THREE.Vector2(0,0) },
         uSymmetryIndex: { type: 'i', value: 999 },
 
 
@@ -126,6 +131,19 @@ reimannShaderDetailsObject = function(name) {
         uLowPassFilterThreshold2: { type: "v3", value: new THREE.Vector3(.25,.25,.25) },
         uThreePointMappingOn: { type: 'i', value: 0 }
     };
+    // aMobiusTransform is just any ole xform you wish to use in a shader but calc in js.
+    this.updateUniformsForMobiusTransform = function() {
+        that.currentUniforms.uXform2A.value = that.aMobiusTransform.a;
+        that.currentUniforms.uXform2B.value = that.aMobiusTransform.b;
+        that.currentUniforms.uXform2C.value = that.aMobiusTransform.c;
+        that.currentUniforms.uXform2D.value = that.aMobiusTransform.d;
+        that.aMobiusTransform.log();
+        that.currentUniforms.uXform2A.needsUpdate = true;
+        that.currentUniforms.uXform2B.needsUpdate = true;
+        that.currentUniforms.uXform2C.needsUpdate = true;
+        that.currentUniforms.uXform2D.needsUpdate = true;
+    }
+    this.updateUniformsForMobiusTransform();
     this.loadDefaultTextures = function() {
         // Initialize the masks to something so everything comes up.
         // These will be changed later as needed.

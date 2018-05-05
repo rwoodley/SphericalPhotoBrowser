@@ -72,6 +72,10 @@ var x = `
     uniform vec2 uXformB;
     uniform vec2 uXformC;
     uniform vec2 uXformD;
+    uniform vec2 uXform2A;
+    uniform vec2 uXform2B;
+    uniform vec2 uXform2C;
+    uniform vec2 uXform2D;
     uniform int uSymmetryIndex;
     uniform int  uMaskType;
     uniform int  uTextureNumber;

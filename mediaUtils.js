@@ -41,7 +41,7 @@ function mediaUtils(canned, scene, camera,
 	document.body.onkeydown = function(e){
         //if (!that.canned.createMode) return;
         console.log(e.keyCode);
-        if (e.keyCode == 16 || e.keyCode == 17) // shift & ctrl, respectively...
+        if (e.keyCode == 16 || e.keyCode == 17 || e.keyCode == 18) // shift & ctrl & alt, respectively...
             this.extraKey = e.keyCode;
         else {
             if(e.keyCode == 32) {
