@@ -37,6 +37,7 @@ function cannedRun(scene, flightControl) {
 
         // overall defaults
         this.showMirrorBall = false;
+        that.hideAllControls = mode != null;
         if (mode == null) {
             this.createMode = true;
             mode = 'uv';
@@ -65,7 +66,6 @@ function cannedRun(scene, flightControl) {
         }
     }
     this.setup = function (mediaUtils, transformUtils, renderer) {
-        mediaUtils.toggleControlPanel();
         this._initMediaUtils(mediaUtils);                   // setup camera
 
         for (var meshName in this.configs) {

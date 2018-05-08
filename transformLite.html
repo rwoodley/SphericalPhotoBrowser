@@ -82,22 +82,27 @@ var Params  = function() {
     this.colorBlack = [ 1., 0, 0, 1.0 ]; // RGB with alpha
 }
 var _params = new Params();
-window.onload = function() {
-  _datgui = new dat.GUI();
-  _datgui.add(_params, 'threshold1', 0, 1);
-  _datgui.addColor(_params, 'color0');
-  _datgui.addColor(_params, 'color1');
-  _datgui.addColor(_params, 'color2');
-  _datgui.addColor(_params, 'color3');
-  _datgui.addColor(_params, 'color4');
-  _datgui.addColor(_params, 'colorBlack');
-};
 var _mirrorSphere, _mirrorSphereCamera; // globals for managing a single mirror ball.
 
 var myMesh;
 // Global Singletons
 TRANSFORM = {}
 TRANSFORM.reimannShaderList = new reimannShaderListObject();
+TRANSFORM.datGuiLoaded = false;
+TRANSFORM.loadDatGuiStuff = function() {
+    if (!TRANSFORM.datGuiLoaded) {
+        _datgui = new dat.GUI();
+        _datgui.add(_params, 'threshold1', 0, 1);
+        _datgui.addColor(_params, 'color0');
+        _datgui.addColor(_params, 'color1');
+        _datgui.addColor(_params, 'color2');
+        _datgui.addColor(_params, 'color3');
+        _datgui.addColor(_params, 'color4');
+        _datgui.addColor(_params, 'colorBlack');
+        TRANSFORM.datGuiLoaded = true;
+    }
+}
+
 function init() {
     if ( ! Detector.webgl ) {
         Detector.addGetWebGLMessage();
@@ -187,7 +192,6 @@ function init() {
 
     animate();  // not all textures may be loaded here. oh well.
 }
-
 function animate() {
     requestAnimationFrame( animate );
     _controls.update( _clock.getDelta() );

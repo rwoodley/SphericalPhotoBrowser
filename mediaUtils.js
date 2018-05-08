@@ -35,7 +35,7 @@ function mediaUtils(canned, scene, camera,
     this.controlPanelVisible = true;
     this.extraKey = 0;
 	document.body.onkeyup = function(e){
-        if (e.keyCode == 16 || e.keyCode == 17)
+        if (e.keyCode == 16 || e.keyCode == 17  || e.keyCode == 18)
             this.extraKey = 0;
     }
 	document.body.onkeydown = function(e){
@@ -74,7 +74,10 @@ function mediaUtils(canned, scene, camera,
         }
         document.getElementById('meshContainerId').innerHTML = meshListHTML;
         $('.mselector').click(that.changeMeshBeingEdited);
-	    that.toggleControlPanel();
+        if (that.canned.hideAllControls) {
+            that.toggleControlPanel();
+            that.hideAllControls();
+        }
     }
     this.setInitialCameraPosition = function() {
         that.camera.position.x = -1; that.camera.position.y = 0.0; that.camera.position.z = 0;   
@@ -195,14 +198,29 @@ function mediaUtils(canned, scene, camera,
     	$(el).click(callback);
     	containerEl.appendChild(el);
     }
+    this.hideAllControls = function() {
+        $('.showhide').hide();
+        $('.tselector').hide();
+        $('.vselector').hide();
+        $('.eselector').hide();
+        $('#mediaListContainer').hide();    // only way I could hide icons on start,
+        $('.dg.ac').hide();
+        that.toggleMap['.tselector'] = false;
+        that.toggleMap['.vselector'] = false;
+        that.toggleMap['.sselector'] = false;
+    }
 	this.toggleControlPanel = function() {
     	that.controlPanelVisible = !that.controlPanelVisible;
-    	if (that.controlPanelVisible) {
+        if (that.controlPanelVisible) {
             $('.showhide').hide();
+            $('.dg.ac').hide();
 		}
 		else {
             $('.showhide').show();
-		}
+            $('#mediaListContainer').show();    // needed to hide all on start.
+            $('.dg.ac').show();
+        }
+        TRANSFORM.loadDatGuiStuff();          
     }
     this.toggleMap = {};
     this.toggleShowPanel = function(panelName) {
@@ -220,6 +238,7 @@ function mediaUtils(canned, scene, camera,
         }
         else {
             $(panelName).show();
+            $('#mediaListContainer').show();    // needed to hide all on start.
         }
     
     }
