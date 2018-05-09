@@ -470,11 +470,12 @@ void main() {
                 gl_FragColor = vec4(.25,0.25,.25,1.);
             return;
         }
-        if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
-            gl_FragColor = vec4(.25,0.,.25,0.);
+        else if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
+            gl_FragColor = vec4(.25,0.,.25,1.);
             return;
         }
         a = tesselationResult.inverseZ;
+        // return;
     }
 
     // ========================

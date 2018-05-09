@@ -358,41 +358,39 @@ schottkyResult applyHyperbolicTesselation2(in vec2 z0) {
     const int MAX_ITER = 100;
 
     schottkyResult res;
-    for (int ilambda = 1; ilambda < 2; ilambda++) {
-        float lambda = float(2);
-        // xform xf1 = xformCtor(zero, -one, one,one);   // S - inversion
-        // xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
-        xform xf1 = xformCtor(one, zero, -lambda*one,one);   // S - inversion
-        xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
+    float lambda = float(2);
+    // xform xf1 = xformCtor(zero, -one, one,one);   // S - inversion
+    // xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
+    xform xf1 = xformCtor(one, zero, -lambda*one,one);   // S - inversion
+    xform xf2 = xformCtor(one, lambda*one, zero, one);   // T - translation
 
-        // if (z.y <=0.) { // lower half-plane, ignore.
-        //     res.inverseZ = z;
-        //     res.iter = 0;
-        //     return res;
-        //     // z.y = z.y * -1.;
-        // }
+    // if (z.y <=0.) { // lower half-plane, ignore.
+    //     res.inverseZ = z;
+    //     res.iter = 0;
+    //     return res;
+    //     // z.y = z.y * -1.;
+    // }
 
-        vec2 leftCenter = vec2(-.5,0);
-        vec2 rightCenter = vec2(.5,0);
-        for (int iter = 0; iter < MAX_ITER; iter++) {
-            float lenLeftCircle = distance(vec2(-.5,0),z);
-            float lenRightCircle = distance(vec2(.5,0),z);
-            float realBoundary = lambda/2.;
-            if ((lenLeftCircle > .5 && lenRightCircle > .5) && abs(z.x) < realBoundary ) {
-                res.inverseZ = z;
-                res.iter = iter+1;
-                return res;
-            }
-
-            if (lenLeftCircle < .5 )
-                z = applyInverseMobiusTransformation(z, xf1);
-            else if (lenRightCircle < .5) 
-                z = applyMobiusTransformation(z, xf1);
-            else if (z.x < -realBoundary)
-                z = applyMobiusTransformation(z, xf2);
-            else
-                z = applyInverseMobiusTransformation(z, xf2);
+    vec2 leftCenter = vec2(-.5,0);
+    vec2 rightCenter = vec2(.5,0);
+    for (int iter = 0; iter < MAX_ITER; iter++) {
+        float lenLeftCircle = distance(vec2(-.5,0),z);
+        float lenRightCircle = distance(vec2(.5,0),z);
+        float realBoundary = lambda/2.;
+        if ((lenLeftCircle > .5 && lenRightCircle > .5) && abs(z.x) < realBoundary ) {
+            res.inverseZ = z;
+            res.iter = iter+1;
+            return res;
         }
+
+        if (lenLeftCircle < .5 )
+            z = applyInverseMobiusTransformation(z, xf1);
+        else if (lenRightCircle < .5) 
+            z = applyMobiusTransformation(z, xf1);
+        else if (z.x < -realBoundary)
+            z = applyMobiusTransformation(z, xf2);
+        else
+            z = applyInverseMobiusTransformation(z, xf2);
     }
     res.inverseZ = z;
     res.iter = MAX_ITER;

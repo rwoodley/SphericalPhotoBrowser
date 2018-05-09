@@ -265,6 +265,7 @@ this.reimannUniformsEditor = function(
     }
     this.toggleGeometryTiming = function() { 
         that.currentUniforms.geometryTiming.value = that.currentUniforms.geometryTiming.value == 0 ? 1 : 0;
+        console.log("that.currentUniforms.geometryTiming.value = " + that.currentUniforms.geometryTiming.value);
     }
 
     this.hyperbolicTilingEffect = function() { 
