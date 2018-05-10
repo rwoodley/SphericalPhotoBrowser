@@ -101,10 +101,21 @@ body {
     position: fixed; 
     top: 10%; 
     left: 10%; 
+}
+#wordText {
+    display: block; 
+    position: fixed; 
+    top: 5%; 
+    left: 10%; 
+    font-size: 20px; 
+    color: red;    
+    border: 1px solid white;
+}
+.redText {
     font-size: 40px; 
     color: red;    
     border: 1px solid white;
 }
-#matrixText td {
+.redText td {
     border: 1px solid blue;    
 }

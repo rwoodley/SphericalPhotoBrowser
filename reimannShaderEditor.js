@@ -16,6 +16,7 @@ this.reimannUniformsEditor = function(
     this.textureControlsContainerId = textureControlsContainerId;
     this.mediaUtils = mediaUtils;
     this.symmetryUtils = symmetryUtils;
+    this.newWord = '';
 
 	this.initUniformsEditor = function() {
 		that.setupTransformControlIcons();
@@ -79,26 +80,34 @@ this.reimannUniformsEditor = function(
             if (e.keyCode == 39) {   // right arrow
                 that.detailsObject.aMobiusTransform = 
                 that.detailsObject.aMobiusTransform.mmult(_tXform);
+                this.newWord+='T';
             }
             if (e.keyCode == 37) {   // left arrow
                 that.detailsObject.aMobiusTransform = 
                 that.detailsObject.aMobiusTransform.mmult(_inverseTXform);
+                this.newWord+='t';
             }
             if (e.keyCode == 38) {   // up arrow
                 that.detailsObject.aMobiusTransform = 
                 that.detailsObject.aMobiusTransform.mmult(_sXform);
+                this.newWord+='S';
             }
             if (e.keyCode == 40) {   // down arrow
                 that.detailsObject.aMobiusTransform = 
                 that.detailsObject.aMobiusTransform.mmult(_inverseSXform);
+                this.newWord+='s';
             }
-            if (e.keyCode == 83) {      // reset
+            if (e.keyCode == 83) {      // reset 
                 that.detailsObject.aMobiusTransform = _one;
+                this.newWord = '';
             }
             that.detailsObject.updateUniformsForMobiusTransform();
             var labels = getMatrixHTML(that.detailsObject.aMobiusTransform.asArrayOfVec2s());
             document.getElementById('matrixText').innerHTML = labels;
-                
+            var wordEl = document.getElementById('wordText');
+            this.newWord = compressWord(this.newWord);
+            document.getElementById('wordText').innerHTML =
+                 this.newWord.replace(/s/g, 'S<sup>-1</sup>').replace(/t/g, 'T<sup>-1</sup>');
         }
         if (e.keyCode == 79) {  // o - stop zoom.
             that.mediaUtils.cameraZoom(1.0);

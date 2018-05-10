@@ -176,3 +176,17 @@ function getDisplayString(vec2) {
     return real == "" ? imag : imag == "" ? real : compoundLabel;
     
 }
+function compressWord(inStr) {
+    // str will be something like TtttSssT
+    var str = inStr;
+    console.log(str);
+    for (var i = 0; i < 2; i++) {  // there has got to be a better way
+    str = str.replace(/Tt/g, '');
+    str = str.replace(/tT/g, '');
+    str = str.replace(/Ss/g, '');
+    str = str.replace(/sS/g, '');
+    str = str.replace(/SS/g, '');
+    str = str.replace(/ss/g, '');
+    }
+    return str;
+}
