@@ -145,3 +145,34 @@ function getParameter( name, url ) {
     var results = regex.exec( url );
     return results == null ? null : results[1];
 }
+//-----
+function getMatrixHTML(anArrayOf4Vec2s) {
+    var current = anArrayOf4Vec2s;
+    var labels = [
+        getDisplayString(current[0]),
+        getDisplayString(current[1]),
+        getDisplayString(current[2]),
+        getDisplayString(current[3])
+    ];
+    var template =
+        "<table>" +
+        "<tr><td align='right'>$1</td><td align='right'>$2</td></tr><tr><td align='right'>$3</td><td align='right'>$4</td></tr>";
+    var str = template
+        .replace('$1', labels[0])
+        .replace('$2', labels[1])
+        .replace('$3', labels[2])
+        .replace('$4', labels[3]);
+    return str;
+    
+}
+function getDisplayString(vec2) {
+    if (vec2.x == 0 && vec2.y == 0) return "0";
+    var real = vec2.x == 0 ? "" : vec2.x + '';
+    var imag = vec2.y == 0 ? "" :
+        vec2.y == 1 ? 'i' :
+            vec2.y == -1 ? '-i' :
+                vec2.y + 'i';
+    var compoundLabel = real + " + " + imag;
+    return real == "" ? imag : imag == "" ? real : compoundLabel;
+    
+}

@@ -35,6 +35,9 @@ complex = function(x,y) {
     this.minus = function() { 
         return new complex(-a.x, -a.y);
     }
+    this.asVec2 = function() {
+        return new THREE.Vector2(a.x, a.y);
+    }
 }
 this.xform = function(a,b,c,d) {
     var x1 = this;
@@ -76,6 +79,9 @@ this.xform = function(a,b,c,d) {
     }
     this.inverse = function() {
         return new xform(this.d, this.b.minus(), this.c.minus(), this.a);
+    }
+    this.asArrayOfVec2s = function() {
+        return [x1.a.asVec2(), x1.b.asVec2(), x1.c.asVec2(), x1.d.asVec2()];
     }
 }
 var _one = new complex(1,0); 

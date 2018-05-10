@@ -21,10 +21,10 @@ function SU2Symmetries() {
         var symmetries = that.getSymmetriesForPolyhedron(polyhedronIndex);
         var current = symmetries[that.symmetryIndex];
         var labels = [
-            that.getDisplayString(current[0]),
-            that.getDisplayString(current[1]),
-            that.getDisplayString(current[2]),
-            that.getDisplayString(current[3])
+            getDisplayString(current[0]),
+            getDisplayString(current[1]),
+            getDisplayString(current[2]),
+            getDisplayString(current[3])
         ];
         var template =
             "<table><tr><td>&nbsp&nbsp&nbsp;&nbsp</td><td>&nbsp&nbsp&nbsp&nbsp</td></tr></tr>" +
@@ -109,16 +109,6 @@ function SU2Symmetries() {
             }
             return group;
         }
-    }
-    that.getDisplayString = function (vec2) {
-        if (vec2.x == 0 && vec2.y == 0) return "0";
-        var real = vec2.x == 0 ? "" : vec2.x + '';
-        var imag = vec2.y == 0 ? "" :
-            vec2.y == 1 ? 'i' :
-                vec2.y == -1 ? '-i' :
-                    vec2.y + 'i';
-        var compoundLabel = real + " + " + imag;
-        return real == "" ? imag : imag == "" ? real : compoundLabel;
     }
 }
 

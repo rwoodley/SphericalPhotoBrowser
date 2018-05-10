@@ -96,6 +96,9 @@ this.reimannUniformsEditor = function(
                 that.detailsObject.aMobiusTransform = _one;
             }
             that.detailsObject.updateUniformsForMobiusTransform();
+            var labels = getMatrixHTML(that.detailsObject.aMobiusTransform.asArrayOfVec2s());
+            document.getElementById('matrixText').innerHTML = labels;
+                
         }
         if (e.keyCode == 79) {  // o - stop zoom.
             that.mediaUtils.cameraZoom(1.0);

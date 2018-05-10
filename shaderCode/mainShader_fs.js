@@ -464,7 +464,7 @@ void main() {
             float fiter = .1 * float(iter);
             gl_FragColor = getRGBAForIter(iter,fiter);
 
-            if (iter == 0)
+            if (iter == 1)
                 gl_FragColor = vec4(.25,0.,.25,1.);
             if (iter > 98)
                 gl_FragColor = vec4(.25,0.25,.25,1.);
@@ -474,9 +474,11 @@ void main() {
             gl_FragColor = vec4(.25,0.,.25,1.);
             return;
         }
-        a = tesselationResult.inverseZ;
-        // return;
+        else {
+            a = tesselationResult.inverseZ;
+        }
     }
+    // return;         // only required for Chrome on Windows.
 
     // ========================
     // Now apply Mobius Transforms and Complex transforms.

@@ -96,3 +96,15 @@ body {
 #statsDivInner {
     float: right;                
 }
+#matrixText {
+    display: block; 
+    position: fixed; 
+    top: 10%; 
+    left: 10%; 
+    font-size: 40px; 
+    color: red;    
+    border: 1px solid white;
+}
+#matrixText td {
+    border: 1px solid blue;    
+}
