@@ -237,19 +237,20 @@ vec4 getRGBAForIter(int iter, float fiter) {
     // Mode: 5 - alpha gradient on blue channel.
     // Mode: 6 - alpha gradient on some other channel.
     float alpha = 1.;
-    if (mod(uColorVideoMode, 2.0) == 0.) {
+    float fColorVideoMode = float(uColorVideoMode);
+    if (mod(fColorVideoMode, 2.0) == 0.) {
         if (mod(float(iter), 2.0) == 0.)
             alpha = 0.;
         else
             alpha = 1.;
     }
-    if (int((uColorVideoMode+1.)/2.) == 3)
+    if (int((fColorVideoMode+1.)/2.) == 3)
         return vec4(hsv2rgb(vec3(fiter)), alpha);
-    if (int((uColorVideoMode+1.)/2.) == 2)
+    if (int((fColorVideoMode+1.)/2.) == 2)
         return vec4(hsv2rgb(vec3(fiter, 1., 1.)), alpha);
-    if (int((uColorVideoMode+1.)/2.) == 1) {
+    if (int((fColorVideoMode+1.)/2.) == 1) {
         alpha = sqrt(fiter);
-        if (mod(uColorVideoMode, 2.0) == 0.) {
+        if (mod(fColorVideoMode, 2.0) == 0.) {
             float bfiter = alpha * (.75 + fiter/4.0);
             return vec4(vec3(fiter, fiter, bfiter), alpha);
         }
@@ -342,6 +343,24 @@ schottkyResult doGeometry(in vec2 a) {
         a = inverseTransformForFixedPoints(b1, vec2(1.,0.), vec2(-1.,0.));
         tesselationResult = applyFractal(a);
     }
+    // for geometry functions, either sample from texture or use a color map.
+    int iter = tesselationResult.iter;
+    if (uColorVideoMode > 0) {
+
+        float fiter = .1 * float(iter);
+        gl_FragColor = getRGBAForIter(iter,fiter);
+
+        if (iter == 0)
+            gl_FragColor = vec4(.25,0.,.25,1.);
+        if (iter > 98)
+            gl_FragColor = vec4(.25,0.25,.25,1.);
+        if (abs(tesselationResult.inverseZ.x) < 0.01*abs(tesselationResult.inverseZ.y)) {
+            gl_FragColor = vec4(1.,1.,1.,1.);
+        }
+    }
+    if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
+        gl_FragColor = vec4(.25,0.,.25,0.);
+    }
     return tesselationResult;
 }
 void handleSyntheticTexture(vec2 result) {
@@ -415,6 +434,14 @@ bool isInt2(float inx, float iny, float epsilon) {
     return (dx*dx+dy*dy) < epsilon;
 }
 void main() {
+    // if (geometryTiming == 0) {
+    //     gl_FragColor = vec4(0.,0.,1.,1.);
+    //     return;
+    // }
+    // else {
+    //     gl_FragColor = vec4(1.,0.,0.5,1.);
+    //     return;        
+    // }
 
     vec2 uv = vUv;
     vec2 a = uvToComplex(uv);
@@ -445,7 +472,7 @@ void main() {
         tesselationResult = applySchottkyLoop(a);
 
         // for math functions, either sample from texture or use a color map.
-        if (uColorVideoMode > 0.) {
+        if (uColorVideoMode > 0) {
             int iter = tesselationResult.iter;
             float fiter = 0.1 * float(iter);
             gl_FragColor = getRGBAForIter(iter,fiter);
@@ -458,27 +485,10 @@ void main() {
 
     if (geometryTiming == 0) {
         tesselationResult = doGeometry(a);
-        int iter = tesselationResult.iter;
-        // for geometry functions, either sample from texture or use a color map.
-        if (uColorVideoMode > 0.) {
-            float fiter = .1 * float(iter);
-            gl_FragColor = getRGBAForIter(iter,fiter);
-
-            if (iter == 1)
-                gl_FragColor = vec4(.25,0.,.25,1.);
-            if (iter > 98)
-                gl_FragColor = vec4(.25,0.25,.25,1.);
-            return;
-        }
-        else if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
-            gl_FragColor = vec4(.25,0.,.25,1.);
-            return;
-        }
-        else {
-            a = tesselationResult.inverseZ;
-        }
+        a = tesselationResult.inverseZ;
+        if (uColorVideoMode > 0) 
+            return;     // doGeometry() set the gl_FragColor
     }
-    // return;         // only required for Chrome on Windows.
 
     // ========================
     // Now apply Mobius Transforms and Complex transforms.
@@ -580,22 +590,12 @@ void main() {
         gl_FragColor = applyMask(newuv, result);
     }
     if (geometryTiming == 1) {
-        tesselationResult = doGeometry(result);
-        int iter = tesselationResult.iter;
-        // for geometry functions, either sample from texture or use a color map.
-        if (uColorVideoMode > 0.) {
-
-            float fiter = .1 * float(iter);
-            gl_FragColor = getRGBAForIter(iter,fiter);
-
-            if (iter == 0)
-                gl_FragColor = vec4(.25,0.,.25,1.);
-            if (iter > 98)
-                gl_FragColor = vec4(.25,0.25,.25,1.);
-            return;
+        tesselationResult = doGeometry(a);
+        if (uColorVideoMode > 0) {
+            return;     // doGeometry() set the gl_FragColor
         }
-        if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
-            gl_FragColor = vec4(.25,0.,.25,0.);
+        else {
+            a = tesselationResult.inverseZ;
         }
     }
 

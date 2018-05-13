@@ -36,7 +36,7 @@ var x = `
     uniform float textureScaleY;
     uniform float tesselate;
     uniform float uAlpha;
-    uniform float uColorVideoMode;
+    uniform int uColorVideoMode;
     uniform int enableTracking;
     uniform float trackingX;
     uniform float trackingY;

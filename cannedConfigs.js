@@ -425,6 +425,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         uniforms.hyperbolicTilingEffectOnOff.value = mode == 'hyperbolicTessellation' ? 2 : 3;
         uniforms.complexEffect3OnOff.value = 0;
         uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
+        uniforms.geometryTiming.value = 0;         // apply geometry before or after mobius xforms.
         generalSettings.rotateYAmount = 0.;
         configs['default'] = {
             'uniforms': uniforms,

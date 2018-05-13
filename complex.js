@@ -1,5 +1,6 @@
 complex = function(x,y) {
     var a = this;
+    var that = this;
     this.x = x; this.y = y;
     this.mult = function(b) {
         var x = a.x*b.x-a.y*b.y;
@@ -38,6 +39,17 @@ complex = function(x,y) {
     this.asVec2 = function() {
         return new THREE.Vector2(a.x, a.y);
     }
+    this.displayString = function() {
+        var vec2 = that;
+        if (vec2.x == 0 && vec2.y == 0) return "0";
+        var real = vec2.x == 0 ? "" : vec2.x + '';
+        var imag = vec2.y == 0 ? "" :
+            vec2.y == 1 ? 'i' :
+                vec2.y == -1 ? '-i' :
+                    vec2.y + 'i';
+        var compoundLabel = real + " + " + imag;
+        return real == "" ? imag : imag == "" ? real : compoundLabel;            
+    }
 }
 this.xform = function(a,b,c,d) {
     var x1 = this;
@@ -51,11 +63,6 @@ this.xform = function(a,b,c,d) {
     this.mmult = function(x2) {             // 2x2 matrix multiplication: return t
         var newone = 
         new xform(
-            // x1.a.mult(x2.a).add(x1.b.mult(x2.c)),  // x1.a*x2.a + x1.b*x2.c,
-            // x1.a.mult(x2.b).add(x1.b.mult(x2.d)),  // x1.a*x2.b + x1.b*x2.d,
-            // x1.c.mult(x2.a).add(x1.d.mult(x2.c)),  // x1.c*x2.a + x1.d*x2.c,
-            // x1.c.mult(x2.b).add(x1.d.mult(x2.d)),  // x1.c*x2.b + x1.d*x2.d
-
             x1.a.mult(x2.a).add(x1.b.mult(x2.c)),  // x1.a*x2.a + x1.b*x2.c,
             x1.a.mult(x2.b).add(x1.b.mult(x2.d)),  // x1.a*x2.b + x1.b*x2.d,
             x1.c.mult(x2.a).add(x1.d.mult(x2.c)),  // x1.c*x2.a + x1.d*x2.c,
@@ -63,6 +70,11 @@ this.xform = function(a,b,c,d) {
 
         );
         return newone;
+    }
+    this.vmult = function(cx,cy) {
+        var newx = x1.a.mult(cx).add(x1.b.mult(cy));
+        var newy = x1.c.mult(cx).add(x1.d.mult(cy));
+        return [newx, newy];
     }
     this.zoom = function(f) {
         self.a = self.a.mult(f);

@@ -57,7 +57,7 @@ reimannShaderDetailsObject = function(name) {
         textureScaleY: { type: 'f', value: 1. },
         tesselate: { type: 'f', value: 0. },
         uAlpha: { type: 'f', value: 1. },
-        uColorVideoMode: { type: 'f', value: 0. },  // need value = 1 for outer texture.
+        uColorVideoMode: { type: 'i', value: 0. },  // need value = 1 for outer texture.
         enableTracking: { type: 'i', value: 0 },
         enableAnimationTracking: { type: 'i', value: 0},
         textureX: { type: 'f', value: 0. },

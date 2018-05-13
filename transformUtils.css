@@ -102,6 +102,12 @@ body {
     top: 10%; 
     left: 10%; 
 }
+#fractionText {
+    display: block; 
+    position: fixed; 
+    top: 30%; 
+    left: 10%; 
+}
 #wordText {
     display: block; 
     position: fixed; 

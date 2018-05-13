@@ -318,12 +318,12 @@ schottkyResult applyHyperbolicTesselation(in vec2 z0) {
     xform sForm = xformCtor(zero, -one, one, zero);   // S - inversion
     xform tForm = xformCtor(one, one, zero, one);   // T - translation
 
-    // if (z.y <=0.) { // lower half-plane, ignore.
-    //     res.inverseZ = z;
-    //     res.iter = 0;
-    //     return res;
-    //     // z.y = z.y * -1.;
-    // }
+    if (z.y <=0.) { // lower half-plane, ignore.
+        res.inverseZ = z;
+        res.iter = 0;
+        return res;
+        // z.y = z.y * -1.;
+    }
 
     vec2 leftCenter = vec2(-.5,0);
     vec2 rightCenter = vec2(.5,0);

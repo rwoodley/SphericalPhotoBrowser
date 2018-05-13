@@ -102,7 +102,12 @@ this.reimannUniformsEditor = function(
                 this.newWord = '';
             }
             that.detailsObject.updateUniformsForMobiusTransform();
-            var labels = getMatrixHTML(that.detailsObject.aMobiusTransform.asArrayOfVec2s());
+            var fraction = that.detailsObject.aMobiusTransform.vmult(_one, _one);
+            var fractionString = formatFraction(fraction[0], fraction[1]);
+            console.log("Fraction = " + fraction[0].displayString() + "/" +  
+            fraction[1].displayString());
+            document.getElementById('fractionText').innerHTML = fractionString;
+            var labels = getMatrixHTML(that.detailsObject.aMobiusTransform);
             document.getElementById('matrixText').innerHTML = labels;
             var wordEl = document.getElementById('wordText');
             this.newWord = compressWord(this.newWord);
@@ -237,8 +242,8 @@ this.reimannUniformsEditor = function(
     }
     this.toggleColorVideo = function() {
         that.currentUniforms.uColorVideoMode.value++;
-        console.log(that.currentUniforms.uColorVideoMode.value);
         that.currentUniforms.uColorVideoMode.value = that.currentUniforms.uColorVideoMode.value%7;
+        console.log("uColorVideoMode = " + that.currentUniforms.uColorVideoMode.value);
     }
     this.tesselate = function() { that.currentUniforms.tesselate.value = that.currentUniforms.tesselate.value == 0 ? 1 : 0; }
     this.complexEffect1 = function() { 

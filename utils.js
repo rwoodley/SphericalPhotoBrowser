@@ -146,13 +146,19 @@ function getParameter( name, url ) {
     return results == null ? null : results[1];
 }
 //-----
-function getMatrixHTML(anArrayOf4Vec2s) {
-    var current = anArrayOf4Vec2s;
+function formatFraction(cx, cy) {
+    var template =
+        "<table>" +
+        "<tr><td align='right'>$1</td></tr><tr><td align='right'>$2</td></tr></table>";
+    return template.replace('$1', cx.displayString())
+    .replace('$2', cy.displayString());
+}
+function getMatrixHTML(anXform) {
     var labels = [
-        getDisplayString(current[0]),
-        getDisplayString(current[1]),
-        getDisplayString(current[2]),
-        getDisplayString(current[3])
+        anXform.a.displayString(),
+        anXform.b.displayString(),
+        anXform.c.displayString(),
+        anXform.d.displayString(),
     ];
     var template =
         "<table>" +
