@@ -328,14 +328,32 @@ schottkyResult applyHyperbolicTesselation(in vec2 z0) {
     vec2 leftCenter = vec2(-.5,0);
     vec2 rightCenter = vec2(.5,0);
 
-    xform anXform = xformCtor(uXform2A, uXform2B, uXform2C, uXform2D);
-    z = applyInverseMobiusTransformation(z, anXform);
+    float realBoundary = 1.;
     
     for (int iter = 0; iter < MAX_ITER; iter++) {
         float realBoundary = 0.5;
-        if (length(z) > 1. && abs(z.x) < realBoundary && z.y > 0.) {    // fundamental domain.
+
+        // This is the correct fundamental domain for the modular group:
+        // if (length(z) > 1. && abs(z.x) < realBoundary && z.y > 0.) {    // fundamental domain.
+        //     res.inverseZ = z;
+        //     res.iter = iter+1;
+        //     return res;
+        // }
+
+        // This gives us a fundamental domain which is a triangle w corners at inf, 1, 0.
+        // useful for doing work with Farey diagrams.
+        float lenLeftCircle = distance(vec2(-.5,0),z);
+        float lenRightCircle = distance(vec2(.5,0),z);
+        if ((lenRightCircle > .5) && abs(z.x) < 1. && z.x > 0.0 ) {
             res.inverseZ = z;
             res.iter = iter+1;
+            return res;
+        }
+
+        // need another fundamental domain so we don't lose pieces
+        if ((lenLeftCircle > .5) && abs(z.x) < 1. && z.x <= 0.0 ) {
+            res.inverseZ = z;
+            res.iter = iter+2;
             return res;
         }
 
@@ -377,7 +395,7 @@ schottkyResult applyHyperbolicTesselation2(in vec2 z0) {
         float lenLeftCircle = distance(vec2(-.5,0),z);
         float lenRightCircle = distance(vec2(.5,0),z);
         float realBoundary = lambda/2.;
-        if ((lenLeftCircle > .5 && lenRightCircle > .5) && abs(z.x) < realBoundary ) {
+        if ((lenLeftCircle > .5 && lenRightCircle > .5) && abs(z.x) < realBoundary && z.x > 0.0 ) {
             res.inverseZ = z;
             res.iter = iter+1;
             return res;

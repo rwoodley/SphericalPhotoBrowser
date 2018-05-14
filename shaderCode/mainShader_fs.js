@@ -351,13 +351,22 @@ schottkyResult doGeometry(in vec2 a) {
         gl_FragColor = getRGBAForIter(iter,fiter);
 
         if (iter == 0)
-            gl_FragColor = vec4(.25,0.,.25,1.);
+            gl_FragColor = vec4(0.,0.,0.,0.);
+        if (iter == 1)
+            gl_FragColor = vec4(.25,0.,.25,0.);
         if (iter > 98)
             gl_FragColor = vec4(.25,0.25,.25,1.);
-        if (abs(tesselationResult.inverseZ.x) < 0.01*abs(tesselationResult.inverseZ.y)) {
-            gl_FragColor = vec4(1.,1.,1.,1.);
+
+            // Highlight imaginary axis
+            if (abs(tesselationResult.inverseZ.x) < 0.01*abs(tesselationResult.inverseZ.y)) {
+                gl_FragColor = vec4(1.,1.,1.,1.);
+            }
+            // Highlight unit circle
+            float norm = tesselationResult.inverseZ.y*tesselationResult.inverseZ.y + tesselationResult.inverseZ.x*tesselationResult.inverseZ.x;
+            if (abs(norm-1.) < 0.01) {
+                gl_FragColor = vec4(0.,0.,0.,1.);
+            }
         }
-    }
     if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
         gl_FragColor = vec4(.25,0.,.25,0.);
     }
@@ -481,6 +490,26 @@ void main() {
         else
             a = tesselationResult.inverseZ;
 
+    }
+
+    xform anXform = xformCtor(uXform2A, uXform2B, uXform2C, uXform2D);
+    a = applyInverseMobiusTransformation(a, anXform);
+    
+    if (a.y>10.) {
+        gl_FragColor = vec4(0.,1.,1.,1.);
+        return;
+    }
+    if (abs(a.y)<.1 && abs(a.x) < .1) {
+        gl_FragColor = vec4(1.,0.,1.,1.);
+        return;
+    }
+    if (abs(a.x-1.)<.05 && abs(a.y) < .05) {
+        gl_FragColor = vec4(1.,1.,1.,1.);
+        return;
+    }
+    if (abs(a.x-2.)<.05 && abs(a.y) < .05) {
+        gl_FragColor = vec4(0.,1.,0.5,1.);
+        return;
     }
 
     if (geometryTiming == 0) {
