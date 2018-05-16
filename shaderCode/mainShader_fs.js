@@ -351,22 +351,27 @@ schottkyResult doGeometry(in vec2 a) {
         gl_FragColor = getRGBAForIter(iter,fiter);
 
         if (iter == 0)
-            gl_FragColor = vec4(0.,0.,0.,0.);
+            gl_FragColor = vec4(0.,0.,0.,1.);
         if (iter == 1)
-            gl_FragColor = vec4(.25,0.,.25,0.);
+            gl_FragColor = vec4(1.,1.,1.,1.);
         if (iter > 98)
             gl_FragColor = vec4(.25,0.25,.25,1.);
 
-            // Highlight imaginary axis
-            if (abs(tesselationResult.inverseZ.x) < 0.01*abs(tesselationResult.inverseZ.y)) {
-                gl_FragColor = vec4(1.,1.,1.,1.);
-            }
-            // Highlight unit circle
-            float norm = tesselationResult.inverseZ.y*tesselationResult.inverseZ.y + tesselationResult.inverseZ.x*tesselationResult.inverseZ.x;
-            if (abs(norm-1.) < 0.01) {
-                gl_FragColor = vec4(0.,0.,0.,1.);
-            }
+        // gradient to make tip clear.
+        tesselationResult.inverseZ = abs(tesselationResult.inverseZ);
+        gl_FragColor.a = (tesselationResult.inverseZ.x+(1./(1.+tesselationResult.inverseZ.y)))/2.;
+        gl_FragColor.a = max(gl_FragColor.a*.6,pow(gl_FragColor.a , 2.));
+
+        // Highlight imaginary axis
+        if (abs(tesselationResult.inverseZ.x) < 0.01*abs(tesselationResult.inverseZ.y)) {
+            gl_FragColor = vec4(1.,1.,1.,1.);
         }
+        // Highlight unit circle
+        float norm = tesselationResult.inverseZ.y*tesselationResult.inverseZ.y + tesselationResult.inverseZ.x*tesselationResult.inverseZ.x;
+        if (abs(norm-1.) < 0.01) {
+            gl_FragColor = vec4(0.,0.,0.,1.);
+        }
+    }
     if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
         gl_FragColor = vec4(.25,0.,.25,0.);
     }
