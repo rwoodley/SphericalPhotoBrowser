@@ -269,11 +269,13 @@ function mediaUtils(canned, scene, camera,
             TRANSFORM.meshInventory.morphFunction(this.animationFrame);
             rotateCameraY(that.camera, that.rotateYAmount);
             rotateCameraUpDown(that.camera, that.rotateXAmount);
-            if (that.rotateZAmount > 0) {
-                console.log("Changing Camera up!");
-                that.camera.up.set(0,1,1);
-            }
-            that.camera.rotateZ(that.rotateZAmount+that.camera.rotation.z);
+            rotateCameraZ(that.camera, that.rotateZAmount);
+            // if (that.rotateZAmount > 0) {
+            //     console.log("Changing Camera up!");
+            //     that.camera.up.set(0,1,1);
+            // }
+            // that.camera.rotateZ(that.rotateZAmount+that.camera.rotation.z);
+            // console.log(that.camera.rotation.z, that.rotateZAmount);
             for (var verticalMirrorName in _verticalMirror)
                 _verticalMirror[verticalMirrorName].render();
             // that.camera.rotateY(that.rotateZAmount);
@@ -386,10 +388,10 @@ function mediaUtils(canned, scene, camera,
         that.rotateXAmount = 0.;
     }  
     this.cameraRotateLeft = function() {
-        that.rotateZAmount -= 0.2;
+        that.rotateZAmount -= 0.002;
     }  
     this.cameraRotateRight = function() {
-        that.rotateZAmount += 0.2;
+        that.rotateZAmount += 0.002;
     }
     this.cameraZoom = function(scale) {
         that.cameraZoomAmount = scale;

@@ -308,6 +308,54 @@ schottkyResult applyFractal(in vec2 z0) {
     res.iter = -1;
     return res;
 }
+schottkyResult applyBianchi3Tesselation(in vec2 z0) {
+    // from https://www.amazon.com/Groups-Acting-Hyperbolic-Space-Mathematics/dp/3540627456 page 325
+    vec2 z = z0;
+    float N = 4.0;
+    const int MAX_ITER = 100;
+
+    schottkyResult res;
+    xform sForm = xformCtor(zero, -one, one, zero);   // S - inversion
+    xform tForm = xformCtor(one, one, zero, one);   // T - translation
+
+    if (z.y <=0.) { // lower half-plane, ignore.
+        res.inverseZ = z;
+        res.iter = 0;
+        return res;
+        // z.y = z.y * -1.;
+    }
+
+    vec2 leftCenter = vec2(-.5,0);
+    vec2 rightCenter = vec2(.5,0);
+
+    float realBoundary = 1.;
+    
+    for (int iter = 0; iter < MAX_ITER; iter++) {
+        float realBoundary = 0.5;
+
+        // Fundamental Domain
+        bool test;
+        // test = (z.x*z.x + 2.*z.y*z.y) >= 1.;
+        test = abs(z.x) <= .5 && z.y >= 0.0 && z.y <= .5;
+        if (test) {    // fundamental domain.
+            res.inverseZ = z;
+            res.iter = iter+1;
+            return res;
+        }
+
+        if (length(z) < 1.)
+            z = applyInverseMobiusTransformation(z, sForm);
+        else if (z.x < -realBoundary)
+            z = applyMobiusTransformation(z, tForm);
+        else
+            z = applyInverseMobiusTransformation(z, tForm);
+    }
+
+    res.inverseZ = z;
+    res.iter = MAX_ITER;
+    return res;
+}
+
 schottkyResult applyHyperbolicTesselation(in vec2 z0) {
     // see https://en.wikipedia.org/wiki/Modular_group#Tessellation_of_the_hyperbolic_plane
     vec2 z = z0;

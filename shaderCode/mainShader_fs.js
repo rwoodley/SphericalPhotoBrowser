@@ -318,6 +318,9 @@ vec2 complexToUV(vec2 result) {
     vec2 newuv = vec2(newu, newv);
     return newuv;
 }
+float calcGradient(vec2 pt) {   // nice gradient for fundamental domain.
+    return pt.x/(pt.x*pt.x + (pt.y + .5)*(pt.y + .5));
+}
 schottkyResult doGeometry(in vec2 a) {
     // geometries include triangleGroup, modularGroups 1 and 2, and fractal.
     // if you call this before you do the rotations/zoom etc, then the geometry stays fixed and the pictures move thru.
@@ -335,6 +338,8 @@ schottkyResult doGeometry(in vec2 a) {
             tesselationResult = applyHyperbolicTesselation(a);
         if (hyperbolicTilingEffectOnOff == 3) 
             tesselationResult = applyHyperbolicTesselation2(a);
+        if (hyperbolicTilingEffectOnOff == 4)
+            tesselationResult = applyBianchi3Tesselation(a);
     }
     if (fractalEffectOnOff > 0) {
         // fractal is in the bottom half plane. Rotate so it is over-head.
@@ -350,17 +355,17 @@ schottkyResult doGeometry(in vec2 a) {
         float fiter = .1 * float(iter);
         gl_FragColor = getRGBAForIter(iter,fiter);
 
+        float gradient = calcGradient(abs(tesselationResult.inverseZ));
+        gl_FragColor.a = 0.;
         if (iter == 0)
-            gl_FragColor = vec4(0.,0.,0.,1.);
-        if (iter == 1)
-            gl_FragColor = vec4(1.,1.,1.,1.);
-        if (iter > 98)
-            gl_FragColor = vec4(.25,0.25,.25,1.);
-
-        // gradient to make tip clear.
-        tesselationResult.inverseZ = abs(tesselationResult.inverseZ);
-        gl_FragColor.a = (tesselationResult.inverseZ.x+(1./(1.+tesselationResult.inverseZ.y)))/2.;
-        gl_FragColor.a = max(gl_FragColor.a*.6,pow(gl_FragColor.a , 2.));
+            gl_FragColor = vec4(0.,0.,0.,0.25);
+        if (iter == 1) {
+            // gradient to make tip clear.
+            gl_FragColor = vec4(gradient,0.,1.-gradient,1.);
+        }
+        if (iter > 98) {
+            gl_FragColor = vec4(.25,0.25,.25,1);
+        }
 
         // Highlight imaginary axis
         if (abs(tesselationResult.inverseZ.x) < 0.01*abs(tesselationResult.inverseZ.y)) {
@@ -369,7 +374,7 @@ schottkyResult doGeometry(in vec2 a) {
         // Highlight unit circle
         float norm = tesselationResult.inverseZ.y*tesselationResult.inverseZ.y + tesselationResult.inverseZ.x*tesselationResult.inverseZ.x;
         if (abs(norm-1.) < 0.01) {
-            gl_FragColor = vec4(0.,0.,0.,1.);
+            gl_FragColor = vec4(0.,1.,1.,1.);
         }
     }
     if (hyperbolicTilingEffectOnOff == 1 && iter == 0) {
@@ -500,22 +505,23 @@ void main() {
     xform anXform = xformCtor(uXform2A, uXform2B, uXform2C, uXform2D);
     a = applyInverseMobiusTransformation(a, anXform);
     
-    if (a.y>10.) {
-        gl_FragColor = vec4(0.,1.,1.,1.);
-        return;
-    }
-    if (abs(a.y)<.1 && abs(a.x) < .1) {
-        gl_FragColor = vec4(1.,0.,1.,1.);
-        return;
-    }
-    if (abs(a.x-1.)<.05 && abs(a.y) < .05) {
-        gl_FragColor = vec4(1.,1.,1.,1.);
-        return;
-    }
-    if (abs(a.x-2.)<.05 && abs(a.y) < .05) {
-        gl_FragColor = vec4(0.,1.,0.5,1.);
-        return;
-    }
+    // debug points
+    // if (a.y>10.) {
+    //     gl_FragColor = vec4(0.,1.,1.,1.);
+    //     return;
+    // }
+    // if (abs(a.y)<.1 && abs(a.x) < .1) {
+    //     gl_FragColor = vec4(1.,0.,1.,1.);
+    //     return;
+    // }
+    // if (abs(a.x-1.)<.05 && abs(a.y) < .05) {
+    //     gl_FragColor = vec4(1.,1.,1.,1.);
+    //     return;
+    // }
+    // if (abs(a.x-2.)<.05 && abs(a.y) < .05) {
+    //     gl_FragColor = vec4(0.,1.,0.5,1.);
+    //     return;
+    // }
 
     if (geometryTiming == 0) {
         tesselationResult = doGeometry(a);

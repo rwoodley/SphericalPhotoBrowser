@@ -419,10 +419,18 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
 
         configs['skyDome'] = normalSkyDome();
     }
-    if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2') {
+    if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2'
+        || mode == 'bianchi3') {
+
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        if (mode == 'hyperbolicTesselation')
+            uniforms.hyperbolicTilingEffectOnOff.value = 2
+        if (mode == 'hyperbolicTesselation2')
+            uniforms.hyperbolicTilingEffectOnOff.value = 3
+        if (mode == 'bianchi3')
+            uniforms.hyperbolicTilingEffectOnOff.value = 4
+
         generalSettings.cameraPosition = [-10.8, 0, 0.];
-        uniforms.hyperbolicTilingEffectOnOff.value = mode == 'hyperbolicTessellation' ? 2 : 3;
         uniforms.complexEffect3OnOff.value = 0;
         uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
         uniforms.geometryTiming.value = 0;         // apply geometry before or after mobius xforms.

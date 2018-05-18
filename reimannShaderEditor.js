@@ -289,7 +289,7 @@ this.reimannUniformsEditor = function(
     this.hyperbolicTilingEffect = function() { 
         that.currentUniforms.hyperbolicTilingEffectOnOff.value++;
         that.currentUniforms.hyperbolicTilingEffectOnOff.value = 
-            that.currentUniforms.hyperbolicTilingEffectOnOff.value%4;
+            that.currentUniforms.hyperbolicTilingEffectOnOff.value%5;
         console.log(that.currentUniforms.hyperbolicTilingEffectOnOff.value);
      }
     this.setFixedPointsIfUndefined = function() {
