@@ -419,13 +419,37 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
 
         configs['skyDome'] = normalSkyDome();
     }
+    if (mode == 'fareyDiagram') {
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.hyperbolicTilingEffectOnOff.value = 5;  // hyperbolic Tesselation with canvas overlay.
+
+        generalSettings.cameraPosition = [-10.8, 0, 0.];
+        uniforms.complexEffect3OnOff.value = 0;
+        uniforms.uColorVideoMode.value = 3; // mode == 'hyperbolicTessellation' ?  2 : 3;
+        uniforms.geometryTiming.value = 0;         // apply geometry before or after mobius xforms.
+        generalSettings.rotateYAmount = 0.;
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'still',
+            'textureName': 'uv.jpg',
+            'geometry': 'sphere',
+            'position': [0, 0, 0],
+            'scale': [1, 1, -1],
+        }
+        configs['skyDome'] = phongSkyDome();
+
+        var el = document.getElementById('canvas');
+        texture = new THREE.Texture(el);
+        uniforms.iChannelAnimation.value = texture;
+            texture.needsUpdate = true;
+    }
     if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2'
         || mode == 'bianchi3') {
 
         var uniforms = TRANSFORM.reimannShaderList.createShader('default');
-        if (mode == 'hyperbolicTesselation')
+        if (mode == 'hyperbolicTessellation')
             uniforms.hyperbolicTilingEffectOnOff.value = 2
-        if (mode == 'hyperbolicTesselation2')
+        if (mode == 'hyperbolicTessellation2')
             uniforms.hyperbolicTilingEffectOnOff.value = 3
         if (mode == 'bianchi3')
             uniforms.hyperbolicTilingEffectOnOff.value = 4
@@ -806,21 +830,6 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         }
 
         keycontrols = new keyControls(['default', 'default2'], 1, 0, -1, 0);
-    }
-    if (mode == 'text') {
-        generalSettings.cameraPosition = [20, 0, 0];
-        generalSettings.videoReloadDelayInSeconds = -1;
-        generalSettings.rotateYAmount = 0.002;
-        configs['skyDome'] = phongSkyDome();
-        document.getElementById('simpleText').style.display = 'block';
-
-    }
-    if (mode == 'text2') {
-        generalSettings.cameraPosition = [20, 0, 0];
-        generalSettings.videoReloadDelayInSeconds = -1;
-        generalSettings.rotateYAmount = 0.002;
-        configs['skyDome'] = phongSkyDome();
-        document.getElementById('simpleText2').style.display = 'block';
     }
     if (mode == 'equiAndSphere') {
         generalSettings.cameraPosition = [20, 0, 0];

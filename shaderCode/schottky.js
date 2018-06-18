@@ -315,15 +315,18 @@ schottkyResult applyBianchi3Tesselation(in vec2 z0) {
     const int MAX_ITER = 100;
 
     schottkyResult res;
-    xform sForm = xformCtor(zero, -one, one, zero);   // S - inversion
-    xform tForm = xformCtor(one, one, zero, one);   // T - translation
+    // xform sForm = xformCtor(zero, -one, one, zero);   // S - inversion
+    // xform tForm = xformCtor(one, one, zero, one);   // T - translation
+    xform sForm = xformCtor(zero, -i, i, zero);   // S - inversion
+    // xform tForm = xformCtor(one, two, zero, one);   // T - translation
+    xform uForm = xformCtor(one, two,one, zero);
 
-    if (z.y <=0.) { // lower half-plane, ignore.
-        res.inverseZ = z;
-        res.iter = 0;
-        return res;
-        // z.y = z.y * -1.;
-    }
+    // if (z.y <=0.) { // lower half-plane, ignore.
+    //     res.inverseZ = z;
+    //     res.iter = 0;
+    //     return res;
+    //     // z.y = z.y * -1.;
+    // }
 
     vec2 leftCenter = vec2(-.5,0);
     vec2 rightCenter = vec2(.5,0);
@@ -337,18 +340,39 @@ schottkyResult applyBianchi3Tesselation(in vec2 z0) {
         bool test;
         // test = (z.x*z.x + 2.*z.y*z.y) >= 1.;
         test = abs(z.x) <= .5 && z.y >= 0.0 && z.y <= .5;
-        if (test) {    // fundamental domain.
+        // if (test) {    // fundamental domain.
+        //     res.inverseZ = z;
+        //     res.iter = iter+1;
+        //     return res;
+        // }
+        // This is the correct fundamental domain for the modular group:
+        // if (length(z) > 1. && abs(z.x) < realBoundary && z.y > 0.) {    // fundamental domain.
+        //     res.inverseZ = z;
+        //     res.iter = iter+1;
+        //     return res;
+        // }
+        float lenLeftCircle = distance(vec2(-.5,0),z);
+        float lenRightCircle = distance(vec2(.5,0),z);
+        if ((lenRightCircle > .5) && abs(z.x) < 1. && z.x > 0.0 ) {
             res.inverseZ = z;
             res.iter = iter+1;
             return res;
         }
 
+        // // need another fundamental domain so we don't lose pieces
+        if ((lenLeftCircle > .5) && abs(z.x) < 1. && z.x <= 0.0 ) {
+            res.inverseZ = z;
+            res.iter = iter+2;
+            return res;
+        }
+
+
         if (length(z) < 1.)
             z = applyInverseMobiusTransformation(z, sForm);
         else if (z.x < -realBoundary)
-            z = applyMobiusTransformation(z, tForm);
+            z = applyMobiusTransformation(z, uForm);
         else
-            z = applyInverseMobiusTransformation(z, tForm);
+            z = applyInverseMobiusTransformation(z, uForm);
     }
 
     res.inverseZ = z;
@@ -366,12 +390,12 @@ schottkyResult applyHyperbolicTesselation(in vec2 z0) {
     xform sForm = xformCtor(zero, -one, one, zero);   // S - inversion
     xform tForm = xformCtor(one, one, zero, one);   // T - translation
 
-    if (z.y <=0.) { // lower half-plane, ignore.
-        res.inverseZ = z;
-        res.iter = 0;
-        return res;
-        // z.y = z.y * -1.;
-    }
+    // if (z.y <=0.) { // lower half-plane, ignore.
+    //     res.inverseZ = z;
+    //     res.iter = 0;
+    //     return res;
+    //     // z.y = z.y * -1.;
+    // }
 
     vec2 leftCenter = vec2(-.5,0);
     vec2 rightCenter = vec2(.5,0);
@@ -398,7 +422,7 @@ schottkyResult applyHyperbolicTesselation(in vec2 z0) {
             return res;
         }
 
-        // need another fundamental domain so we don't lose pieces
+        // // need another fundamental domain so we don't lose pieces
         if ((lenLeftCircle > .5) && abs(z.x) < 1. && z.x <= 0.0 ) {
             res.inverseZ = z;
             res.iter = iter+2;

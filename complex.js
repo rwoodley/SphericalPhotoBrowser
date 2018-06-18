@@ -96,12 +96,70 @@ this.xform = function(a,b,c,d) {
         return [x1.a.asVec2(), x1.b.asVec2(), x1.c.asVec2(), x1.d.asVec2()];
     }
 }
+var _two = new complex(2,0); 
 var _one = new complex(1,0); 
 var _minusOne = new complex(-1,0); 
 var _i = new complex(0,1); 
 var _zero = new complex(0,0);
-var _two = new complex(2,0);
+var _sqrtTwo = new complex(Math.sqrt(2),0);
 var _tXform = new xform(_one,_one,_zero,_one);
+// var _tXform = new xform(_one,_zero,_sqrtTwo,_one);
 var _sXform = new xform(_zero, _minusOne, _one, _zero);
 var _inverseTXform = _tXform.inverse();
 var _inverseSXform = _sXform.inverse();
+var PI = Math.PI;
+
+function cartesianToPolar(x,y,z) {
+    var theta;
+    var phi;
+    phi = Math.atan2(y, x);
+    //phi -= (PI/2.0);    // this correction lines up the UV texture nicely.
+    if (phi <= 0.0) {
+        phi = phi + PI*2.0; 
+    }
+    if (phi >= (2.0 * PI)) {    // allow 2PI since we gen uv over [0,1]
+        phi = phi - 2.0 * PI;
+    }
+    // phi = 2. * PI - phi;        // flip the texture around.
+    theta = Math.acos(z);
+    return [phi, theta];
+}
+function complexToUV(inx,iny) {
+    // now c back to sphere.
+    var theta;
+    var phi;
+    var x;
+    var y;
+    var z;
+    var denom = 1.0 + inx * inx + iny * iny;
+    x = 2.0 * inx/denom;
+    y = 2.0 * iny/denom;
+    z = (inx*inx + iny*iny - 1.0)/denom;
+    // console.log(x,y,z);
+
+    // convert to polar
+    var polarCoords = cartesianToPolar(x,y,z);
+    phi = polarCoords[0];
+    theta = polarCoords[1];
+    // console.log(phi, theta);
+
+    // now get uv in new chart.
+    var newv = 1-theta/PI;
+    var newu = phi/(2.0 * PI);
+    // if (newu < 0.) newu = newu + 1.0;
+
+    // So in WebGL the UV origin is at the lower left.
+    // On the canvas it is the upper left. Since we want to superimpose
+    // things drawn on the canvas onto the WEBGL texture, we need to flip the V coord.
+    // Also see uvToComplex in mainShader_js where a correction of PI is added to phi.
+    // so that's why we add .25 below.
+    var u = (newu+.25)%1.0;
+    if (u < 0) u = u + 1.0;
+    if (u < 0) u = u + 1.0;
+    return [(1-newu+.25)%1.0, 1-newv];
+    // return [(1-newu)%1.0, 1-newv];
+}
+function uvToCanvasCoord(uv) {
+    var el = document.getElementById('canvas');
+
+}

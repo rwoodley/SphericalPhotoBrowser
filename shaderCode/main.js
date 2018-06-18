@@ -90,6 +90,7 @@ var x = `
     uniform vec2 u3r2;
 
     uniform bool showFixedPoints;
+    vec2 two = vec2(2.0, 0.0);
     vec2 one = vec2(1.0, 0.0);
     vec2 zero = vec2(0.0, 0.0);
     vec2 i = vec2(0., 1.);
