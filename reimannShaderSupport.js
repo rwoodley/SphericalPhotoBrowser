@@ -47,6 +47,7 @@ reimannShaderDetailsObject = function(name) {
     that.point2Defined = false;
     that.colorGen = new colorGen('FF0000', '0000FF', 1000);
     this.aMobiusTransform = new xform(_one, _zero, _zero, _one);
+    // this.aMobiusTransform = new xform(_one, _four, _zero, _one);
 
     this.currentUniforms = {
         iRotationAmount:    { type: 'f', value: 0.0 },
@@ -144,6 +145,104 @@ reimannShaderDetailsObject = function(name) {
         that.currentUniforms.uXform2D.needsUpdate = true;
     }
     this.updateUniformsForMobiusTransform();
+    this.drawLabelOnCanvas = function(rn, rd,i) {
+        // draws a fraction, if real (i == 0)
+        // There is only one canvas element for now,
+        // so if you have multiple meshes, this won't work.
+        var el = document.getElementById('canvas');
+        var ctx = el.getContext("2d");
+        var z = new complex(rn/rd, i);
+
+        // so the labels have been placed assuming no mobius transform.
+        // if a transform has been applied that will morph the labels.
+        // values near the origin will balloon, those near infinity will shrink.
+        // so the labels need to be divided by |z b4|/|z after|
+        var xform = that.aMobiusTransform;
+        var z_after = xform.doit(z);
+        var mod_b4 = z.modulus();
+        var mod_after = z_after.modulus();
+        var font_size = (100 * mod_after/mod_b4).toFixed(0);
+        ctx.font = font_size + "px Arial";
+
+        ctx.fillStyle = 'red';
+        var uv = complexToUV(z.x, z.y);
+        var txt; 
+        if (i == 0) {
+            txt = rn + "/" + rd;
+            ctx.fillText(txt,uv[0]*el.width,uv[1]*el.height);
+        }
+        else {
+            txt = z.displayString();
+            ctx.fillText(txt,uv[0]*el.width,uv[1]*el.height);
+        }
+        console.log(txt, mod_b4, mod_after, mod_b4/mod_after, ctx.font);
+
+        ctx.stroke();
+    }
+    
+    this.updateFareyLabelsForMobiusTransform = function() {
+        var el = document.getElementById('canvas');
+        var ctx = el.getContext("2d");
+        ctx.clearRect(0, 0, el.width, el.height);        
+
+        that.drawLabelOnCanvas(1.0,2,0.0);
+        that.drawLabelOnCanvas(1.0,3,0.0);
+        that.drawLabelOnCanvas(1.0,4,0.0);
+        that.drawLabelOnCanvas(1.0,5,0.0);
+        
+        that.drawLabelOnCanvas(-1.0,2,0.0);
+        that.drawLabelOnCanvas(-1.0,3,0.0);
+        that.drawLabelOnCanvas(-1.0,4,0.0);
+        that.drawLabelOnCanvas(-1.0,5,0.0);
+        
+        that.drawLabelOnCanvas(1.0,1,0.0);
+        that.drawLabelOnCanvas(2.0,1,0.0);
+        that.drawLabelOnCanvas(3.0,1,0.0);
+        that.drawLabelOnCanvas(4.0,1,0.0);
+        that.drawLabelOnCanvas(5.0,1,0.0);
+        that.drawLabelOnCanvas(-1.0,1,0.0);
+        that.drawLabelOnCanvas(-2.0,1,0.0);
+        that.drawLabelOnCanvas(-3.0,1,0.0);
+        that.drawLabelOnCanvas(-4.0,1,0.0);
+        that.drawLabelOnCanvas(-5.0,1,0.0);
+        that.drawLabelOnCanvas(0.0,1, 1.0);
+        that.drawLabelOnCanvas(0.0,1, 2.0);
+        that.drawLabelOnCanvas(0.0,1, 3.0);
+        that.drawLabelOnCanvas(0.0,1, 4.0);
+        that.drawLabelOnCanvas(0.0,1, 5.0);
+        // that.currentUniforms.iChannelAnimation.needsUpdate = true;
+        texture = new THREE.Texture(el);
+        that.currentUniforms.iChannelAnimation.value = texture;
+        texture.needsUpdate = true;
+
+        // var z = new complex(1.0,0.0);
+        // var uv = complexToUV(z.x, z.y);
+        // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
+        // var z = new complex(2.0,0.0);
+        // var uv = complexToUV(z.x, z.y);
+        // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
+        // var z = new complex(3.0,0.0);
+        // var uv = complexToUV(z.x, z.y);
+        // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
+        // var z = new complex(0.5,0.0);
+        // var uv = complexToUV(z.x, z.y);
+        // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
+
+
+        // var xf = new xform(_one, _zero, _zero, _one);
+        // var z = new complex(1.0,0.0);
+        // for (i = 0; i < 10; i++) {
+        //     var z = xf.doit(z);
+        //     xf =xf.mmult(_tXform);
+        //     var uv = complexToUV(z.x, z.y);
+        //     console.log(">>>>>>>>>> " + z.x + "," + z.y + "[" + uv[0] + "," + uv[1] + "]");
+        //     ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
+        //     ctx.beginPath();
+        //     ctx.arc(uv[0]*el.width,uv[1]*el.height,10,0,2*Math.PI);
+        //     ctx.stroke();
+        // }
+    }
+
     this.loadDefaultTextures = function() {
         // Initialize the masks to something so everything comes up.
         // These will be changed later as needed.

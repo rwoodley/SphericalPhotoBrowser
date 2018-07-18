@@ -10,6 +10,9 @@ complex = function(x,y) {
     this.add = function(b) {
         return new complex(a.x+b.x,a.y+b.y);
     }
+    this.minus = function(b) {
+        return new complex(a.x-b.x,a.y-b.y);
+    }
     this.divide = function(b) {
         var x = (a.x*b.x+a.y*b.y)/(b.x*b.x+b.y*b.y);
         var y = (a.y*b.x-a.x*b.y)/(b.x*b.x+b.y*b.y);
@@ -39,6 +42,9 @@ complex = function(x,y) {
     this.asVec2 = function() {
         return new THREE.Vector2(a.x, a.y);
     }
+    this.modulus = function() {
+        return Math.sqrt(a.x*a.x + a.y*a.y);
+    }
     this.displayString = function() {
         var vec2 = that;
         if (vec2.x == 0 && vec2.y == 0) return "0";
@@ -51,6 +57,13 @@ complex = function(x,y) {
         return real == "" ? imag : imag == "" ? real : compoundLabel;            
     }
 }
+var _four = new complex(-4,0); 
+var _two = new complex(2,0); 
+var _one = new complex(1,0); 
+var _minusOne = new complex(-1,0); 
+var _i = new complex(0,1); 
+var _zero = new complex(0,0);
+var _sqrtTwo = new complex(Math.sqrt(2),0);
 this.xform = function(a,b,c,d) {
     var x1 = this;
     var self = this;
@@ -70,6 +83,15 @@ this.xform = function(a,b,c,d) {
 
         );
         return newone;
+    }
+    this.magnitudeOfTransform = function(z) {
+        // the magnitude at z = modulus(f'(z))
+        var a = (x1.c.mult(z).add(x1.d))
+        var denom = a.mult(a);
+        var num = x1.a.mult(x1.d).minus(x1.b.mult(x1.c));
+        var deriv = num.divide(denom);
+        var modulus = deriv.modulus()
+        return modulus;
     }
     this.vmult = function(cx,cy) {
         var newx = x1.a.mult(cx).add(x1.b.mult(cy));
@@ -96,12 +118,6 @@ this.xform = function(a,b,c,d) {
         return [x1.a.asVec2(), x1.b.asVec2(), x1.c.asVec2(), x1.d.asVec2()];
     }
 }
-var _two = new complex(2,0); 
-var _one = new complex(1,0); 
-var _minusOne = new complex(-1,0); 
-var _i = new complex(0,1); 
-var _zero = new complex(0,0);
-var _sqrtTwo = new complex(Math.sqrt(2),0);
 var _tXform = new xform(_one,_one,_zero,_one);
 // var _tXform = new xform(_one,_zero,_sqrtTwo,_one);
 var _sXform = new xform(_zero, _minusOne, _one, _zero);

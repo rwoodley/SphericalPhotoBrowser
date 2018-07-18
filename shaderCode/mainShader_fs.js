@@ -370,7 +370,7 @@ schottkyResult doGeometry(in vec2 a) {
         }
 
         // Highlight imaginary axis
-        if (abs(tesselationResult.inverseZ.x) < 0.01*abs(tesselationResult.inverseZ.y)) {
+        if (abs(tesselationResult.inverseZ.x) < 0.04*abs(tesselationResult.inverseZ.y)) {
             gl_FragColor = vec4(1.,1.,1.,1.);
         }
         // Highlight unit circle

@@ -420,7 +420,9 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         configs['skyDome'] = normalSkyDome();
     }
     if (mode == 'fareyDiagram') {
-        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        var detailsObject = TRANSFORM.reimannShaderList.createShader2('default');
+        detailsObject.loadDefaultTextures();
+        var uniforms = detailsObject.currentUniforms;
         uniforms.hyperbolicTilingEffectOnOff.value = 5;  // hyperbolic Tesselation with canvas overlay.
 
         generalSettings.cameraPosition = [-10.8, 0, 0.];
@@ -439,9 +441,11 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         configs['skyDome'] = phongSkyDome();
 
         var el = document.getElementById('canvas');
+        el.width = 4096; el.height=4096;
+        detailsObject.updateFareyLabelsForMobiusTransform();
         texture = new THREE.Texture(el);
         uniforms.iChannelAnimation.value = texture;
-            texture.needsUpdate = true;
+        texture.needsUpdate = true;
     }
     if (mode == 'hyperbolicTessellation' || mode == 'hyperbolicTessellation2'
         || mode == 'bianchi3') {

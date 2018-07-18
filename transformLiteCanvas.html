@@ -190,68 +190,7 @@ function init() {
     _flightControl.shareGlobalObjects(_mediaUtils, _transformUtils);
     _canned.setup(_mediaUtils, _transformUtils, _renderer);     // if this is a canned run, configure.
 
-    drawOnCanvas(_transformUtils);
     animate();  // not all textures may be loaded here. oh well.
-}
-function drawLabelOnCanvas(rn, rd,i) {
-    // draws a fraction, if real (i == 0)
-    var el = document.getElementById('canvas');
-    var ctx = el.getContext("2d");
-    ctx.font = "100px Arial";
-    ctx.fillStyle = 'red';
-    var z = new complex(rn/rd, i);
-    var uv = complexToUV(z.x, z.y);
-    if (i == 0)
-        ctx.fillText(rn + "/" + rd,uv[0]*el.width,uv[1]*el.height);
-    else
-        ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
-    console.log(uv[0], uv[1]);
-    ctx.stroke();
-}
-function drawOnCanvas(transformUtils) {
-    var el = document.getElementById('canvas');
-    el.width = 4096; el.height=4096;
-    drawLabelOnCanvas(1.0,1,0.0);
-    drawLabelOnCanvas(2.0,1,0.0);
-    drawLabelOnCanvas(3.0,1,0.0);
-    drawLabelOnCanvas(4.0,1,0.0);
-    drawLabelOnCanvas(5.0,1,0.0);
-    drawLabelOnCanvas(-1.0,1,0.0);
-    drawLabelOnCanvas(-2.0,1,0.0);
-    drawLabelOnCanvas(-3.0,1,0.0);
-    drawLabelOnCanvas(-4.0,1,0.0);
-    drawLabelOnCanvas(-5.0,1,0.0);
-    drawLabelOnCanvas(0.0,1, 1.0);
-    drawLabelOnCanvas(0.0,1, 2.0);
-    drawLabelOnCanvas(0.0,1, 3.0);
-    drawLabelOnCanvas(0.0,1, 4.0);
-    drawLabelOnCanvas(0.0,1, 5.0);
-    // var z = new complex(1.0,0.0);
-    // var uv = complexToUV(z.x, z.y);
-    // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
-    // var z = new complex(2.0,0.0);
-    // var uv = complexToUV(z.x, z.y);
-    // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
-    // var z = new complex(3.0,0.0);
-    // var uv = complexToUV(z.x, z.y);
-    // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
-    // var z = new complex(0.5,0.0);
-    // var uv = complexToUV(z.x, z.y);
-    // ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
-
-
-    // var xf = new xform(_one, _zero, _zero, _one);
-    // var z = new complex(1.0,0.0);
-    // for (i = 0; i < 10; i++) {
-    //     var z = xf.doit(z);
-    //     xf =xf.mmult(_tXform);
-    //     var uv = complexToUV(z.x, z.y);
-    //     console.log(">>>>>>>>>> " + z.x + "," + z.y + "[" + uv[0] + "," + uv[1] + "]");
-    //     ctx.fillText(z.displayString(),uv[0]*el.width,uv[1]*el.height);
-    //     ctx.beginPath();
-    //     ctx.arc(uv[0]*el.width,uv[1]*el.height,10,0,2*Math.PI);
-    //     ctx.stroke();
-    // }
 }
 function animate() {
     requestAnimationFrame( animate );

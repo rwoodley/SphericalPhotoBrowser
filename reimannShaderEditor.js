@@ -101,19 +101,18 @@ this.reimannUniformsEditor = function(
                 that.detailsObject.aMobiusTransform = _one;
                 this.newWord = '';
             }
+            this.detailsObject.updateFareyLabelsForMobiusTransform();
+
             that.detailsObject.updateUniformsForMobiusTransform();
-            var labels = getMatrixHTML(that.detailsObject.aMobiusTransform);
-            document.getElementById('matrixText').innerHTML = labels;
-            var wordEl = document.getElementById('wordText');
+            document.getElementById('matrixText').innerHTML = getMatrixHTML(that.detailsObject.aMobiusTransform);
             this.newWord = compressWord(this.newWord);
             document.getElementById('wordText').innerHTML =
                  this.newWord.replace(/s/g, 'S<sup>-1</sup>').replace(/t/g, 'T<sup>-1</sup>');
 
             var fraction = that.detailsObject.aMobiusTransform.vmult(_one, _one);
             var fractionString = formatFraction(fraction[0], fraction[1]);
-            console.log("Fraction = " + fraction[0].displayString() + "/" +  
-            fraction[1].displayString());
-            document.getElementById('fractionText').innerHTML = fractionString;
+            console.log("Fraction = " + fraction[0].displayString() + "/" + fraction[1].displayString());
+            document.getElementById('fractionText').innerHTML = fractionString;            
         }
         if (e.keyCode == 79) {  // o - stop zoom.
             that.mediaUtils.cameraZoom(1.0);
