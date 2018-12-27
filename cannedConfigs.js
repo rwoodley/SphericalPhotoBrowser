@@ -728,9 +728,31 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
             'textureName': 'rosie',
             'geometry': 'sphere',
             'position': [0, 0, 0],
-            'scale': [.5, .5, -.5],
+            'scale': [1.0, 1.0, -1.0],
         };
         configs['skyDome'] = phongSkyDome();
+    }
+    if (mode == 'ornament') {
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        generalSettings.cameraPosition = [0, -25, 50];
+        uniforms.complexEffect3OnOff.value = 0;
+        generalSettings.rotateYAmount = 0.;
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': 'kickingBall',
+            'geometry': 'sphere',
+            'position': [0, 0, 0],
+            'scale': [5, 5, -5],      // z-scale negative reqd for transparency!??!
+        }
+
+        configs['mirrorBall'] =
+            {
+                'textureType': 'mirror',
+                'geometry': 'sphere',
+                'position': [0, 0, 0],
+                'scale': [1.7, 1.7, 1.7],
+            };
     }
     if (mode == 'louisTriangles') {
         generalSettings.cameraPosition = [0, 00, 40];
@@ -897,7 +919,7 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         // uniforms.complexEffect3OnOff.value = 0;
         uniforms.textureScaleY.value = .7;
         uniforms.uHighPassFilter.value = 1;
-        uniforms.uMaskType.value = 2; // green mask just to hide the green screen a bit.
+        uniforms.uMaskType.value = 22; // green mask just to hide the green screen a bit.
         configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'video',

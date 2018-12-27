@@ -25,20 +25,21 @@ this.reimannUniformsEditor = function(
 	}
     this.onkeydown = function(e, extraKey) {
         if (extraKey == 0 || extraKey == undefined) {
+            var shiftAmount = 0.0002;
             if (e.keyCode == 39) {   // right arrow
-                that.currentUniforms.textureUAdjustment.value += .0025;
+                that.currentUniforms.textureUAdjustment.value += shiftAmount;
                 console.log("shift texture");
             }
             if (e.keyCode == 37) {   // left arrow
-                that.currentUniforms.textureUAdjustment.value -= .0025;
+                that.currentUniforms.textureUAdjustment.value -= shiftAmount;
                 console.log("shift texture");
             }
             if (e.keyCode == 38) {   // up arrow
-                that.currentUniforms.textureVAdjustment.value += .0025;
+                that.currentUniforms.textureVAdjustment.value += shiftAmount;
                 console.log("shift texture");
             }
             if (e.keyCode == 40) {   // down arrow
-                that.currentUniforms.textureVAdjustment.value -= .0025;
+                that.currentUniforms.textureVAdjustment.value -= shiftAmount;
                 console.log("shift texture");
             }
             if (e.keyCode == 83) {  // s - stop
@@ -101,18 +102,18 @@ this.reimannUniformsEditor = function(
                 that.detailsObject.aMobiusTransform = _one;
                 this.newWord = '';
             }
-            this.detailsObject.updateFareyLabelsForMobiusTransform();
+//            this.detailsObject.updateFareyLabelsForMobiusTransform();
 
             that.detailsObject.updateUniformsForMobiusTransform();
-            document.getElementById('matrixText').innerHTML = getMatrixHTML(that.detailsObject.aMobiusTransform);
-            this.newWord = compressWord(this.newWord);
-            document.getElementById('wordText').innerHTML =
-                 this.newWord.replace(/s/g, 'S<sup>-1</sup>').replace(/t/g, 'T<sup>-1</sup>');
-
-            var fraction = that.detailsObject.aMobiusTransform.vmult(_one, _one);
-            var fractionString = formatFraction(fraction[0], fraction[1]);
-            console.log("Fraction = " + fraction[0].displayString() + "/" + fraction[1].displayString());
-            document.getElementById('fractionText').innerHTML = fractionString;            
+//            document.getElementById('matrixText').innerHTML = getMatrixHTML(that.detailsObject.aMobiusTransform);
+//            this.newWord = compressWord(this.newWord);
+//            document.getElementById('wordText').innerHTML =
+//                 this.newWord.replace(/s/g, 'S<sup>-1</sup>').replace(/t/g, 'T<sup>-1</sup>');
+//
+//            var fraction = that.detailsObject.aMobiusTransform.vmult(_one, _one);
+//            var fractionString = formatFraction(fraction[0], fraction[1]);
+//            console.log("Fraction = " + fraction[0].displayString() + "/" + fraction[1].displayString());
+//            document.getElementById('fractionText').innerHTML = fractionString;
         }
         if (e.keyCode == 79) {  // o - stop zoom.
             that.mediaUtils.cameraZoom(1.0);
@@ -168,7 +169,7 @@ this.reimannUniformsEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'debug.png', 'Show/Hide Debug Info', that.toggleDebugInfo);
         appendSingleIcon(container, 'transformControlIcon', 'toggle.png', 'Toggle View', that.toggleView);
         appendSingleIcon(container, 'transformControlIcon', 'help.png', 'Help/Info', that.showHelpPage);
-        appendSingleIcon(container, 'transformControlIcon', 'diffRedMask.svg', 'mask is still', that.useStillMask);
+        appendSingleIcon(container, 'transformControlIcon', 'diffRedMask.svg', 'use current as still mask', that.useStillMask);
         appendSingleIcon(container, 'transformControlIcon', 'diffMask.svg', 'mask is delayed feed', that.useDelayMask);
         appendSingleIcon(container, 'transformControlIcon', 'diffGreenMask.svg', 'mask out green', that.useGreenMask);
         appendSingleIcon(container, 'transformControlIcon', 'mask.svg', 'make result black', that.blackMask);
@@ -303,11 +304,17 @@ this.reimannUniformsEditor = function(
     }
     // these can be deleted:
     this.useGreenMask = function() {
-            that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 2 ? 0 : 2;
+            that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 22 ? 0 : 22;
             showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.useStillMask = function() {
-            that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 3 ? 0 : 3;
+            var pathToSubtractionTexture = that.mediaUtils.currentPathToSkyDomeTexture  ;
+            (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
+                console.log("reimannShaderSupport.setDefaults(): loading texture for iChannelDelayMask");
+                setMipMapOptions(texture);
+                that.currentUniforms.iChannelStillMask1.value =  texture;
+            });
+            that.currentUniforms.uMaskType.value = that.currentUniforms.uMaskType.value == 2 ? 0 : 2;
             showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.blackMask = function() {

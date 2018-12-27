@@ -36,10 +36,9 @@ function getMaterialForName(name) {
         return new THREE.MeshNormalMaterial({side: THREE.DoubleSide, shading: THREE.FlatShading});
     }
     if (name == 'transparent') {
-        return  new THREE.MeshLambertMaterial({ 
+        return  new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
-            color: 0x00000000,
-            transparent: true
+            color: 0xffffff
         });
     }
 }

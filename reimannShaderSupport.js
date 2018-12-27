@@ -45,6 +45,7 @@ reimannShaderDetailsObject = function(name) {
     that.cameraLookAtComplexY = 0;
     that.point1Defined = false;
     that.point2Defined = false;
+    that.savedFrame = undefined;
     that.colorGen = new colorGen('FF0000', '0000FF', 1000);
     this.aMobiusTransform = new xform(_one, _zero, _zero, _one);
     // this.aMobiusTransform = new xform(_one, _four, _zero, _one);
@@ -345,17 +346,28 @@ reimannShaderDetailsObject = function(name) {
         }
 
         if (that.currentUniforms.uMaskType.value == 1 || 
-            that.currentUniforms.uMaskType.value == 4 || 
+            that.currentUniforms.uMaskType.value == 2 ||
+            that.currentUniforms.uMaskType.value == 4 ||
             that.currentUniforms.uMaskType.value == 5) {
-            if (animationFrame%160 == 0) {
-                that.currentUniforms.iChannelDelayMask1.value.image = that.currentUniforms.iChannel0.value.image;
+
+            if (that.savedFrame != undefined) {
+                that.currentUniforms.iChannelDelayMask1.value.image = that.savedFrame;
                 that.currentUniforms.iChannelDelayMask1.value.needsUpdate = true;
             }
+            else {
+                console.log("undefined")
+            }
+            that.savedFrame = that.currentUniforms.iChannel0.value.image;
+//            if (animationFrame%1 == 0) {
+//                console.log("Updating.");
+//                that.currentUniforms.iChannelDelayMask1.value.image = that.currentUniforms.iChannel0.value.image;
+//                that.currentUniforms.iChannelDelayMask1.value.needsUpdate = true;
+//            }
             if (animationFrame%120 == 0) {
                 that.currentUniforms.iChannelDelayMask2.value.image = that.currentUniforms.iChannel0.value.image;
                 that.currentUniforms.iChannelDelayMask2.value.needsUpdate = true;
             }
-            if (animationFrame%180 == 0 && that.currentUniforms.uMaskType.value == 4) {
+            if (animationFrame%180 == 0) {
                 that.currentUniforms.iChannelDelayMask3.value.image = that.currentUniforms.iChannel0.value.image;
                 that.currentUniforms.iChannelDelayMask3.value.needsUpdate = true;
             }
