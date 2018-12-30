@@ -90,8 +90,8 @@ function getGeometryForName(geoName) {
         var flatDumpling = function(u,v) { return dumpling(u, v, -1, 0, 0, 0, 8, 8); }
         var funcCup = function(u,v) { return      dumpling(u, v, 1, 1, 3, 1.7, 8, 4); }
         var funcLeaves = function(u,v) { return   dumpling(u, v, -1, .5, .5, .2, 16, 7); }
-        var func1Geo = new THREE.ParametricGeometry(funcLeaves, 90, 90, false);
-        var func2Geo = new THREE.ParametricGeometry(funcCup, 90, 90, false);
+        var func1Geo = new THREE.ParametricGeometry(flatDumpling, 90, 90, false);
+        var func2Geo = new THREE.ParametricGeometry(funcLeaves, 90, 90, false);
         func1Geo.morphTargets.push( { name: "target1", vertices: func2Geo.vertices } );
         func1Geo.computeMorphNormals();
         geo = func1Geo;
@@ -268,7 +268,7 @@ function meshManager(scene, position, scale, desiredGeoName, rotationAxis,
                 if (newMaterial.type != 'MeshNormalMaterial') {
                     newMaterial.morphTargets = true;
                     var myMorphFunction = function(animationFrame) {
-                        // msh.morphTargetInfluences[0] = 1. - (animationFrame%100.0)/100.0;
+                        msh.morphTargetInfluences[0] = 1. - Math.sin(animationFrame/100.0);
                         // console.log(msh.morphTargetInfluences[0]*10.);
                     }
                     TRANSFORM.meshInventory.listOfMorphFunctions.push(myMorphFunction);

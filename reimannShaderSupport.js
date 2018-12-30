@@ -97,7 +97,6 @@ reimannShaderDetailsObject = function(name) {
 
 
         uMaskType: { type: 'i', value: 0 },
-        uTextureNumber: { type: 'i', value: 0 },
         e1x: { type: 'f', value: 0. },
         e1y: { type: 'f', value: 0. },
         e2x: { type: 'f', value: 0. }, 

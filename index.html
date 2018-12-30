@@ -1,146 +1,305 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <style>
-			body {
-				font-family: Monospace;
-				background-color: #000;
-				margin: 0px;
-				overflow: hidden;
-			}
-            .availableMediaPanel {
-                position: fixed;
-                top: 0;
-                width: 95%;
-            }
-            .availableMediaPanelInner {
-                width: 90%;
-                margin: 0 auto;             
-            }
-            .videoPanel {
-                position: fixed;
-                bottom: 10%;
-                width: 95%;
-            }
-            .videoPanelInner {
-                width: 95%;
-                margin: 0 auto;             
-            }
-            .cameraPanel {
-                position: fixed;
-                bottom: 0%;
-                width: 95%;
-            }
-            .cameraPanelInner {
-                width: 95%;
-                margin: 0 auto;             
-            }
-		</style>
-        <link rel="stylesheet" type="text/css" href="mediaUtils.css">
-		<script src="r73/three.js"></script>
-        <script src="r73/OrbitControls.js"></script>
-		<script src="r73/Detector.js"></script>
- 		<script src="r73/stats.min.js"></script>
-		<script src="lib/jquery-3.1.0.min.js"></script>
-        <script src="lib/toast.js"></script>
-        <script src="meshManager.js"></script>
-        <script src="mediaUtils.js"></script>
-        <script src="utils.js"></script>
-        <script src="canned.js"></script>
-        <script src="media/files.js"></script>
-        <script src="media/videos.js"></script>
-        <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+<html >
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="mediaUtils.css">
+    <link rel="stylesheet" type="text/css" href="transformUtils.css">
+    <link rel="stylesheet" type="text/css" href="mathNotes.css">
+    <script src="r87/three.js"></script>
+    <script src="r87/OrbitControls.js"></script>
+    <script src="r87/Detector.js"></script>
+    <script src="r87/Mirror.js"></script>
+    <script src="r87/ParametricGeometries.js"></script>
+    <script src="r87/stats.min.js"></script>
+    <script src="lib/jquery-3.1.0.min.js"></script>
+    <script src="lib/toast.js"></script>
 
-  ga('create', 'UA-41066114-3', 'auto');
-  ga('send', 'pageview');
+    <script src="lib/CCapture.min.js"></script>
+    <script src="lib/CubemapToEquirectangular.js"></script>
+    <script src="lib/Whammy.js"></script>
+    <script src="lib/download.js"></script>
+    <script src="lib/dat.gui.min.js"></script>
+    <script src="lib/chroma.js"></script>
+    <script src="myGeometries.js"></script>
+    <script src="trackerUtils.js"></script>
+
+    <script src="shaderCode/main.js"></script>
+    <script src="shaderCode/droste.js"></script>
+    <script src="shaderCode/animation.js"></script>
+    <script src="shaderCode/schottkyCommon.js"></script>
+    <script src="shaderCode/schottky.js"></script>
+    <script src="shaderCode/mathUtils.js"></script>
+    <script src="shaderCode/symmetryUtils.js"></script>
+    <script src="shaderCode/mobiusTransformUtils.js"></script>
+    <script src="shaderCode/polygonalGroups.js"></script>
+    <script src="shaderCode/mainShader_fs.js"></script>
+    <script src="shaderCode/outerShader_fs.js"></script>
+    <script src="shaderCode/mainShader_vs.js"></script>
+
+    <script src="reimannShaderSupport.js"></script>
+    <script src="videoManager.js"></script>
+    <script src="riemannShaderEditors/legacyEditor.js"></script>
+    <script src="riemannShaderEditors/keyboardHandlers.js"></script>
+    <script src="riemannShaderEditors/keyboardHandlerComplex.js"></script>
+    <script src="riemannShaderEditors/keyboardEditor.js"></script>
+    <script src="riemannShaderEditors/cameraContext.js"></script>
+    <script src="meshManager.js"></script>
+    <script src="meshInventory.js"></script>
+    <script src="cannedConfigs.js"></script>
+    <script src="colorGen.js"></script>
+    <script src="canned.js"></script>
+    <script src="mediaUtils.js"></script>
+    <script src="transformUtils.js"></script>
+    <script src="keyControls.js"></script>
+    <script src="fly.js"></script>
+    <script src="utils.js"></script>
+    <script src="variousMaterials.js"></script>
+    <script src="complex.js"></script>
+
+
+    <script src="media/files.js"></script>
+    <script src="media/videos.js"></script>
+    <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-41066114-3', 'auto');
+ga('send', 'pageview');
 
 </script>
 
-		<script>
-			var _container;
-			var _camera, _controls, _scene, _renderer, _uniforms, _clock, _mediaUtils;
-			var myMesh;
-			function init() {
-                if ( ! Detector.webgl ) {
-                    Detector.addGetWebGLMessage();
-                    document.getElementById( 'container' ).innerHTML = "";
-                }
+    <script>
+var _container, _stats, _canned, _flightControl;
+var _camera, _controls, _scene, _renderer, _clock, _mediaUtils, _transformUtils;
+var _datgui;
+var _liteVersion = false;
 
-                _clock = new THREE.Clock();
-                _container = document.getElementById( 'container' );
+var Params  = function() {
+    this.color1 = 0;
+    this.threshold1 = 0;
+    this.color0 = [ 0, 128, 255, 1.0 ]; // RGB with alpha
+    this.color1 = [ 255, 255, 0, 1.0 ]; // RGB with alpha
+    this.color2 = [ 255, 75, 0, 1.0 ]; // RGB with alpha
+    this.color3 = [ 231, 15, 245, 1.0 ]; // RGB with alpha
+    <!--this.color1 = [ 128, 0, 0, 1.0 ]; // RGB with alpha-->
+    <!--this.color2 = [ 0, 128, 0, 1.0 ]; // RGB with alpha-->
+    <!--this.color3 = [ 128, 0, 255, 1.0 ]; // RGB with alpha-->
+    this.color4 = [ 128, 255, 128, 1.0 ]; // RGB with alpha
+    this.colorBlack = [ 1., 0, 0, 1.0 ]; // RGB with alpha
+}
+var _params = new Params();
+var _mirrorSphere, _mirrorSphereCamera; // globals for managing a single mirror ball.
 
-                _camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
+var myMesh;
+// Global Singletons
+TRANSFORM = {}
+TRANSFORM.reimannShaderList = new reimannShaderListObject();
+TRANSFORM.datGuiLoaded = false;
+TRANSFORM.loadDatGuiStuff = function() {
+    if (!TRANSFORM.datGuiLoaded) {
+        _datgui = new dat.GUI();
+        _datgui.add(_params, 'threshold1', 0, 1);
+        _datgui.addColor(_params, 'color0');
+        _datgui.addColor(_params, 'color1');
+        _datgui.addColor(_params, 'color2');
+        _datgui.addColor(_params, 'color3');
+        _datgui.addColor(_params, 'color4');
+        _datgui.addColor(_params, 'colorBlack');
+        TRANSFORM.datGuiLoaded = true;
+    }
+}
+function init() {
+    if ( ! Detector.webgl ) {
+        Detector.addGetWebGLMessage();
+        document.getElementById( 'container' ).innerHTML = "";
+    }
 
-                _scene = new THREE.Scene();
-                _controls = new THREE.OrbitControls( _camera, _container.domElement );
-                _axes = new THREE.AxisHelper( 15000 );
-                // _scene.add(_axes);
-                _renderer =  new THREE.WebGLRenderer({ antialias: true } );
-                var canned = new cannedRun();
-                _mediaUtils = new mediaUtils(
-                    canned,
-                    _scene, 
-                    _camera, 
-                    myTextures, 
-                    myVideos, 
-                    "mediaListContainer", 
-                    "cameraControlsContainer",
-                    "videoControlsContainerId",
-                    false
-                );
+    _clock = new THREE.Clock();
+    _container = document.getElementById( 'container' );
 
-                _renderer.setSize( window.innerWidth, window.innerHeight );
+    _camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 20000 );
 
-                document.getElementById( 'container' ).innerHTML = "";
-                _container.appendChild( _renderer.domElement );
-                animate();
-			}
+    _scene = new THREE.Scene();
+    TRANSFORM.meshInventory = new meshInventory(_scene);
+    var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    directionalLight.position.set( 1, 1, 1 ).normalize();
+    //_scene.add( directionalLight );
 
-			function animate() {
-				requestAnimationFrame( animate );
-				_controls.update( _clock.getDelta() );
-				_renderer.render( _scene, _camera );
-                _mediaUtils.animate(1.0);
-			}
-            $().ready(function() {
-                init();
-            });
+
+    _controls = new THREE.OrbitControls( _camera, _container.domElement );
+    _controls.keys = {};    // this disable arrow keys which are now used for moving the texture.
+    // _axes = new THREE.AxisHelper( 15000 );
+    // _scene.add(_axes);
+    _renderer =  new THREE.WebGLRenderer({ antialias: true } );
+
+    _renderer.sortObjects = false;          // see: http://stackoverflow.com/a/15995475
+    _camera.position.x = -1; _camera.position.y = 0.0; _camera.position.z = 0;
+    _renderer.setSize( window.innerWidth, window.innerHeight );
+    // _renderer.setClearColor( 0xbfd1ff );
+    document.getElementById( 'container' ).innerHTML = "";
+    _container.appendChild( _renderer.domElement );
+
+    _flightControl = new flight(_clock);
+    _canned = new cannedRun(_scene,_flightControl);
+
+    _stats = new Stats();
+    document.getElementById('statsDivInner').appendChild( _stats.domElement );
+    var rightClickHandler = function(event) {
+        if (event.target.id.indexOf('textureSelector_') > -1) {
+            pid = 'media/' + event.target.id.replace('textureSelector_','');
+            console.log(pid);
+            (new THREE.TextureLoader()).load(pid, function ( texture ) {
+                var material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+                material.map = texture;
+                TRANSFORM.meshInventory.meshes['skyDome'].material = material;  // do we really need this twice?
+                TRANSFORM.meshInventory.meshes['skyDome'].mesh.material = material;
+                TRANSFORM.meshInventory.meshes['skyDome'].mesh.needsUpdate = true;
+                TRANSFORM.meshInventory.meshes['skyDome'].mesh.geometry.uvsNeedUpdate = true;
+                });
+        }
+        else {
+            pid = event.target.id.replace('effectSelector_','');
+            var material = getMaterialForName(pid);
+            TRANSFORM.meshInventory.meshes['skyDome'].material = material;  // do we really need this twice?
+            TRANSFORM.meshInventory.meshes['skyDome'].mesh.material = material;
+            TRANSFORM.meshInventory.meshes['skyDome'].mesh.needsUpdate = true;
+            TRANSFORM.meshInventory.meshes['skyDome'].mesh.geometry.uvsNeedUpdate = true;
+        }
+    }
+
+    // render inner objects
+    // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
+    cameraContext = new cameraContext(_camera);
+
+    _mediaUtils = new mediaUtils(
+        _canned,
+        _scene, 
+        "mediaListContainer",
+        "cameraControlsContainer",
+        "videoControlsContainerId",
+        rightClickHandler,
+        true);
+
+    _transformUtils = new transformUtils(cameraContext,
+        "transformControlsContainerId",
+        "complexControlsContainerId",
+        "transformControls2ContainerId",
+        "textureControlsContainerId",
+        _mediaUtils);
+    _flightControl.shareGlobalObjects(_mediaUtils, _transformUtils);
+    _canned.setup(_mediaUtils, _transformUtils, _renderer);     // if this is a canned run, configure.
+
+    animate();  // not all textures may be loaded here. oh well.
+}
+function animate() {
+    setTimeout(function() {
+        requestAnimationFrame( animate );
+    }, 1000/29.97       // this syncs up with OBS screen capture (and others)
+    );
+    _controls.update( _clock.getDelta() );
+    _renderer.render( _scene, _camera );
+    _transformUtils.animate();
+
+    if (_mirrorSphereCamera != undefined) {
+        _mirrorSphere.visible = false;
+        _mirrorSphereCamera.update( _renderer, _scene );
+        _mirrorSphere.visible = true;
+    }
+    _stats.update();
+    _flightControl.update();
+}
+$().ready(function() {
+    init();
+});
 </script>
 </head>
-	<body>
-		<video  id="video"
-		  style="display: none;
-		  position: absolute; left: 15px; top: 75px;"
-		  controls="true" autoplay="true">
-		</video>
-		<div id="container"><br /><br /><br /><br /><br />Generating...</div>
-        <div style="position: fixed; top: 3%; width:95%; ">
-            <div class="videoPanel">
-                <div class="videoPanelInner">
-                    <div id="videoControlsContainerId">
-                    </div>
-                </div>
-            </div>
-            <div style="float: right; "  class="availableMediaPanel ">
-                <div class="availableMediaPanelInner">
-                    <div id="mediaListContainer" >
-                    </div>
-                </div>
-            </div>
-            <div class="cameraPanel">
-                <div class="cameraPanelInner">
-                    <div id="cameraControlsContainer">
+<body>
+<video  id="video1"
+        style="display: none;
+        position: absolute; left: 15px; top: 75px;"
+        controls="true" autoplay="true">
+</video>
+<video  id="video2"
+        style="display: none;
+      position: absolute; left: 15px; top: 75px;"
+        controls="true" autoplay="true">
+</video>
+<div id="container"><br /><br /><br /><br /><br />Generating...</div>
+<div id="matrixText" style="display: block; position: fixed; top: 10%; left: 10%; font-size: 40px; color: red; ">
+</div>
 
-                    </div>
-                </div>
-            </div>
+<div id="wordText"  class='redText'><a href="http://rwoodleymedia.org/topoVideoInfo.html">?</a></div>
+
+<div style="position: fixed; top: 30%; width:95%; ">
+    <div id='cameraText' class="statusText"></div>
+    <div id='unitVectorText' class="statusText"></div>
+    <div id='complexPointText' class="statusText"></div>
+    <div id='windowSizeText' class="statusText"></div>
+    <div id='canvasSizeText' class="statusText"></div>
+</div>
+<div class="availableMediaPanel ">
+    <div class="centerAlign">
+        <div id="mediaListContainer" >
+            <span class='showhide  wideLabel label'>Stills/Videos:</span>
         </div>
-        <script>
-        </script>
-	</body>
+    </div>
+</div>
+<div class="meshPanel">
+    <div class="centerAlign">
+        <div id="meshContainerId">
+            <span class='showhide wideLabel label'>Meshes:</span>
+            </span>
+        </div>
+    </div>
+</div>
+<div class="texturePanel">
+    <div class="centerAlign">
+        <div id="textureControlsContainerId">
+            <span class='showhide wideLabel label'>Texture controls:</span>
+            </span>
+        </div>
+    </div>
+</div>
+<div class="transformPanel">
+    <div class="centerAlign">
+        <div id="transformControlsContainerId">
+            <span class='showhide wideLabel label'>M&ouml;bius transforms:</span>
+        </div>
+    </div>
+</div>
+<div class="complexPanel">
+    <div class="centerAlign">
+        <div id="complexControlsContainerId">
+            <span class='showhide wideLabel label'>Complex transforms:</span>
+        </div>
+    </div>
+</div>
+<div class="videoPanel">
+    <div class="centerAlign">
+        <div id="videoControlsContainerId">
+            <span class='showhide wideLabel label'>Video controls:</span>
+        </div>
+    </div>
+</div>
+<div class="transformPanel2">
+    <div class="centerAlign">
+        <div id="transformControls2ContainerId">
+            <span class='showhide wideLabel label'>Reset, toggle, etc:</span>
+        </div>
+    </div>
+</div>
+<div class="cameraPanel">
+    <div class="centerAlign">
+        <div id="cameraControlsContainer">
+            <span class='showhide wideLabel label'>Camera controls:</span>
+            <span id="statsDivInner" class="showhide">
+                    </span>
+        </div>
+    </div>
+</div>
+<script>
+</script>
+</body>
 </html>

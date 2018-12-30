@@ -1,10 +1,10 @@
 
-// This handles all user editing of uniforms. 
+// This handles all user editing of uniforms.
 // It sets up icons on construction.
-// You can change the uniform being edited. 
-this.reimannUniformsEditor = function(
+// You can change the uniform being edited.
+this.legacyEditor = function(
     camera, mediaUtils,
-    transformControlsContainerId, complexControlsContainerId, 
+    transformControlsContainerId, complexControlsContainerId,
     transformControls2ContainerId, textureControlsContainerId,
     symmetryUtils
 ) {
@@ -21,131 +21,8 @@ this.reimannUniformsEditor = function(
 	this.initUniformsEditor = function() {
 		that.setupTransformControlIcons();
         that.setupComplexControlIcons();
-        //showToast('Hit space bar to show/hide icons.', 2000);
 	}
-    this.onkeydown = function(e, extraKey) {
-        if (extraKey == 0 || extraKey == undefined) {
-            var shiftAmount = 0.0002;
-            if (e.keyCode == 39) {   // right arrow
-                that.currentUniforms.textureUAdjustment.value += shiftAmount;
-                console.log("shift texture");
-            }
-            if (e.keyCode == 37) {   // left arrow
-                that.currentUniforms.textureUAdjustment.value -= shiftAmount;
-                console.log("shift texture");
-            }
-            if (e.keyCode == 38) {   // up arrow
-                that.currentUniforms.textureVAdjustment.value += shiftAmount;
-                console.log("shift texture");
-            }
-            if (e.keyCode == 40) {   // down arrow
-                that.currentUniforms.textureVAdjustment.value -= shiftAmount;
-                console.log("shift texture");
-            }
-            if (e.keyCode == 83) {  // s - stop
-                that.currentUniforms.textureVAdjustment.value = 0;
-                console.log("shift texture");
-            }
-        }
-        if (extraKey == 16) {       // shift
-            if (e.keyCode == 37)    // right arrow
-                that.rotateLeft();
-            if (e.keyCode == 39)    // left arrow
-                that.rotateRight();
-            if (e.keyCode == 83)  // s - stop/reset
-                that.rotationOff();
-        }
-        if (extraKey == 17) {       // ctrl
-            if (e.keyCode == 39) {   // right arrow
-                that.mediaUtils.cameraRight();
-                console.log("move camera");
-            }
-            if (e.keyCode == 37) {   // left arrow
-                that.mediaUtils.cameraLeft();
-                console.log("move camera");
-            }
-            if (e.keyCode == 38) {   // up arrow
-                that.mediaUtils.cameraUp();
-                console.log("move camera");
-            }
-            if (e.keyCode == 40) {   // down arrow
-                that.mediaUtils.cameraDown();
-                console.log("move camera");
-            }
-            if (e.keyCode == 83) { // s - stop
-                that.mediaUtils.cameraStop();
-                console.log("move camera");
-            }
-        }
-        if (extraKey == 18) {       // alt
-            if (e.keyCode == 39) {   // right arrow
-                that.detailsObject.aMobiusTransform = 
-                that.detailsObject.aMobiusTransform.mmult(_tXform);
-                this.newWord+='T';
-            }
-            if (e.keyCode == 37) {   // left arrow
-                that.detailsObject.aMobiusTransform = 
-                that.detailsObject.aMobiusTransform.mmult(_inverseTXform);
-                this.newWord+='t';
-            }
-            if (e.keyCode == 38) {   // up arrow
-                that.detailsObject.aMobiusTransform = 
-                that.detailsObject.aMobiusTransform.mmult(_sXform);
-                this.newWord+='S';
-            }
-            if (e.keyCode == 40) {   // down arrow
-                that.detailsObject.aMobiusTransform = 
-                that.detailsObject.aMobiusTransform.mmult(_inverseSXform);
-                this.newWord+='s';
-            }
-            if (e.keyCode == 83) {      // reset 
-                that.detailsObject.aMobiusTransform = _one;
-                this.newWord = '';
-            }
-//            this.detailsObject.updateFareyLabelsForMobiusTransform();
 
-            that.detailsObject.updateUniformsForMobiusTransform();
-//            document.getElementById('matrixText').innerHTML = getMatrixHTML(that.detailsObject.aMobiusTransform);
-//            this.newWord = compressWord(this.newWord);
-//            document.getElementById('wordText').innerHTML =
-//                 this.newWord.replace(/s/g, 'S<sup>-1</sup>').replace(/t/g, 'T<sup>-1</sup>');
-//
-//            var fraction = that.detailsObject.aMobiusTransform.vmult(_one, _one);
-//            var fractionString = formatFraction(fraction[0], fraction[1]);
-//            console.log("Fraction = " + fraction[0].displayString() + "/" + fraction[1].displayString());
-//            document.getElementById('fractionText').innerHTML = fractionString;
-        }
-        if (e.keyCode == 79) {  // o - stop zoom.
-            that.mediaUtils.cameraZoom(1.0);
-        }
-        if (e.keyCode == 80) {  // p - pan.
-            that.mediaUtils.cameraZoom(1.01);
-        }
-        if (e.keyCode == 81) {  // q - zoom.
-            that.mediaUtils.cameraZoom(.99);
-        }
-        if (e.keyCode == 82) {  // r - tetrahedral symmetry over triangle group.
-            that.currentUniforms.hyperbolicTilingEffectOnOff.value = 1; // turn on triangles...
-            that.tetrahedralGroup(2);
-        }
-        if (e.keyCode == 84) {  // t - tetrahedral symmetry.
-            that.tetrahedralGroup(1);
-        }
-        if (e.keyCode == 85) {  // u - take a snap.
-
-            var cubeCamera = new THREE.CubeCamera( .1, 1000, 4096 );
-
-
-            var equiUnmanaged = new CubemapToEquirectangular( _renderer, false );
-            cubeCamera.updateCubeMap( _renderer, _scene );
-            equiUnmanaged.convert( cubeCamera );
-            _scene.remove(mirrorSphere);
-        }
-
-        var textureNumber = e.keyCode - 48;
-        if ((extraKey == 17) && (textureNumber < 10 && textureNumber >= 0))
-            that.currentUniforms.uTextureNumber.value = textureNumber;        
-    }
     this.setupTransformControlIcons = function() {
     	var container = document.getElementById(that.transformControlsContainerId);
     	appendSingleIcon(container, 'transformControlIcon', 'rotateLeft.png', 'Rotate Left', that.rotateLeft);

@@ -140,10 +140,7 @@ function cartesianToPolar(x,y,z) {
     theta = Math.acos(z);
     return [phi, theta];
 }
-function complexToUV(inx,iny) {
-    // now c back to sphere.
-    var theta;
-    var phi;
+function complexToCartesian(inx, iny) {
     var x;
     var y;
     var z;
@@ -151,7 +148,17 @@ function complexToUV(inx,iny) {
     x = 2.0 * inx/denom;
     y = 2.0 * iny/denom;
     z = (inx*inx + iny*iny - 1.0)/denom;
-    // console.log(x,y,z);
+    return [x,y,z];
+}
+
+function complexToUV(inx,iny) {
+    // now c back to sphere.
+    var theta;
+    var phi;
+    var pts = complexToCartesian(inx, iny);
+    var x = pts[0];
+    var y = pts[1];
+    var z = pts[2];
 
     // convert to polar
     var polarCoords = cartesianToPolar(x,y,z);

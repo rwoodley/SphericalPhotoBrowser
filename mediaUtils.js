@@ -8,7 +8,7 @@ User might want to:
 - add their own icons
 
 **/ 
-function mediaUtils(canned, scene, camera,  
+function mediaUtils(canned, scene,
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
        rightClickHandler, addEffects) {
 	var that = this;
@@ -20,43 +20,38 @@ function mediaUtils(canned, scene, camera,
 	this.videoControlsContainerId = videoControlsContainerId;
     this.rightClickHandler = rightClickHandler;
     this.deviceList = {};
-
-	this.camera = camera;
 	this.scene = scene;
 
-    this.rotateZAmount = 0;
-    this.rotateYAmount = 0;
-    this.rotateXAmount = 0;
-    this.cameraZoomAmount = 1;
-    this.FOV = 90;
-    this.onkeydown = undefined;     // this gets defined by transformUtils... 
+    this.onkeydown = undefined;     // this gets defined by transformUtils...
     this.material = new THREE.MeshNormalMaterial();
     this.geoIndex = 0;
 
     this.controlPanelVisible = true;
     this.extraKey = 0;
 	document.body.onkeyup = function(e){
-        if (e.keyCode == 16 || e.keyCode == 17  || e.keyCode == 18)
-            this.extraKey = 0;
+        if (e.keyCode == 16 || e.keyCode == 17  || e.keyCode == 18) {
+            that.extraKey = 0;
+        }
     }
 	document.body.onkeydown = function(e){
         //if (!that.canned.createMode) return;
         console.log(e.keyCode);
-        if (e.keyCode == 16 || e.keyCode == 17 || e.keyCode == 18) // shift & ctrl & alt, respectively...
-            this.extraKey = e.keyCode;
+        if (e.keyCode == 16 || e.keyCode == 17 || e.keyCode == 18) { // shift & ctrl & alt, respectively...
+            that.extraKey = e.keyCode;
+        }
         else {
             if(e.keyCode == 32) {
                 that.toggleControlPanel();
             }
-            if (that.extraKey == 0) {
+            if (that.extraKey == 16) {  // shift key
                 if (e.keyCode == 49)     // '1'
                     that.toggleShowPanel('.tselector');
                 if (e.keyCode == 50)     // '2'
                     that.toggleShowPanel('.vselector');
                 if (e.keyCode == 51)     // '3'
                     that.toggleShowPanel('.eselector');
-} 
-            if (that.onkeydown != undefined) that.onkeydown(e, this.extraKey);
+            }
+            if (that.onkeydown != undefined) that.onkeydown(e, that.extraKey);
         }
     };
 
@@ -66,7 +61,6 @@ function mediaUtils(canned, scene, camera,
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
         that.toggleVideoControls();
-        that.setInitialCameraPosition();
 	};
     this.doneLoadingConfig = function() {
         var meshListHTML = document.getElementById('meshContainerId').innerHTML;
@@ -80,9 +74,6 @@ function mediaUtils(canned, scene, camera,
             that.hideAllControls();
         }
     }
-    this.setInitialCameraPosition = function() {
-        that.camera.position.x = -1; that.camera.position.y = 0.0; that.camera.position.z = 0;   
-    };
     this.setupMediaIcons = function() {
         var textureListHTML = document.getElementById(that.mediaListContainerId).innerHTML;
         for (var i = 0; i < myTextures.length; i++)
@@ -146,13 +137,13 @@ function mediaUtils(canned, scene, camera,
     }
     this.setupCameraControlIcons = function() {
     	var container = document.getElementById(that.cameraControlsContainerId);
-    	appendSingleIcon(container, 'cameraControlIcon', 'left', 'Camera Left', that.cameraLeft);
-    	appendSingleIcon(container, 'cameraControlIcon', 'up', 'Camera Up', that.cameraUp);
-    	appendSingleIcon(container, 'cameraControlIcon', 'down', 'Camera Down', that.cameraDown);
-    	appendSingleIcon(container, 'cameraControlIcon', 'right', 'Camera Right', that.cameraRight);
-    	appendSingleIcon(container, 'cameraControlIcon', 'rotateLeft', 'Rotate Left', that.cameraRotateLeft);
-    	appendSingleIcon(container, 'cameraControlIcon', 'rotateRight', 'Rotate Right', that.cameraRotateRight);
-    	appendSingleIcon(container, 'cameraControlIcon', 'stop', 'Camera Stop', that.cameraStop);
+    	appendSingleIcon(container, 'cameraControlIcon', 'left', 'Camera Left', TRANSFORM.camera.cameraLeft);
+    	appendSingleIcon(container, 'cameraControlIcon', 'up', 'Camera Up', TRANSFORM.camera.cameraUp);
+    	appendSingleIcon(container, 'cameraControlIcon', 'down', 'Camera Down', TRANSFORM.camera.cameraDown);
+    	appendSingleIcon(container, 'cameraControlIcon', 'right', 'Camera Right', TRANSFORM.camera.cameraRight);
+    	appendSingleIcon(container, 'cameraControlIcon', 'rotateLeft', 'Rotate Left', TRANSFORM.camera.cameraRotateLeft);
+    	appendSingleIcon(container, 'cameraControlIcon', 'rotateRight', 'Rotate Right', TRANSFORM.camera.cameraRotateRight);
+    	appendSingleIcon(container, 'cameraControlIcon', 'stop', 'Camera Stop', TRANSFORM.camera.cameraStop);
         appendSingleIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
         appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', that.narrowFOV);
         appendSingleIcon(container, 'cameraControlIcon', 'fovWide', 'Wider Viewport', that.widerFOV);
@@ -218,6 +209,7 @@ function mediaUtils(canned, scene, camera,
 		}
 		else {
             $('.showhide').show();
+            $('.tselector').hide();
             $('#mediaListContainer').show();    // needed to hide all on start.
             $('.dg.ac').show();
         }
@@ -244,47 +236,20 @@ function mediaUtils(canned, scene, camera,
     
     }
 	this.toggleVideoControls = function() {
-		if (that.videoManager.videoDisplayed)
 			$('#' + that.videoControlsContainerId).show();
-		else {
-			$('#' + that.videoControlsContainerId).hide();
-			// that.videoManager.video_stop();
-		}
 	}
     this.animationFrame = 0;
 	this.animate = function(cameraVectorLength, videoCurrentTime) {
         this.animationFrame++;
         if (that.geoIndex == 1) {       //plane
-            that.setInitialCameraPosition();
-            that.camera.position.x *=-1;
+            TRANSFORM.camera.camera.position.x *=-1;
         }
         else {
-            if (1 ==2 && cameraVectorLength > 0 && that.geoIndex == 0) { // sphere
-        		var unitVector = (new THREE.Vector3())
-                    .copy(that.camera.position)
-                    .normalize()
-                    .multiplyScalar(cameraVectorLength);
-                that.camera.position.set(unitVector.x, unitVector.y, unitVector.z);
-            }
-            that.camera.lookAt(new THREE.Vector3(0,0,0));
             TRANSFORM.meshInventory.morphFunction(this.animationFrame);
-            rotateCameraY(that.camera, that.rotateYAmount);
-            rotateCameraUpDown(that.camera, that.rotateXAmount);
-            rotateCameraZ(that.camera, that.rotateZAmount);
-            // if (that.rotateZAmount > 0) {
-            //     console.log("Changing Camera up!");
-            //     that.camera.up.set(0,1,1);
-            // }
-            // that.camera.rotateZ(that.rotateZAmount+that.camera.rotation.z);
-            // console.log(that.camera.rotation.z, that.rotateZAmount);
             for (var verticalMirrorName in _verticalMirror)
                 _verticalMirror[verticalMirrorName].render();
-            // that.camera.rotateY(that.rotateZAmount);
-            // that.camera.rotateX(that.rotateZAmount);
-            that.camera.position.x = that.cameraZoomAmount*that.camera.position.x;
-            that.camera.position.y = that.cameraZoomAmount*that.camera.position.y;
-            that.camera.position.z = that.cameraZoomAmount*that.camera.position.z;
-            
+
+            TRANSFORM.camera.animate();
         }
         var obj = that.videoManager.animate(that.activeMeshName);
         if (obj.str != undefined)
@@ -352,11 +317,19 @@ function mediaUtils(canned, scene, camera,
         that.activeMeshName = meshName;
         that.changeMeshBeingEditedOverridable(meshName);
     }
-    this.initializeReimannDomeForVideoName = function(meshName, pid, desiredGeoName, position, scale, rotationAxis, rotationAngle) {
+    this.initializeReimannDomeForVideoName = function(
+            meshName,
+            pid,
+            desiredGeoName,
+            position,
+            scale,
+            rotationAxis,
+            rotationAngle, pidType)
+    {
         if (this.activeMeshName == undefined)
             this.activeMeshName = meshName;
         TRANSFORM.meshInventory.newMesh(meshName, desiredGeoName, position, scale, 'reimann', rotationAxis, rotationAngle);
-        this.updateReimannDomeForVideoName(meshName, pid);
+        this.updateReimannDomeForVideoName(meshName, pid, pidType);
     }
     this.updateReimannDomeForVideoName = function(meshName, pid, pidType) {
         var textureConsumers = [function(videoTexture) {
@@ -364,54 +337,12 @@ function mediaUtils(canned, scene, camera,
                 that.buildMaterialForTexture);
         }];
         if (pidType == 'stream') {
-            that.videoManager.makeStream(meshName, pid, textureConsumers,
-        "stream");
+            that.videoManager.makeStream(meshName, pid, textureConsumers, "stream");
         }
         else {
             that.videoManager.addVideo(meshName, pid, textureConsumers, "video");
             that.toggleVideoControls();            
         }
 	}
-    this.cameraLeft = function() {
-        that.rotateYAmount -= 0.0005;
-    }  
-    this.cameraRight = function() {
-        that.rotateYAmount += 0.0005;
-    }  
-    this.cameraUp = function() {
-        that.rotateXAmount -= 0.002;
-    }  
-    this.cameraDown = function() {
-        that.rotateXAmount += 0.002;
-    }  
-    this.cameraStop = function() {
-        that.rotateZAmount = 0.0;
-        that.rotateYAmount = 0.;
-        that.rotateXAmount = 0.;
-    }  
-    this.cameraRotateLeft = function() {
-        that.rotateZAmount -= 0.002;
-    }  
-    this.cameraRotateRight = function() {
-        that.rotateZAmount += 0.002;
-    }
-    this.cameraZoom = function(scale) {
-        that.cameraZoomAmount = scale;
-    }  
-    this.flipCamera = function() {
-    	that.camera.position.x = - that.camera.position.x;
-    	that.camera.position.y = - that.camera.position.y;
-    	that.camera.position.z = - that.camera.position.z;
-    }
-    this.narrowFOV = function() {
-        that.FOV += 15;
-        that.camera.fov = that.FOV;
-        that.camera.updateProjectionMatrix();
-    }
-    this.widerFOV = function() {
-        that.FOV -= 15;
-        that.camera.fov = that.FOV;
-        that.camera.updateProjectionMatrix();
-    }
     this.initMediaUtils();
 }

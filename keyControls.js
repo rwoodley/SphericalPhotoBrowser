@@ -1,5 +1,9 @@
 // This is broken out so key controls can work with multiple meshes
 // In other words, if you press an arrow key, all meshes will rotate.
+// It is not required if you are only working with a single mesh.
+// It only implements a sub-set of the full commands because, no time/no need.
+// It works directly on the uniforms so bypasses legacyEditor/keyboardEditor. Those can still be invoked
+// on a single mesh at a time.
 function keyControls(inMeshNames, e1x, e1y, e2x, e2y) {
     var that = this;
     this.meshNames = inMeshNames;

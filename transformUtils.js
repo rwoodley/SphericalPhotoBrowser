@@ -1,9 +1,9 @@
-function transformUtils(camera, 
+function transformUtils(cameraContext,
     transformControlsContainerId, complexControlsContainerId, 
     transformControls2ContainerId, textureControlsContainerId,
     mediaUtils) {
     this.canvas = document.querySelector('canvas');
-	this.camera = camera;
+	this.cameraContext = cameraContext;
 	var that = this;
     this.mediaUtils = mediaUtils;
     that.recording = false;
@@ -13,21 +13,15 @@ function transformUtils(camera,
             //that.currentUniforms.showFixedPoints.value = 0;
             $('.statusText').hide();
         }
-        if (e.keyCode == 77) {  // 'm'
-            that.useGreenMask();
-        }
-        if (e.keyCode == 70) {    // f=flight. shift-f = record flight. 
-            _flightControl.toggleStartStop(extraKey == 16);
-        }
-        if (e.keyCode == 88 && extraKey == 16) {  // shift-X - start/stop recording
-            if (!that.recording) {
-                that.startRecording();
-            }
-            else {
-                that.stopRecording();
-            }
-        }
-        that.reimannShaderEditor.onkeydown(e, extraKey);
+//        if (e.keyCode == 88 && extraKey == 16) {  // shift-X - start/stop recording
+//            if (!that.recording) {
+//                that.startRecording();
+//            }
+//            else {
+//                that.stopRecording();
+//            }
+//        }
+        that.keyboardEditor.onkeydown(e, extraKey);
         e.preventDefault();
     }
     this.startRecording = function() {
@@ -57,15 +51,16 @@ function transformUtils(camera,
     mediaUtils.buildMaterialForTexture = function(texture, meshName) {
         // yes, the name of the mesh is the same name we use to look up uniforms.
         var newMaterial = getReimannShaderMaterial(
-            texture, 
+            texture,
             TRANSFORM.reimannShaderList.getShaderDetailsObject(meshName).currentUniforms
             );
         setMipMapOptions(texture);
-        return newMaterial; 
+        return newMaterial;
     }
     mediaUtils.changeMeshBeingEditedOverridable = function(meshName) {
         details = TRANSFORM.reimannShaderList.getShaderDetailsObject(meshName);
-        that.reimannShaderEditor.setShaderDetails(details);
+        that.legacyEditor.setShaderDetails(details);
+        that.keyboardEditor.setShaderDetails(details);
     }
     this.animate = function() {
         var videoCurrentTime = 0;
@@ -77,6 +72,7 @@ function transformUtils(camera,
         if (that.capturer != undefined) {
             that.capturer.capture( that.canvas );
         }
+        // Update uniforms. Snatch animationFrame for delay mask if needed.
         TRANSFORM.reimannShaderList.animate(
             that.mediaUtils.animationFrame,
             that.mediaUtils.videoManager.videoDisplayed,
@@ -88,15 +84,20 @@ function transformUtils(camera,
 
     detailsObject = TRANSFORM.reimannShaderList.getShaderDetailsObject('default');
 
-    this.reimannShaderEditor = new reimannUniformsEditor(
-        this.camera, this.mediaUtils,
-        transformControlsContainerId, complexControlsContainerId, 
+    this.legacyEditor = new legacyEditor(
+        this.cameraContext.camera, this.mediaUtils,
+        transformControlsContainerId, complexControlsContainerId,
         transformControls2ContainerId, textureControlsContainerId,
         new SU2Symmetries()
     );
-    if (detailsObject != undefined)
-        this.reimannShaderEditor.setShaderDetails(detailsObject);
-    TRANSFORM.reimannShaderList.editor = this.reimannShaderEditor;
+    this.keyboardEditor = new keyboardEditor(
+        this.cameraContext, this.mediaUtils
+    );
+    if (detailsObject != undefined) {
+        this.legacyEditor.setShaderDetails(detailsObject);
+        this.keyboardEditor.setShaderDetails(detailsObject);
+    }
+    TRANSFORM.reimannShaderList.editor = this.keyboardEditor;
     //TRANSFORM.reimannShaderList.mediaUtils = this.mediaUtils;
 
 

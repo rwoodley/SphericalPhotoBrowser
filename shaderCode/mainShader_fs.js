@@ -89,12 +89,7 @@ vec4 applyMask(vec2 uv, vec2 complexPoint) {        // subtracting t2 from t1.
             return vec4(0.,0.,0.,0.);
     }
 
-    // if (uTextureNumber == 0)
-        textureValue = wrappedTexture2D( iChannel0,  uv);
-    // if (uTextureNumber == 1)
-    //     textureValue = wrappedTexture2D( iChannelDelayMask1,  uv);
-    // if (uTextureNumber == 2)
-    //     textureValue = wrappedTexture2D( iChannelStillMask1,  uv);
+    textureValue = wrappedTexture2D( iChannel0,  uv);
 
     if (uAnimationEffect == 1) {
         // if (uAnimationEffect == 1) {

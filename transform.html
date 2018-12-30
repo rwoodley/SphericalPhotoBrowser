@@ -38,7 +38,11 @@
 
         <script src="reimannShaderSupport.js"></script>
         <script src="videoManager.js"></script>
-        <script src="reimannShaderEditor.js"></script>
+        <script src="riemannShaderEditors/legacyEditor.js"></script>
+        <script src="riemannShaderEditors/keyboardHandlers.js"></script>
+        <script src="riemannShaderEditors/keyboardHandlerComplex.js"></script>
+        <script src="riemannShaderEditors/keyboardEditor.js"></script>
+        <script src="riemannShaderEditors/cameraContext.js"></script>
         <script src="meshManager.js"></script>
         <script src="meshInventory.js"></script>
         <script src="cannedConfigs.js"></script>
@@ -166,6 +170,8 @@ function init() {
 
     // render inner objects
     // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
+    cameraContext = new cameraContext(_camera);
+
     _mediaUtils = new mediaUtils(
         _canned,
         _scene, 
@@ -176,7 +182,7 @@ function init() {
         rightClickHandler,
         true);
 
-    _transformUtils = new transformUtils(_camera, 
+    _transformUtils = new transformUtils(cameraContext,
         "transformControlsContainerId", 
         "complexControlsContainerId", 
         "transformControls2ContainerId",

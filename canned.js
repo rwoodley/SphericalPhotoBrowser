@@ -55,12 +55,12 @@ function cannedRun(scene, flightControl) {
         that.keyControls = retdic['keyControls'];
     }
     this._initMediaUtils = function(mediaUtils) {   // when still or video is defined in URL
-        mediaUtils.camera.position.set(
+        TRANSFORM.camera.camera.position.set(
             this.generalSettings.cameraPosition[0],
             this.generalSettings.cameraPosition[1],
             this.generalSettings.cameraPosition[2]);
         mediaUtils.rotateYAmount -= this.generalSettings.rotateYAmount;
-        rotateCameraUpDown(mediaUtils.camera, this.generalSettings.initialUpDownRotation);
+        rotateCameraUpDown(TRANSFORM.camera.camera, this.generalSettings.initialUpDownRotation);
         if (this.generalSettings.fog) {
             that.scene.fog = new THREE.Fog( 0xaaaaaa, 1, 1000);
         }
@@ -168,14 +168,36 @@ function cannedRun(scene, flightControl) {
                 var mesh = getNoMaterialMesh(meshName, meshSpecs);
                 var WIDTH = window.innerWidth;
                 var HEIGHT = window.innerHeight;
-                var verticalMirror = new THREE.Mirror( renderer, mediaUtils.camera, { 
-                    clipBias: 0.003, 
+                var verticalMirror = new THREE.Mirror( renderer, TRANSFORM.camera.camera, {
+                    clipBias: 0.003,
                     textureWidth: WIDTH, 
                     textureHeight: HEIGHT, 
                     color:0x00aaaa } );
                 mesh.mesh.material =  verticalMirror.material;
 				mesh.mesh.add( verticalMirror );
                 _verticalMirror[meshName] = verticalMirror;
+            }
+            else if (meshSpecs['textureType'] == 'stream') {
+                mediaUtils.initializeReimannDomeForVideoName(
+                    meshName,
+                    meshSpecs['textureName'],
+                    meshSpecs['geometry'],
+                    meshSpecs['position'],
+                    meshSpecs['scale'],
+                    meshSpecs['rotationAxis'],
+                    meshSpecs['rotationAngle'],
+                    'stream'
+                    );
+                if (that.generalSettings.videoReloadDelayInSeconds > -1) {
+                    mediaUtils.videoManager.onVideoEnded = function () {
+                        console.log("here..........");
+                        window.setTimeout(function () {
+                            console.log("Video is done, reloading.")
+                            location.reload(true);
+                        },
+                            that.generalSettings.videoReloadDelayInSeconds * 1000);
+                    }
+                }
             }
             else {
                 mediaUtils.initializeReimannDomeForVideoName(
@@ -185,7 +207,8 @@ function cannedRun(scene, flightControl) {
                     meshSpecs['position'],
                     meshSpecs['scale'],
                     meshSpecs['rotationAxis'],
-                    meshSpecs['rotationAngle']
+                    meshSpecs['rotationAngle'],
+                    'video'
                     );
                 if (that.generalSettings.videoReloadDelayInSeconds > -1) {
                     mediaUtils.videoManager.onVideoEnded = function () {

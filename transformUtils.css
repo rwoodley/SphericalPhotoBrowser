@@ -109,19 +109,19 @@ body {
     left: 10%; 
 }
 #wordText {
-    display: block; 
-    position: fixed; 
-    top: 5%; 
-    left: 10%; 
-    font-size: 20px; 
-    color: red;    
+    display: block;
+    position: fixed;
+    top: 95%;
+    left: 90%;
+    font-size: 20px;
+    color: red;
     border: 1px solid white;
 }
 .redText {
-    font-size: 40px; 
-    color: red;    
+    font-size: 40px;
+    color: red;
     border: 1px solid white;
 }
 .redText td {
-    border: 1px solid blue;    
+    border: 1px solid blue;
 }

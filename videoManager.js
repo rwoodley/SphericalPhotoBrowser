@@ -12,6 +12,7 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
         that.videoSource = document.createElement('source');
         that.video.appendChild(that.videoSource);
         that.video.addEventListener('ended', function() { that.onVideoEnded() } );
+        that.textureConsumers = textureConsumers;
         this.setVideoSourceFromPid(pid, pidType);
 
         that.videoTexture = new THREE.Texture(that.video);
@@ -21,11 +22,13 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
     }
     this.setVideoSourceFromPid = function(pid, pidType) {
         if (pidType === 'stream') {
-            that.video.pause();     // this line is necessary if you're switch from video to stream, it seems.
-            that.videoSource.setAttribute('src', window.URL.createObjectURL(that.streams[pid]));            
-            that.video.load();     // this line is necessary if you're switch from video to stream, it seems.
+//            that.video.pause();     // this line is necessary if you're switch from video to stream, it seems.
+            that.video.srcObject = that.streams[pid];
+            that.video.play();
         }
         else {
+            that.video.srcObject = null;
+//            that.streams[pid].stop();
             var pathToTexture = 'media/' + pid;
             if (pid.indexOf('.') == -1)
                 pathToTexture = 'media/' + pid + '.mp4';
@@ -41,7 +44,10 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
         console.log("The video ended. I have nothing to do so I'm doing nothing. Over-ride this to do something.")
     }
     this.loadNewVideo = function(pid, pidType) {
-        that.unloadVideo();
+        that.video.pause();
+        for (var index in textureConsumers) {
+            textureConsumers[index](that.videoTexture);
+        }
         this.setVideoSourceFromPid(pid, pidType);
     }
     this.unloadVideo = function() {
@@ -85,7 +91,8 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
     }
     this.animate = function() {
 		if (that.video.readyState === that.video.HAVE_ENOUGH_DATA ) {
-            if (that.videoTexture) that.videoTexture.needsUpdate = true; 
+            if (that.videoTexture)
+                that.videoTexture.needsUpdate = true;
             if (that.recordingUnderway)
                 return 'recording';
             var timeRemaining = (that.video.duration - that.video.currentTime).toFixed(0);
