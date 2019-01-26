@@ -196,7 +196,8 @@ function init() {
 function animate() {
     setTimeout(function() {
         requestAnimationFrame( animate );
-    }, 1000/29.97       // this syncs up with OBS screen capture (and others)
+    }, 1000/60       // this syncs up with AVerMedia
+//    }, 1000/29.97       // this syncs up with OBS screen capture (and others)
     );
     _controls.update( _clock.getDelta() );
     _renderer.render( _scene, _camera );

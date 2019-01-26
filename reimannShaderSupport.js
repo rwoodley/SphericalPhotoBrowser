@@ -376,19 +376,37 @@ reimannShaderDetailsObject = function(name) {
 function getReimannShaderMaterial(texture, uniforms) {
     if (texture != undefined)
         uniforms.iChannel0 =  { type: 't', value: texture }; 
-    var fragmentShaderCode = 
-        ""
-        + SHADERCODE.uniformsAndGlobals()
-        + SHADERCODE.mathUtils()
-        + SHADERCODE.mobiusTransformUtils()
-        + SHADERCODE.polygonalGroupsCode()
-        + SHADERCODE.drosteUtils()
-        + SHADERCODE.animationUtils()
-        + SHADERCODE.symmetryUtils()
-        + SHADERCODE.schottkyUtilsCommon()
-        + SHADERCODE.schottkyUtils()
-        + SHADERCODE.mainShader_fs()
-    ;
+    var fragmentShaderCode;
+
+     if (getUrlVars()["lite"] == "true") {
+         fragmentShaderCode =
+            ""
+            + SHADERCODE.uniformsAndGlobals()
+            + SHADERCODE.mathUtils()
+            + SHADERCODE.mobiusTransformUtils()
+            + SHADERCODE.polygonalGroupsCodeLite()
+            + SHADERCODE.drosteLiteUtils()
+            + SHADERCODE.animationUtils()
+            + SHADERCODE.schottkyUtilsCommon()
+            + SHADERCODE.schottkyUtils()
+            + SHADERCODE.mainShader_fs()
+              ;
+    }
+    else {
+         fragmentShaderCode =
+            ""
+            + SHADERCODE.uniformsAndGlobals()
+            + SHADERCODE.mathUtils()
+            + SHADERCODE.mobiusTransformUtils()
+            + SHADERCODE.polygonalGroupsCode()
+            + SHADERCODE.drosteUtils()
+            + SHADERCODE.animationUtils()
+            + SHADERCODE.symmetryUtils()
+            + SHADERCODE.schottkyUtilsCommon()
+            + SHADERCODE.schottkyUtils()
+            + SHADERCODE.mainShader_fs()
+        ;
+    }
     console.log(">>>>>>>>>>>>>>>>>>>Create shader material");
     var newMaterial = new THREE.ShaderMaterial( {
         uniforms: uniforms,

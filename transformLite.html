@@ -38,7 +38,11 @@
 
         <script src="reimannShaderSupport.js"></script>
         <script src="videoManager.js"></script>
-        <script src="reimannShaderEditor.js"></script>
+        <script src="riemannShaderEditors/legacyEditor.js"></script>
+        <script src="riemannShaderEditors/keyboardHandlers.js"></script>
+        <script src="riemannShaderEditors/keyboardHandlerComplex.js"></script>
+        <script src="riemannShaderEditors/keyboardEditor.js"></script>
+        <script src="riemannShaderEditors/cameraContext.js"></script>
         <script src="meshManager.js"></script>
         <script src="meshInventory.js"></script>
         <script src="cannedConfigs.js"></script>
@@ -102,7 +106,6 @@ TRANSFORM.loadDatGuiStuff = function() {
         TRANSFORM.datGuiLoaded = true;
     }
 }
-
 function init() {
     if ( ! Detector.webgl ) {
         Detector.addGetWebGLMessage();
@@ -118,7 +121,7 @@ function init() {
     TRANSFORM.meshInventory = new meshInventory(_scene);
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
     directionalLight.position.set( 1, 1, 1 ).normalize();
-    _scene.add( directionalLight );
+    //_scene.add( directionalLight );
 
 
     _controls = new THREE.OrbitControls( _camera, _container.domElement );
@@ -137,8 +140,6 @@ function init() {
     _flightControl = new flight(_clock);
     _canned = new cannedRun(_scene,_flightControl);
 
-    var skyMaterialOld = new THREE.MeshBasicMaterial({color: 0xffaaff, side: THREE.DoubleSide} );
-
     // _canned.changeSkyDome(_scene);
 
     _stats = new Stats();
@@ -148,9 +149,6 @@ function init() {
             pid = 'media/' + event.target.id.replace('textureSelector_','');
             console.log(pid);
             (new THREE.TextureLoader()).load(pid, function ( texture ) {
-                // setMipMapOptions(texture);
-                // material.map = texture;
-                // var material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide, shading: THREE.FlatShading});
                 var material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });            
                 material.map = texture;
                 TRANSFORM.meshInventory.meshes['skyDome'].material = material;  // do we really need this twice?
@@ -171,6 +169,8 @@ function init() {
 
     // render inner objects
     // outer sphere must be rendered first, then inner objects, see note above re sortOrder.
+    cameraContext = new cameraContext(_camera);
+
     _mediaUtils = new mediaUtils(
         _canned,
         _scene, 
@@ -181,7 +181,7 @@ function init() {
         rightClickHandler,
         true);
 
-    _transformUtils = new transformUtils(_camera, 
+    _transformUtils = new transformUtils(cameraContext,
         "transformControlsContainerId", 
         "complexControlsContainerId", 
         "transformControls2ContainerId",
@@ -193,7 +193,10 @@ function init() {
     animate();  // not all textures may be loaded here. oh well.
 }
 function animate() {
-    requestAnimationFrame( animate );
+    setTimeout(function() {
+        requestAnimationFrame( animate );
+    }, 1000/29.97       // this syncs up with OBS screen capture (and others)
+    );
     _controls.update( _clock.getDelta() );
     _renderer.render( _scene, _camera );
     _transformUtils.animate();
@@ -217,15 +220,15 @@ $().ready(function() {
         position: absolute; left: 15px; top: 75px;"
         controls="true" autoplay="true">
       </video>
-      <video  id="video2" 
+      <video  id="video2"
       style="display: none;
       position: absolute; left: 15px; top: 75px;"
       controls="true" autoplay="true">
     </video>
   <div id="container"><br /><br /><br /><br /><br />Generating...</div>
-  <div id="matrixText" class='redText'></div>
-  <div id="fractionText" class='redText'></div>
-  <div id="wordText"  class='redText'></div>
+        <div id="matrixText" style="display: block; position: fixed; top: 10%; left: 10%; font-size: 40px; color: red; ">
+        </div>
+
 
         <div style="position: fixed; top: 30%; width:95%; ">
              <div id='cameraText' class="statusText"></div>

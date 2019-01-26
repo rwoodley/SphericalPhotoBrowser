@@ -1,4 +1,4 @@
-SHADERCODE.polygonalGroupsCode = function () {
+SHADERCODE.polygonalGroupsCodeLite = function () {
     var x = `  
 // This has the polygonal group formulas, and a few others.
 // these others are prefixed with 'adhoc;.

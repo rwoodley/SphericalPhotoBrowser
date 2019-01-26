@@ -1,4 +1,4 @@
-SHADERCODE.drosteUtils = function() {
+SHADERCODE.drosteLiteUtils = function() {
     var x = `  
          vec2 applyRoundDroste(in vec2 z) {
              return vec2(0.,0.);

@@ -185,7 +185,7 @@ this.legacyEditor = function(
             showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.useStillMask = function() {
-            var pathToSubtractionTexture = that.mediaUtils.currentPathToSkyDomeTexture  ;
+            var pathToSubtractionTexture = that.mediaUtils.pathToCurrentSubtractionTexture  ;
             (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
                 console.log("reimannShaderSupport.setDefaults(): loading texture for iChannelDelayMask");
                 setMipMapOptions(texture);

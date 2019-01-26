@@ -12,7 +12,7 @@ function mediaUtils(canned, scene,
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
        rightClickHandler, addEffects) {
 	var that = this;
-	this.currentPathToSkyDomeTexture = 'placeHolderStill.png';
+	this.pathToCurrentSubtractionTexture = 'placeHolderStill.png';
     this.canned = canned;
     this.addEffects = addEffects;
 	this.mediaListContainerId = mediaListContainerId;
@@ -144,9 +144,23 @@ function mediaUtils(canned, scene,
     	appendSingleIcon(container, 'cameraControlIcon', 'rotateLeft', 'Rotate Left', TRANSFORM.camera.cameraRotateLeft);
     	appendSingleIcon(container, 'cameraControlIcon', 'rotateRight', 'Rotate Right', TRANSFORM.camera.cameraRotateRight);
     	appendSingleIcon(container, 'cameraControlIcon', 'stop', 'Camera Stop', TRANSFORM.camera.cameraStop);
-        appendSingleIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', that.flipCamera);
-        appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', that.narrowFOV);
-        appendSingleIcon(container, 'cameraControlIcon', 'fovWide', 'Wider Viewport', that.widerFOV);
+        appendSingleIcon(container, 'cameraControlIcon', 'flipCamera', 'Flip Camera', TRANSFORM.camera.flipCamera);
+        appendSingleIcon(container, 'cameraControlIcon', 'fovNarrow', 'Smaller Viewport', TRANSFORM.camera.narrowFOV);
+        appendSingleIcon(container, 'cameraControlIcon', 'fovWide', 'Wider Viewport', TRANSFORM.camera.widerFOV);
+
+    	el = document.createElement('span');
+        el.style='width: 30px; height: 30px;';
+        el.className='showhide cameraControlIcon';
+        el.innerHTML="3840<br/>1920"
+        container.appendChild(el);
+    	$(el).click(screenSizeHuge);
+
+    	el = document.createElement('span');
+        el.style='width: 30px; height: 30px;';
+        el.className='showhide cameraControlIcon';
+        el.innerHTML="2560<br/>1600"
+        container.appendChild(el);
+    	$(el).click(screenSizeLarger);
 
     	el = document.createElement('span');
         el.style='width: 30px; height: 30px;';
@@ -168,6 +182,14 @@ function mediaUtils(canned, scene,
         el.innerHTML="720<br/>480"
         container.appendChild(el);
     	$(el).click(screenSizeSmall);
+    }
+    function screenSizeHuge() {
+        document.getElementsByTagName( 'canvas' )[0].style.width = "3840px";
+        document.getElementsByTagName( 'canvas' )[0].style.height = "1920px";
+    }
+    function screenSizeLarger() {
+        document.getElementsByTagName( 'canvas' )[0].style.width = "2560px";
+        document.getElementsByTagName( 'canvas' )[0].style.height = "1600px";
     }
     function screenSizeLarge() {
         document.getElementsByTagName( 'canvas' )[0].style.width = "1920px";
@@ -284,7 +306,7 @@ function mediaUtils(canned, scene,
         that.toggleVideoControls();
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
-        that.currentPathToSkyDomeTexture = pathToTexture;
+        that.pathToCurrentSubtractionTexture = pathToTexture;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
             console.log("updateReimannDomeForFileName: loading texture");
             TRANSFORM.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
@@ -332,6 +354,7 @@ function mediaUtils(canned, scene,
         this.updateReimannDomeForVideoName(meshName, pid, pidType);
     }
     this.updateReimannDomeForVideoName = function(meshName, pid, pidType) {
+
         var textureConsumers = [function(videoTexture) {
             TRANSFORM.meshInventory.setTexture(meshName, videoTexture, 
                 that.buildMaterialForTexture);
@@ -340,6 +363,8 @@ function mediaUtils(canned, scene,
             that.videoManager.makeStream(meshName, pid, textureConsumers, "stream");
         }
         else {
+            console.log("pid is " + pid);
+            that.pathToCurrentSubtractionTexture = "media/" + pid + "_subtractionTexture.png";
             that.videoManager.addVideo(meshName, pid, textureConsumers, "video");
             that.toggleVideoControls();            
         }

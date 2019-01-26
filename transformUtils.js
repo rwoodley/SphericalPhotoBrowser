@@ -13,14 +13,14 @@ function transformUtils(cameraContext,
             //that.currentUniforms.showFixedPoints.value = 0;
             $('.statusText').hide();
         }
-//        if (e.keyCode == 88 && extraKey == 16) {  // shift-X - start/stop recording
-//            if (!that.recording) {
-//                that.startRecording();
-//            }
-//            else {
-//                that.stopRecording();
-//            }
-//        }
+        if (e.keyCode == 88 && extraKey == 16) {  // shift-X - start/stop recording
+            if (!that.recording) {
+                that.startRecording();
+            }
+            else {
+                that.stopRecording();
+            }
+        }
         that.keyboardEditor.onkeydown(e, extraKey);
         e.preventDefault();
     }
@@ -97,7 +97,7 @@ function transformUtils(cameraContext,
         this.legacyEditor.setShaderDetails(detailsObject);
         this.keyboardEditor.setShaderDetails(detailsObject);
     }
-    TRANSFORM.reimannShaderList.editor = this.keyboardEditor;
+    TRANSFORM.reimannShaderList.editor = this.legacyEditor;
     //TRANSFORM.reimannShaderList.mediaUtils = this.mediaUtils;
 
 
