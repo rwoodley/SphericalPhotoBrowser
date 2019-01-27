@@ -551,6 +551,35 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         };
         configs['skyDome'] = simpleSkyDome('hdr1.jpg');
     }
+    if (mode == 'video') {
+        generalSettings.cameraPosition = [-7.8, 4.8, -2.7];
+        var uniforms = TRANSFORM.reimannShaderList.createShader('default');
+        uniforms.complexEffect3OnOff.value = 0;
+
+        uniforms.mobiusEffectsOnOff.value = 1
+        uniforms.e1x.value = 0.0;
+        uniforms.e1y.value = 0.0;
+        uniforms.e2x.value = 10.0;
+        uniforms.e2y.value = 10.0;
+        uniforms.showFixedPoints.value = 0;
+        factor = .8;        // adelheid wants more floor.
+        uniforms.loxodromicX.value *= factor;
+        uniforms.loxodromicY.value *= factor;
+
+        var videoName = getParameter('name', window.location.href);
+
+        configs['default'] = {
+            'uniforms': uniforms,
+            'textureType': 'video',
+            'textureName': videoName,
+            'geometry': 'sphere',
+            'position': [0, 0, 0],
+            'scale': [1, 1, -1],
+        }
+        configs['skyDome'] = phongSkyDome();
+        document.getElementById("wordText").style.display='none';
+        document.getElementById("startVideoText").style.display='block';
+    }
     if (mode == 'torusTracker') {
         generalSettings.cameraPosition = [-13.2, -0.3, 2.0];
         generalSettings.videoReloadDelayInSeconds = 1;

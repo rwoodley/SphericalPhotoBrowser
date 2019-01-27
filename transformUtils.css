@@ -117,6 +117,16 @@ body {
     color: red;
     border: 1px solid white;
 }
+#startVideoText {
+    background-color: white;
+    display: block;
+    position: fixed;
+    top: 45%;
+    left: 40%;
+    font-size: 40px;
+    color: black;
+    border: 1px solid white;
+}
 .redText {
     font-size: 40px;
     color: red;

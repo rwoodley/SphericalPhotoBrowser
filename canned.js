@@ -70,6 +70,7 @@ function cannedRun(scene, flightControl) {
 
         for (var meshName in this.configs) {
             var meshSpecs = this.configs[meshName];
+
             // when mediaUtils refers to a skyDome it means the inner dome.
             // in this file skyDome means the outer dome. it uses skyMaterial.
             // the inner dome uses textureName.
@@ -200,6 +201,7 @@ function cannedRun(scene, flightControl) {
                 }
             }
             else {
+                // Video
                 mediaUtils.initializeReimannDomeForVideoName(
                     meshName, 
                     meshSpecs['textureName'],
@@ -210,6 +212,11 @@ function cannedRun(scene, flightControl) {
                     meshSpecs['rotationAngle'],
                     'video'
                     );
+                document.getElementById("startVideoText").onclick = function() {
+                    console.log("user clicked, play video");
+                    mediaUtils.videoManager.video_play_all();
+                    document.getElementById("startVideoText").style.display = "None"
+                };
                 if (that.generalSettings.videoReloadDelayInSeconds > -1) {
                     mediaUtils.videoManager.onVideoEnded = function () {
                         console.log("here..........");

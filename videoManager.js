@@ -36,8 +36,8 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
             that.videoFileName = pid;
             that.videoSource.setAttribute('src', pathToTexture);
             that.video.load();
-            // that.video.pause();     
-            that.video.play();
+            // don't want to play video here because chrome throws an error if you try to
+            // play a video without user input, and this is called on init as well as on new video.
         }
     }
     this.onVideoEnded = function() {
@@ -49,9 +49,15 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
             textureConsumers[index](that.videoTexture);
         }
         this.setVideoSourceFromPid(pid, pidType);
+        // ok to play video at this point.
+        that.video.play();
     }
     this.unloadVideo = function() {
         that.video.pause();
+    }
+    this.video_play = function() {
+        that.video.mute = false;
+        that.video.play();
     }
     this.video_play = function() {
         // all this messing around to avoid a chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=593273
@@ -155,9 +161,14 @@ function videoManager(mu) { // handles streams too.
         that.videos[that.mediaUtils.activeMeshName].video_play();
         // $.map(that.videos, function(val,key){val.video_play()});
     }
-    this.video_play_all_for_recording = function(i,val) {
+    this.video_play_all_for_recording = function() {
         $.map(that.videos, function(val,key){
             val.start_recording();
+        });
+    }
+    this.video_play_all = function() {
+        $.map(that.videos, function(val,key){
+            val.video_play();
         });
     }
     this.stop_recording = function() {
