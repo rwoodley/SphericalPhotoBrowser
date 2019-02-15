@@ -185,6 +185,7 @@ this.legacyEditor = function(
             showToast('uMaskType = ' + that.currentUniforms.uMaskType.value, 1000);
     }
     this.useStillMask = function() {
+            // this is set whenever a user selects a new video.
             var pathToSubtractionTexture = that.mediaUtils.pathToCurrentSubtractionTexture  ;
             (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
                 console.log("reimannShaderSupport.setDefaults(): loading texture for iChannelDelayMask");

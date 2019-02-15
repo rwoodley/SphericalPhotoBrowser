@@ -34,37 +34,6 @@ it swaps in the uniforms it needs to edit.
     we need multiple uniformsEditors for the animation loop.
 - for now transformUtils only works on default uniforms.
 
-- put back in capture code.
-        // if (that.capturer != undefined && that.mediaUtils.animationFrame%120 == 0)
-        if (that.capturer != undefined){
-            var recording_fps = 60;
-            timing = that.capturer.getTiming();
-            actual_fps = timing.performancetime - that.lasttiming.performancetime;
-            ratio = actual_fps / recording_fps;
-            // playbackRate is normalised
-            that.mediaUtils.video.playbackRate = ratio;
-            that.lasttiming = timing;
-
-            that.capturer.capture( that.canvas );
-        }
-- put back in video restart code:
-    this.mediaUtils.postProcessingAfterVideoRestart = function() {
-        if (that.currentUniforms.enableTracking.value == 1)
-            that.trackerUtils.reset();        
-    }
-    this.mediaUtils.postProcessingAfterVideoLoad = function(pid) {
-        // Load stills for this video if they exist.
-        var pathToSubtractionTexture = 'media/' + pid + 'Still1.png';
-        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            setMipMapOptions(texture);
-            that.currentUniforms.iChannelStillMask1.value =  texture; 
-        });
-        var pathToSubtractionTexture = 'media/' + pid + 'Still2.png';
-        (new THREE.TextureLoader()).load(pathToSubtractionTexture, function ( texture ) {
-            setMipMapOptions(texture);
-            that.currentUniforms.iChannelStillMask2.value =  texture; 
-        });        
-    }
 
 TODO:
 - get tracking and recording working.

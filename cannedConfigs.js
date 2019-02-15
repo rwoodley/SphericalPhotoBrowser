@@ -373,11 +373,6 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
 
         generalSettings.cameraPosition = [2, 0, 0.];
 
-        // var uniforms = {
-        //     iChannelStillMask1: { type: 't', value: 0 },
-        //     iChannelStillMask2: { type: 't', value: 0 },
-        // };
-
         var uniforms = TRANSFORM.reimannShaderList.createShaderFewerTextures('default');
         // so... to animate, set uAnimationEffect and iChannelAnimation.
         uniforms.uAnimationEffect.value = 1;
@@ -562,12 +557,14 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
         uniforms.e2x.value = 10.0;
         uniforms.e2y.value = 10.0;
         uniforms.showFixedPoints.value = 0;
-        factor = .8;        // adelheid wants more floor.
-        uniforms.loxodromicX.value *= factor;
-        uniforms.loxodromicY.value *= factor;
 
         var videoName = getParameter('name', window.location.href);
+        zoomFactor = getParameter('zoomFactor', window.location.href);
+        if (zoomFactor == null) zoomFactor = 1;
 
+        factor = zoomFactor;        // adelheid wants more floor.
+        uniforms.loxodromicX.value *= factor;
+        uniforms.loxodromicY.value *= factor;
         configs['default'] = {
             'uniforms': uniforms,
             'textureType': 'video',

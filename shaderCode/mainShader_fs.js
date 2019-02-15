@@ -170,10 +170,13 @@ vec4 applyMask(vec2 uv, vec2 complexPoint) {        // subtracting t2 from t1.
             !checkMaskPointNew(t1, t2)
         )
         {
-            float gray = dot(t1.rgb, vec3(0.299,0.587,0.114));
-            clr = vec4(gray, gray, gray, 1.0);
-//            clr = vec4(gray,0.,0.,1.);
-//            clr = uColorBlack; // vec4(0.5,.5,1.,1.);
+            if (uBlackMask == 1)
+                clr = uColorBlack;   // vec4(0.,1.,1.,1.);
+            else {
+                float gray = dot(t1.rgb, vec3(0.299,0.587,0.114));
+                clr = vec4(gray, gray, gray, 1.0);
+
+           }
         }
 
         return clr;

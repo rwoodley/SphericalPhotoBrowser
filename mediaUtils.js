@@ -12,6 +12,8 @@ function mediaUtils(canned, scene,
 	   mediaListContainerId, cameraControlsContainerId, videoControlsContainerId,
        rightClickHandler, addEffects) {
 	var that = this;
+
+	// this is a default that gets over-ridden when a video is chosen:
 	this.pathToCurrentSubtractionTexture = 'placeHolderStill.png';
     this.canned = canned;
     this.addEffects = addEffects;
@@ -306,7 +308,6 @@ function mediaUtils(canned, scene,
         that.toggleVideoControls();
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
-        that.pathToCurrentSubtractionTexture = pathToTexture;
         (new THREE.TextureLoader()).load(pathToTexture, function ( texture ) {
             console.log("updateReimannDomeForFileName: loading texture");
             TRANSFORM.meshInventory.setTexture(meshName, texture, that.buildMaterialForTexture);
