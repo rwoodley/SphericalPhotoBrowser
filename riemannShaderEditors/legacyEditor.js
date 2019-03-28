@@ -76,7 +76,9 @@ this.legacyEditor = function(
         appendSingleIcon(container, 'transformControlIcon', 'transform2Icon.png', 'Decrease N', that.complexEffect2);                
         appendSingleIcon(container, 'transformControlIcon', 'transform3Icon.png', 'Apply transform', that.complexEffect3);                
         appendSingleIcon(container, 'transformControlIcon', 'transform4Icon.png', 'Apply transform', that.complexEffect4);
-        appendSingleIcon(container, 'transformControlIcon', 'polygons.png', 'Polygonal Groups', that.polygonalGroups);                
+        appendSingleIcon(container, 'transformControlIcon', 'tesselate.png', 'Elliptical Tiling', that.complexEffect5);
+        appendSingleIcon(container, 'transformControlIcon', 'flatGradient.png', 'Flat Shader', that.flatShader);
+        appendSingleIcon(container, 'transformControlIcon', 'polygons.png', 'Polygonal Groups', that.polygonalGroups);
         appendSingleIcon(container, 'transformControlIcon', 'S1.png', 'Apply theta schottky (Equal Circles)', that.schottkyEffect1);
         appendSingleIcon(container, 'transformControlIcon', 'S2.png', 'Apply theta schottky (Uneven Circles)', that.schottkyEffect2);
         appendSingleIcon(container, 'transformControlIcon', 'A.png', 'Apollonian Gasket', that.schottkyEffect3);
@@ -136,7 +138,14 @@ this.legacyEditor = function(
     this.complexEffect4 = function() { 
         that.currentUniforms.complexEffect4OnOff.value = that.currentUniforms.complexEffect4OnOff.value == 0 ? 1 : 0;
     }
-    this.polygonalGroups = function() { 
+    this.complexEffect5 = function() {
+        that.currentUniforms.complexEffect5OnOff.value = that.currentUniforms.complexEffect5OnOff.value == 0 ? 1 : 0;
+    }
+    this.flatShader = function() {
+        that.currentUniforms.flatShaderX.value = that.currentUniforms.flatShaderX.value == 0 ? window.innerWidth : 0;
+        that.currentUniforms.flatShaderY.value = that.currentUniforms.flatShaderY.value == 0 ? window.innerHeight : 0;
+    }
+    this.polygonalGroups = function() {
         that.currentUniforms.uPolygonalGroups.value++;
         console.log(that.currentUniforms.uPolygonalGroups.value);
         that.currentUniforms.uPolygonalGroups.value = that.currentUniforms.uPolygonalGroups.value%7;
@@ -366,6 +375,9 @@ this.legacyEditor = function(
         // that.currentUniforms.complexEffect2OnOff.value = 0;
         that.currentUniforms.complexEffect3OnOff.value = 0;
         that.currentUniforms.complexEffect4OnOff.value = 0;
+        that.currentUniforms.complexEffect5OnOff.value = 0;
+        that.currentUniforms.flatShaderX.value = 0;
+        that.currentUniforms.flatShaderY.value = 0;
         that.currentUniforms.uPolygonalGroups.value = 0;
         that.currentUniforms.schottkyEffectOnOff.value = 0;
         that.currentUniforms.fractalEffectOnOff.value = 0;

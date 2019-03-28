@@ -64,6 +64,7 @@ this.keyboardContext = function (camera, mediaUtils) {
         // that.currentUniforms.complexEffect2OnOff.value = 0;
         that.currentUniforms.complexEffect3OnOff.value = 0;
         that.currentUniforms.complexEffect4OnOff.value = 0;
+        that.currentUniforms.complexEffect5OnOff.value = 0;
         that.currentUniforms.schottkyEffectOnOff.value = 0;
         that.currentUniforms.fractalEffectOnOff.value = 0;
         that.currentUniforms.geometryTiming.value = 0;

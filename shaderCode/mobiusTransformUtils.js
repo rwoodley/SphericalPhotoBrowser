@@ -41,6 +41,9 @@ vec2 zoom(in vec2 z, in vec2 zoomDegree) {
     vec2 ans = cx_product(zoomDegree,z);
     return ans;
 }
+vec2 elliptical_tiling(vec2 z) {
+    return vec2(mod(z.x-.5, 1.0), mod(z.y-.5, 1.0));
+}
 vec2 anotherTransform(vec2 z) {
     vec2 n = z-i;
     vec2 d = z+i;

@@ -49,6 +49,7 @@ var x = `
     uniform int complexEffect2OnOff;
     uniform int complexEffect3OnOff;
     uniform int complexEffect4OnOff;
+    uniform int complexEffect5OnOff;
     uniform int uPolygonalGroups;
     uniform int schottkyEffectOnOff;
     uniform int fractalEffectOnOff;
@@ -59,6 +60,8 @@ var x = `
     uniform int drosteSpiral;
     uniform int drosteZoom;
     uniform int uNumCircles;
+    uniform float flatShaderX;
+    uniform float flatShaderY;
 
     uniform int  uBlackMask;
     uniform int uHighPassFilter;

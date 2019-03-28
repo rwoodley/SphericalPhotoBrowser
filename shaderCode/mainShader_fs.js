@@ -499,7 +499,16 @@ void main() {
     //     return;        
     // }
 
-    vec2 uv = vUv;
+    vec2 uv;
+
+    if (flatShaderX == 0.0) {
+        uv = vUv;
+    }
+    else {
+        uv = gl_FragCoord.xy/vec2(flatShaderX, flatShaderY);
+        uv = vec2(mod(uv.x+0.3,1.0),uv.y);
+    }
+
     vec2 a = uvToComplex(uv);
     if (tesselate == 1.) {
         a.x = my_mod(a.x, 1.);
@@ -615,6 +624,9 @@ void main() {
     }
     if (complexEffect4OnOff == 1) {
         result = cx_exp(result);
+    }
+    if (complexEffect5OnOff == 1) {
+        result = elliptical_tiling(result);
     }
     if (uPolygonalGroups == 1) {
         result = polygonalGroup_Tetrahedron(result);
