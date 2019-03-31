@@ -203,9 +203,9 @@ this.keyboardEditor = function(
             	window.innerWidth + " , " + window.innerHeight;
 
             document.getElementById('canvasSizeText').innerHTML = "Canvas (wxh): " +
-            	        document.getElementsByTagName( 'canvas' )[0].style.width  +
+            	        document.getElementById('MainCanvas').style.width  +
                 " , " +
-            	        document.getElementsByTagName( 'canvas' )[0].style.height;
+            	        document.getElementById('MainCanvas').style.height;
 
  		}
 		catch (x) {}

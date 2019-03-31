@@ -59,6 +59,7 @@ function mediaUtils(canned, scene,
 
     this.initMediaUtils = function() {
 	    that.videoManager = new videoManager(that);
+	    that.streamSource = new streamSource();
 	    that.setupMediaIcons();
 	    that.setupCameraControlIcons();
 	    that.setupVideoControlIcons();
@@ -104,6 +105,9 @@ function mediaUtils(canned, scene,
                     console.log(device.label);
                 }
             }
+
+
+            textureListHTML += "<span id='server' class='showhide sselector'>CV Server</span>";
 
             // and... finish setup.
             document.getElementById(that.mediaListContainerId).innerHTML = textureListHTML;
@@ -186,25 +190,25 @@ function mediaUtils(canned, scene,
     	$(el).click(screenSizeSmall);
     }
     function screenSizeHuge() {
-        document.getElementsByTagName( 'canvas' )[0].style.width = "3840px";
-        document.getElementsByTagName( 'canvas' )[0].style.height = "1920px";
+        document.getElementById('MainCanvas').style.width = "3840px";
+        document.getElementById('MainCanvas').style.height = "1920px";
     }
     function screenSizeLarger() {
-        document.getElementsByTagName( 'canvas' )[0].style.width = "2560px";
-        document.getElementsByTagName( 'canvas' )[0].style.height = "1600px";
+        document.getElementById('MainCanvas').style.width = "2560px";
+        document.getElementById('MainCanvas').style.height = "1600px";
     }
     function screenSizeLarge() {
-        document.getElementsByTagName( 'canvas' )[0].style.width = "1920px";
-        document.getElementsByTagName( 'canvas' )[0].style.height = "1080px";
+        document.getElementById('MainCanvas').style.width = "1920px";
+        document.getElementById('MainCanvas').style.height = "1080px";
     }
     function screenSizeMedium() {
-        document.getElementsByTagName( 'canvas' )[0].style.width = "1280px";
-        document.getElementsByTagName( 'canvas' )[0].style.height = "720px";
+        document.getElementById('MainCanvas').style.width = "1280px";
+        document.getElementById('MainCanvas').style.height = "720px";
         window.resizeTo(1280, 720)
     }
     function screenSizeSmall() {
-        document.getElementsByTagName( 'canvas' )[0].style.width = "720px";
-        document.getElementsByTagName( 'canvas' )[0].style.height = "480px";
+        document.getElementById('MainCanvas').style.width = "720px";
+        document.getElementById('MainCanvas').style.height = "480px";
     }
     function appendSingleIcon(containerEl, style, png, title, callback) {
     	var el;
@@ -280,6 +284,7 @@ function mediaUtils(canned, scene,
             document.getElementById('videoClock').innerHTML = obj.str;
         if (obj.meshName != undefined)
             document.getElementById('videoMeshName').innerHTML = obj.meshName;
+        that.streamSource.animate();
     }
     this.updateSkyDome = function(event) {  // this should be called updateTextureForActiveMesh
         var pid;
@@ -305,6 +310,7 @@ function mediaUtils(canned, scene,
     }
     this.updateReimannDomeForFileName = function(meshName, filename) {
         that.videoManager.unloadVideos();
+        that.streamSource.stopStreaming();  // this is the OpenCV stream, not the regular stream.
         that.toggleVideoControls();
         showToast("Loading '" + filename + "'.", 2000);
         var pathToTexture = 'media/' + filename;
@@ -332,6 +338,10 @@ function mediaUtils(canned, scene,
             var pid = that.deviceList[id].label;
             showToast("Loading Stream '" + pid + "'.", 2000);
             that.updateReimannDomeForVideoName(that.activeMeshName, pid, "stream");
+        }
+        else if (event.target.id.indexOf('server') > -1) {
+            showToast("Loading Stream from server.", 2000);
+            that.updateReimannDomeForVideoName(that.activeMeshName, 0, "server");
         }
     }
     this.changeMeshBeingEditedOverridable = function(meshName) {    }    
@@ -361,9 +371,15 @@ function mediaUtils(canned, scene,
                 that.buildMaterialForTexture);
         }];
         if (pidType == 'stream') {
+            that.streamSource.stopStreaming();  // this is the OpenCV stream, not the regular stream.
             that.videoManager.makeStream(meshName, pid, textureConsumers, "stream");
         }
+        else if (pidType == 'server') {
+            that.videoManager.video_stop();
+            that.streamSource.setStreamSourceFromPid("/video_feed", textureConsumers);
+        }
         else {
+            that.streamSource.stopStreaming();  // this is the OpenCV stream, not the regular stream.
             console.log("pid is " + pid);
             that.pathToCurrentSubtractionTexture = "media/" + pid + "_subtractionTexture.png";
             that.videoManager.addVideo(meshName, pid, textureConsumers, "video");

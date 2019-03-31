@@ -40,6 +40,7 @@
 
     <script src="reimannShaderSupport.js"></script>
     <script src="videoManager.js"></script>
+    <script src="streamTexture.js"></script>
     <script src="riemannShaderEditors/legacyEditor.js"></script>
     <script src="riemannShaderEditors/keyboardHandlers.js"></script>
     <script src="riemannShaderEditors/keyboardHandlerComplex.js"></script>
@@ -142,6 +143,7 @@ function init() {
     // _renderer.setClearColor( 0xbfd1ff );
     document.getElementById( 'container' ).innerHTML = "";
     _container.appendChild( _renderer.domElement );
+    _renderer.domElement.id = "MainCanvas";
 
     _flightControl = new flight(_clock);
     _canned = new cannedRun(_scene,_flightControl);
@@ -228,6 +230,7 @@ $().ready(function() {
       position: absolute; left: 15px; top: 75px;"
         controls="true" autoplay="true">
 </video>
+<canvas id="2d" width="1920" height="1080" style="display: none"></canvas>
 <div id="container"><br /><br /><br /><br /><br />Generating...</div>
 <div id="matrixText" style="display: block; position: fixed; top: 10%; left: 10%; font-size: 40px; color: red; ">
 </div>

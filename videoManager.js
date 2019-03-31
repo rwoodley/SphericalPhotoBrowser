@@ -45,8 +45,8 @@ function VideoSource(meshName, pid, textureConsumers, pidType, streams) {
     }
     this.loadNewVideo = function(pid, pidType) {
         that.video.pause();
-        for (var index in textureConsumers) {
-            textureConsumers[index](that.videoTexture);
+        for (var index in that.textureConsumers) {
+            that.textureConsumers[index](that.videoTexture);
         }
         this.setVideoSourceFromPid(pid, pidType);
         // ok to play video at this point.
@@ -181,7 +181,9 @@ function videoManager(mu) { // handles streams too.
         // $.map(that.videos, function(val,key){val.video_restart()});
     }
     this.video_stop = function(i,val) {
-        that.videos[that.mediaUtils.activeMeshName].video_stop();
+        if(Object.keys(that.videos).length > 0) {
+            that.videos[that.mediaUtils.activeMeshName].video_stop();
+        }
         // $.map(that.videos, function(val,key){val.video_stop()});
     }
     this.video_skip = function(value) {

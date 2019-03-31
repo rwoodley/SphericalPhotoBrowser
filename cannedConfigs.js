@@ -147,8 +147,8 @@ function getCannedConfigs(mode, generalSettings, flightControl) {
                 uniforms.uPolygonalGroups.value = 0;
                 generalSettings.cameraPosition = [0, 39, 0.];     // expected by trackerUtils.
                 console.log("I'm alive.");
-                document.getElementsByTagName('canvas')[0].style.width = "1920px";
-                document.getElementsByTagName('canvas')[0].style.height = "1080px";
+                document.getElementById('MainCanvas').style.width = "1920px";
+                document.getElementById('MainCanvas').style.height = "1080px";
                 mu.videoManager.video_restart();
                 if (shouldWeRecord)
                     mu.videoManager.videos['default'].playbackRate = .125;     // this has to be found by trial and error. :(

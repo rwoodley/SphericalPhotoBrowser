@@ -1,0 +1,59 @@
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>Three.js Start</title>
+    <style>
+        canvas {
+          background-color: white;
+          position: relative;
+        }
+    </style>
+</head>
+
+<body onclick="startVid()">
+<canvas id="2d" width="512" height="512" style="display: none"></canvas>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js'></script>
+<script>
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1,1000);
+
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize (window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+
+camera.position.z= 35;
+
+const canvas2d = document.getElementById('2d')
+const ctx = canvas2d.getContext("2d")
+const map = new THREE.Texture(canvas2d)
+const material = new THREE.MeshBasicMaterial({ map: map })
+
+img = document.createElement('img');
+img.src = "/video_feed";
+
+var geometry = new THREE.SphereGeometry(9, 12, 12);
+var sphere = new THREE.Mesh(geometry, material);
+
+scene.add( sphere );
+
+function render(){
+    requestAnimationFrame (render);
+
+    ctx.drawImage(img, 0, 0, 500, 500)
+    map.needsUpdate = true
+
+     sphere.rotation.x += 0.02;
+    sphere.rotation.y += 0.02;
+    renderer.render (scene, camera);
+}
+function startVid() {
+    video.play();
+    console.log("ploaying");
+}
+render();
+</script>
+
+</body>
+</html>
